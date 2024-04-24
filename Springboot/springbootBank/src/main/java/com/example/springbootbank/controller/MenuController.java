@@ -1,11 +1,12 @@
 package com.example.springbootbank.controller;
 
 
-import cn.hutool.core.lang.Dict;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.Constants;
 import com.example.springbootbank.common.Result;
+import com.example.springbootbank.entity.Dict;
 import com.example.springbootbank.entity.Menu;
 import com.example.springbootbank.mapper.DictMapper;
 import com.example.springbootbank.service.IMenuService;
