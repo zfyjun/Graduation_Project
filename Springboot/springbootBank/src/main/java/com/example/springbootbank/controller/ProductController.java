@@ -54,7 +54,7 @@ public class ProductController {
             Integer cardid=(Integer) map.get("cardid");
             float cost=Float.valueOf((String)map.get("cost"));
             BankCard bankCard=bankCardMapper.selectById(cardid);
-            if(bankCard.getBalance()>cost){//余额足够
+            if(bankCard.getBalance()>=cost){//余额足够
                 Integer uid=(Integer) map.get("uid");
                 UserProduct userProduct=userproductMapper.selectOne(Wrappers.<UserProduct>lambdaQuery().eq(UserProduct::getUid,uid));
                 //设置细节

@@ -150,6 +150,7 @@
 										})
 					}
 					else{
+						this.show2=false
 						this.$refs.uToast.show({
 											type:'error',
 											duration:'2000',

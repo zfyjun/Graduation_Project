@@ -1,14 +1,14 @@
 package com.example.springbootbank.controller;
 
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.User;
 import com.example.springbootbank.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -68,4 +68,32 @@ public class UserController {
         }
         return Result.error("500","密码更新失败！");
     }
+
+    @GetMapping("/page")
+    public Result findPage(@RequestParam Integer pageNum,
+                           @RequestParam Integer pageSize,
+                           @RequestParam(defaultValue = "") String name) {
+        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
+        queryWrapper.like("name",name);
+//        Page<User> page = new Page<>(pageNum, pageSize);
+        return Result.success(userMapper.selectPage(new Page<>(pageNum, pageSize),queryWrapper));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public Result delete(@PathVariable Integer id){
+        return Result.success(userMapper.deleteById(id));
+    }
+
+    @PostMapping
+    public Result save(@RequestBody User user){
+        return Result.success(userMapper.insert(user));
+    }
+
+    @PostMapping("/update")
+    public Result update(@RequestBody User user){
+        return Result.success(userMapper.updateById(user));
+    }
+
+
 }
