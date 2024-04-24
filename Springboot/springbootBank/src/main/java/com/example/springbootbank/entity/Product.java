@@ -19,9 +19,9 @@ public class Product {
     private LocalDateTime createtime;
     private Integer risk;
     private String description;
-    private Integer amount;
-    private Integer price;
-    private Integer sum;
+    private float amount;
+    private float price;
+    private float sum;
     private String targetmarket;
     private String historicalrate;
 }

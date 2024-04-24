@@ -436,7 +436,7 @@
 												message:"操作成功！",
 											})
 						}
-						
+						this.getCards()
 					})	
 				}
 				else{

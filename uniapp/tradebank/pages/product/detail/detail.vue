@@ -6,7 +6,7 @@
 				<u--text align="center" size="18" bold :text="product.name"></u--text>
 				<u--text style="margin-top: 2%;" type="info" size="12" :text="'创建时间：'+product.createtime"></u--text>
 				<view style="display: flex;">
-					<u--text style="flex:3.2;" type="info" size="12" :text="product.rate+'% 利率'" suffixIcon="question-circle-fill"></u--text>
+					<u--text style="flex:3.2;" type="info" size="12" :text="product.rate+'% 利率'" suffixIcon="question-circle-fill" @click="checkrate()" ></u--text>
 					<u--text v-if="product.type==1" style="flex: 5;" size="17" type="primary" text="固期产品"></u--text>
 					<u--text v-if="product.type==2" style="flex: 5;" size="17" type="primary" text="限期产品"></u--text>
 				</view>
@@ -64,6 +64,9 @@
 				show:false,
 			};
 		},
+		onBackPress(){
+			uni.removeStorageSync('product')
+		},
 		methods:{
 			openmarket(){
 				this.marketNames=[]
@@ -92,10 +95,12 @@
 				this.show=false
 			},
 			buyproduct(){
-				uni.setStorageSync('product',item)
 				uni.navigateTo({
 					url:"/pages/product/buyproduct/buyproduct"
 				})
+			},
+			checkrate(){
+				
 			}
 		}
 	}

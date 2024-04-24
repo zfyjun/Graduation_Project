@@ -4,11 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
-import com.example.springbootbank.entity.BankCard;
-import com.example.springbootbank.entity.Code;
-import com.example.springbootbank.entity.Detail;
-import com.example.springbootbank.entity.User;
+import com.example.springbootbank.entity.*;
 import com.example.springbootbank.mapper.BankCardMapper;
+import com.example.springbootbank.mapper.ProductMapper;
 import com.example.springbootbank.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +29,9 @@ public class PayCostController {
     BankCardMapper bankCardMapper;
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    ProductMapper productMapper;
 
     @PostMapping("/out")//取钱
     public Result out(@RequestBody Map map){
@@ -164,4 +165,30 @@ public class PayCostController {
         }
         return 0;
     }
+
+
+    //购买商品操作(设置银行卡信息和账单信息)
+    public int buyproductandsetcard(int uid, UserProductDetails userProductDetails){
+        BankCard bankCard=bankCardMapper.selectById(userProductDetails.getCardid());
+        if(bankCard!=null){
+            List<Detail> details= JSONArray.parseArray(bankCard.getDetail(),Detail.class);
+            bankCard.setBalance(bankCard.getBalance()-userProductDetails.getCost());//设置当前余额
+            Detail detail=new Detail();
+            detail.setId(userProductDetails.getId());
+            detail.setPaytime(userProductDetails.getPaytime());
+            detail.setCost(userProductDetails.getCost());
+            detail.setPlace("网上银行");
+            detail.setType("理财");
+            String describe="用于购买理财产品，产品名称：";
+            Product product=productMapper.selectById(userProductDetails.getProductid());
+            describe=describe+product.getName();
+            detail.setDescribe(describe);
+            details.add(detail);
+            bankCard.setDetail(details.toString());
+            bankCardMapper.updateById(bankCard);
+            return 1;
+        }
+        return 0;
+    }
+
 }

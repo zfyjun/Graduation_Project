@@ -98,18 +98,12 @@ public class BankCardController {
     public Result getCardsDetail(@RequestBody Map map){
         Integer id=(Integer) map.get("cardsid");
         BankCard bankCard=bankCardMapper.selectById(id);
-        System.out.println(bankCard);
         if(bankCard!=null){
-            System.out.println("hello");
             List<Detail> details=JSONArray.parseArray(bankCard.getDetail(),Detail.class);
             List<Detail> list=new ArrayList<Detail>();
            if(details.size()>0){
                long begintime=(long) map.get("begintime");
                long endtime=(long) map.get("endtime")+86400000;
-               System.out.println("begintime:"+begintime+"  endtime:"+endtime);
-//               DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//               LocalDateTime btime = LocalDateTime.ofEpochSecond(begintime/1000,0, ZoneOffset.ofHours(8));
-//               LocalDateTime etime = LocalDateTime.ofEpochSecond(endtime/1000,0, ZoneOffset.ofHours(8));
                for(int i=0;i<details.size();i++){
                    LocalDateTime time=details.get(i).getPaytime();
                    long timestamp=time.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
