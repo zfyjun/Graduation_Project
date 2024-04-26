@@ -1,5 +1,6 @@
 package com.example.springbootbank;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -8,10 +9,7 @@ import com.example.springbootbank.common.CreateBankCards;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.*;
-import com.example.springbootbank.mapper.BankCardMapper;
-import com.example.springbootbank.mapper.CodeMapper;
-import com.example.springbootbank.mapper.ProductMapper;
-import com.example.springbootbank.mapper.UserMapper;
+import com.example.springbootbank.mapper.*;
 import com.example.springbootbank.service.CodeService;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
@@ -21,9 +19,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @SpringBootTest
@@ -41,21 +42,49 @@ class SpringbootBankApplicationTests {
     @Autowired
     private ProductMapper productMapper;
 
+    @Autowired
+    UserProductMapper userProductMapper;
     @Test
     void contextLoads() {
-        List<Product> products=productMapper.selectList(null);
-        for(int i=0;i<products.size();i++){
-            JSONObject jsonObject=new JSONObject();
-            jsonObject.put("time",products.get(i).getCreatetime());
-            jsonObject.put("rate",products.get(i).getRate());
-            List<JSONObject> list=new ArrayList<>();
-            list.add(jsonObject);
-            products.get(i).setHistoricalrate(list.toString());
-            productMapper.updateById(products.get(i));
-        }
-      }
-
+        Integer pid=1;
+        Integer uid=1;
+        UserProduct userProduct=userProductMapper.selectOne(Wrappers.<UserProduct>lambdaQuery().eq(UserProduct::getUid,uid));
+        Product product=productMapper.selectById(pid);
+        List<UserProductDetails> details= JSONArray.parseArray(userProduct.getProduct(),UserProductDetails.class);
+        //获取能够取出的期限
+        LocalDate ltime=details.get(0).getPaytime().plusDays(product.getMinday()).toLocalDate();
+        LocalDate now=LocalDateTime.now().plusDays(-2).toLocalDate();
+        System.out.println("今天："+now+" 最少取出期限："+ltime);
+        long days= ChronoUnit.DAYS.between(ltime,now);
+        System.out.println("相差天数："+days);
     }
+    public void productwork(){
+        List<UserProduct> userProducts=userProductMapper.selectList(null);
+        for(int i=0;i<userProducts.size();i++){
+            //获取当前用户的理财产品购买记录
+            List<UserProductDetails> details= JSONArray.parseArray(userProducts.get(i).getProduct(),UserProductDetails.class);
+            int flag=0;//看该用户其下是否有产品的余额发生了变化,用于节省性能
+            for(int j=0;j<details.size();j++){//该用户购买的所有产品
+                if(details.get(j).getState()==1){//该用户的该产品还未结束
+                    flag=1;
+                    Product product=productMapper.selectById(details.get(j).getProductid());
+                    float balance=0;
+                    if(product.getType()!=1){//限期（七日年化）
+                        balance=details.get(i).getBalance()*(float) (100+product.getRate()/7)/100;
+                    }
+                    else {//固期，固期利率
+                        balance=details.get(i).getBalance()*(float) (100+product.getRate()/product.getMinday())/100;
+                    }
+                    details.get(j).setBalance(balance);
+                }
+            }
+            if(flag==1){//更新该用户的理财产品情况
+                userProducts.get(i).setProduct(JSONArray.toJSONString(details));
+                userProductMapper.updateById(userProducts.get(i));
+            }
+        }
+    }
+}
 @Data
 class historicalrate{
     public LocalDateTime time;

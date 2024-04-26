@@ -1,111 +1,114 @@
 <template>
-	<view  style="padding: 2%;" >
-		<view class="box"  >
-			
-			<view style="display: flex; padding: 5%;" >
-				<u-avatar  size="60" class="avatar" ></u-avatar>
-				<u--text class="text1" mode="name"  format="encrypt" bold :text="user.name"></u--text>
-				<view style="flex: 1;">
-					<u--text prefixIcon="integral" iconStyle="font-size: 15px"  align="right"  bold size="12" text="个人账户"></u--text>
-					<u--text    align="right" size="15" text="上次登录"></u--text>
-					<u--text  style="margin-bottom: 12%;" align="right"  size="12" :text="user.lasttime"></u--text>
+	<view >
+		<view  style="padding: 2%;" >
+			<view class="box"  >
+				
+				<view style="display: flex; padding: 5%;" >
+					<u-avatar  size="60" class="avatar" ></u-avatar>
+					<u--text color="#fff" class="text1" mode="name"  format="encrypt" bold :text="user.name"></u--text>
+					<view style="flex: 1;">
+						<u--text color="#fff" prefixIcon="integral"  iconStyle="font-size: 15px;color:#fff"  align="right"  bold size="12" text="个人账户"></u--text>
+						<u--text  color="#fff"  align="right" size="15" text="上次登录"></u--text>
+						<u--text  style="margin-bottom: 12%;" align="right"  size="12" :text="user.lasttime"></u--text>
+					</view>
 				</view>
 			</view>
+			<view style="width: 85%;margin: 5% auto;">
+				<u-cell-group>
+						<u-cell icon="lock-opened-fill" title="登录密码" @click="openchangePassword"></u-cell>
+						<u-cell icon="rmb-circle-fill" title="我的理财" @click="tofinance"></u-cell>
+						<u-cell icon="integral-fill" title="会员等级" value="新版本"></u-cell>
+				</u-cell-group>
+			</view>
+			<view style="width: 50%; margin: 5% auto" >
+				<u-button shape="circle" text="安全退出" @click="outlogin()"></u-button>
+			</view>
+			
+			<view >
+				<u-modal @confirm="checkCode" @cancel="cancel" :show="show" showCancelButton="true" >
+					<view style="width: 100%;">
+							<u--form
+									labelPosition="left"
+									:model="model"
+									ref="uForm"
+							>
+								<u-form-item
+								        labelWidth="20%"
+										label="原密码"
+										borderBottom
+										ref="item1"
+								>
+									<u--input
+											v-model="model.userInfo.password"
+											border="none"
+											type="number"
+											password=true
+									></u--input>
+								</u-form-item>
+								<u-form-item
+								        labelWidth="20%"
+										label="新密码"
+										borderBottom
+										ref="item1"
+								>
+									<u--input
+									        type="number"
+									        password=true
+											v-model="model.userInfo.newpassword"
+											border="none"
+									></u--input>
+								</u-form-item>
+								<u-form-item
+								        labelWidth="30%"
+										label="确认新密码"
+										borderBottom
+										ref="item1"
+								>
+									<u--input
+									        type="number"
+											password=true
+											v-model="model.userInfo.newpassword2"
+											border="none"
+									></u--input>
+								</u-form-item>
+								<u-form-item
+								        labelWidth="20%"
+										label="验证码"
+										borderBottom
+										ref="item1"
+								>
+									<u-code-input size="20" style="width: 85%;margin-top: 5%;" v-model="model.userInfo.code">
+										
+									</u-code-input>
+								</u-form-item>
+								<u-form-item
+										borderBottom
+										ref="item1"
+								>
+									<template  >
+														<u-code
+															ref="uCode"
+															@change="codeChange"
+															seconds="60"
+															changeText="X秒重新获取"
+														></u-code>
+														<u-button
+															@tap="getCode"
+															:text="tips"
+															type="success"
+															size="mini"
+														></u-button>
+													</template>
+								</u-form-item>
+							</u--form>
+							
+					 </view>
+					 <u-toast ref="uToast2"></u-toast>
+				</u-modal>
+			</view>
+				<u-toast ref="uToast"></u-toast>
+			
 		</view>
-		<view style="width: 80%;margin: 5% auto;">
-			<u-cell-group>
-					<u-cell icon="lock-opened-fill" title="登录密码" @click="openchangePassword"></u-cell>
-					<u-cell icon="integral-fill" title="会员等级" value="新版本"></u-cell>
-			</u-cell-group>
-		</view>
-		<view style="width: 50%; margin: 5% auto" >
-			<u-button shape="circle" text="安全退出" @click="outlogin()"></u-button>
-		</view>
-		
-		<view >
-			<u-modal @confirm="checkCode" @cancel="cancel" :show="show" showCancelButton="true" >
-				<view style="width: 100%;">
-						<u--form
-								labelPosition="left"
-								:model="model"
-								ref="uForm"
-						>
-							<u-form-item
-							        labelWidth="20%"
-									label="原密码"
-									borderBottom
-									ref="item1"
-							>
-								<u--input
-										v-model="model.userInfo.password"
-										border="none"
-										type="number"
-										password=true
-								></u--input>
-							</u-form-item>
-							<u-form-item
-							        labelWidth="20%"
-									label="新密码"
-									borderBottom
-									ref="item1"
-							>
-								<u--input
-								        type="number"
-								        password=true
-										v-model="model.userInfo.newpassword"
-										border="none"
-								></u--input>
-							</u-form-item>
-							<u-form-item
-							        labelWidth="30%"
-									label="确认新密码"
-									borderBottom
-									ref="item1"
-							>
-								<u--input
-								        type="number"
-										password=true
-										v-model="model.userInfo.newpassword2"
-										border="none"
-								></u--input>
-							</u-form-item>
-							<u-form-item
-							        labelWidth="20%"
-									label="验证码"
-									borderBottom
-									ref="item1"
-							>
-								<u-code-input size="20" style="width: 85%;margin-top: 5%;" v-model="model.userInfo.code">
-									
-								</u-code-input>
-							</u-form-item>
-							<u-form-item
-									borderBottom
-									ref="item1"
-							>
-								<template  >
-													<u-code
-														ref="uCode"
-														@change="codeChange"
-														seconds="60"
-														changeText="X秒重新获取"
-													></u-code>
-													<u-button
-														@tap="getCode"
-														:text="tips"
-														type="success"
-														size="mini"
-													></u-button>
-												</template>
-							</u-form-item>
-						</u--form>
-						
-				 </view>
-				 <u-toast ref="uToast2"></u-toast>
-			</u-modal>
-		</view>
-			<u-toast ref="uToast"></u-toast>
-		
 	</view>
 </template>
 
@@ -122,9 +125,11 @@
 					code:"",
 				}},
 				tips:'',
+				screenHeight:''
 			};
 		},
 		onLoad() {
+			this.screenHeight = uni.getSystemInfoSync().windowHeight+"px";
 			if(this.user.lasttime==null){
 				this.user.lasttime="未知"
 			}
@@ -272,6 +277,11 @@
 										})
 					}
 				})
+			},
+			tofinance(){//转移到理财页面
+			    uni.navigateTo({
+						url:"/pages/bankcards/finance/finance"
+				})
 			}
 			
 		}
@@ -293,9 +303,16 @@
 	border: 1px solid #ddd;
 	border-radius: 5px;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-	background-image: url(~@/static/image/inset/background.jpg);
+	background-image: url(~@/static/image/inset/work2.jpeg);
 	background-size: 100% 100%;
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
+}
+.background1{
+	position: relative;
+	background-image: url(~@/static/image/inset/work2.jpeg);
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	width: 100vw;
 }
 </style>

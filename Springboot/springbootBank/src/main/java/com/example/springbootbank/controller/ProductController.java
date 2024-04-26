@@ -46,6 +46,16 @@ public class ProductController {
         return Result.error("300","搜索不到任何商品！");
     }
 
+    @PostMapping("/getProductOne")//获取某个商品
+    public Result getProduct(@RequestBody Map map){
+        Integer id=(Integer)map.get("id");
+        Product product=productMapper.selectById(id);
+        if(product!=null){
+            return Result.success(product);
+        }
+        return Result.error("300","搜索不到任何商品！");
+    }
+
     @PostMapping("/BuyProduct")//购买某个商品
     public Result BuyProduct(@RequestBody Map map){
         Integer productId=(Integer) map.get("productid");

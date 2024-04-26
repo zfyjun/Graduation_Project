@@ -70,6 +70,14 @@
 				"navigationBarTitleText" : "理财购买",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/bankcards/finance/finance",
+			"style" : 
+			{
+				"navigationBarTitleText" : "理财",
+				"enablePullDownRefresh" : false
+			}
 		}
 		
 	],

@@ -125,7 +125,7 @@
 					this.show2=true
 				}
 			},
-			surebuy(){
+			surebuy(){//确认购买
 				this.request({
 					url:"/Product/BuyProduct",
 					method:"POST",
@@ -157,6 +157,7 @@
 											message:res.msg,
 										})
 					}
+					this.getcards()
 				}) 
 			}
 		}
