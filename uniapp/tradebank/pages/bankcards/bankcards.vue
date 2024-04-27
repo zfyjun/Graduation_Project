@@ -48,106 +48,6 @@
 								<u-button plain style="width: 80%;" type="" text="查看详情" @click=" tip(2)"></u-button>
 							</view>
 						</view>
-						
-						
-						
-			<!-- 各种弹出层============================================================ -->
-						<u-popup  class="popup" :show="show1" :round="10" mode="center"    @close="close" @open="open">
-						        <view   style="padding: 10%;width: 80%;">
-						            <u--text style="margin-top: -8%;" align="center" type="info" size="12" :text="mig"></u--text>
-						        </view>
-						</u-popup>
-						<u-toast ref="uToast2"></u-toast>
-				<!-- 存取的弹出层 -->
-				        <u-modal :closeOnClickOverlay="true" :showConfirmButton="false"  @close="showoutandsave=false" :show="showoutandsave" title="存取页面" :content='content'>
-						    <view style="display: block;width: 120%;">
-								<u--text size="16" align="center" type="info" :text="'剩余金额(单位元)： '+balance"></u--text>
-								<view style="padding-top: 5%;">
-									<u--input
-									    type="number"
-									    placeholder="请输入金额"
-									    border="surround"
-									    v-model="saveorout"
-									    @change="change"
-									></u--input>
-								</view>
-								<view style="display: flex;padding-top: 2%;">
-									<u-button style="flex: 2;"  type="warning" plain text="取钱" @click="outorsave(2)" ></u-button>
-									<text style="flex: 1;"></text>
-									<u-button  style="flex: 2;" type="success" plain text="存钱" @click="outorsave(1)" ></u-button>
-								</view>
-							</view>
-							<u-toast ref="uToastout"></u-toast>
-						</u-modal>
-				<!-- 开户的弹出层 -->		
-					    <u-popup class="popup2" :show="show2" :round="5" mode="bottom"   @close="close2" @open="open2">
-								<u-toast ref="uToast"></u-toast>
-								<view  style="padding: 5%;width: 90%;">
-					                <view>
-										    <u--text bold text="信息验证"></u--text>
-					                		<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
-					                		<u--form
-					                				labelPosition="left"
-					                				:model="model"
-					                				ref="uForm"
-					                		>
-					                			<u-form-item
-					                					label="姓名"
-					                					prop="userInfo.name"
-					                					borderBottom
-														
-					                					ref="item1"
-					                			>
-					                				<u--input
-													border="bottom"
-					                						v-model="model.userInfo.name"
-					                				></u--input>
-					                			</u-form-item>
-												<u-form-item
-														label="身份证号码"
-														prop="userInfo.idnumber"
-														borderBottom
-														ref="item1"
-												>
-													<u--input 
-															v-model="model.userInfo.idnumber"
-													></u--input>
-												</u-form-item>
-												<u-form-item
-														label="电话号码"
-														prop="mobile"
-														borderBottom
-														ref="item1"
-												>
-													<u--input
-													        type="number"
-															v-model="model.userInfo.phone"
-													>
-													<template slot="suffix">
-																		<u-code
-																			ref="uCode"
-																			@change="codeChange"
-																			seconds="60"
-																			changeText="X秒重新获取"
-																		></u-code>
-																		<u-button
-																			@tap="getCode"
-																			:text="tips"
-																			type="success"
-																			size="mini"
-																		></u-button>
-																	</template>
-													</u--input>
-												</u-form-item>
-												<u-form-item label="验证码" ref="item1" v-if="flag==true">
-													<u-code-input @finish="finish" style="margin: 0 auto;" mode="line" v-model="codewords" :maxlength="6"></u-code-input>
-												</u-form-item>
-					                		</u--form>
-					                	</view>
-					            </view>
-					    </u-popup>	
-						<u-modal @confirm="createCard(type)" @cancel="cancel" :show="show3" :title="title" content="是否确认开通？开通后注销账户需到线下柜台处持身份证及相应证件办理" showCancelButton="true" ></u-modal>
-					
 					</view>
 		</view>
 		
@@ -157,7 +57,7 @@
 			<view  class="box4">
 				
 				<view class="box3"  >
-				    <view v-if="!cards1">
+				    <view v-if="!cards3">
 						<u--text style="padding-top: 5%;" align="center" type="info" text="您尚未开通信用卡"></u--text>
 						<view class="u-demo-block__content" style="padding-top: 5%;padding-bottom: 1%;">
 						    <u-row>
@@ -171,21 +71,21 @@
 						</view>
 					</view>
 				    
-					<view v-if="cards1">
-						<u--text style="padding-top: 5%;padding-left: 20%;" align="left" type="info" :text="'信用卡（'+cardsText[0]+'）'"></u--text>
+					<view v-if="cards3">
+						<u--text style="padding-top: 5%;padding-left: 20%;" align="left" type="info" :text="'信用卡（'+cardsText[2]+'）'"></u--text>
 						<view class="u-demo-block__content" style="padding-top: 5%;padding-bottom: 1%;">
 						    <u-row>
 						        <u-col span="3">
-						            <u-button plain style="width: 80%;" type="" text="明细" @click="detail(1)" ></u-button>
+						            <u-button plain style="width: 80%;" type="" text="明细" @click="detail(3)" ></u-button>
 						        </u-col>
 						        <u-col span="3">
-						            <u-button plain style="width: 80%;" type="" text="转账" @click="toTransfer(1)"  ></u-button>
+						            <u-button plain style="width: 80%;" type="" text="还款" @click="returnm(3)"  ></u-button>
 						        </u-col>
 								<u-col span="3">
-								    <u-button plain style="width: 80%;" type="" text="存取" @click="opneoutandsave(1)" ></u-button>
+								    <u-button plain style="width: 80%;" type="" text="存取" @click="opneoutandsave(3)" ></u-button>
 								</u-col>
 								<u-col span="3">
-								    <u-button plain style="width: 80%;" type="" text="贷款" @click="toloans(1)" ></u-button>
+								    <u-button plain style="width: 80%;" type="" text="升级" ></u-button>
 								</u-col>
 						    </u-row>
 						</view>
@@ -194,6 +94,106 @@
 				
 			</view>
 		</view>
+		
+		
+					
+<!-- 各种弹出层============================================================ -->
+					<u-popup  class="popup" :show="show1" :round="10" mode="center"    @close="close" @open="open">
+					        <view   style="padding: 10%;width: 80%;">
+					            <u--text style="margin-top: -8%;" align="center" type="info" size="12" :text="mig"></u--text>
+					        </view>
+					</u-popup>
+					<u-toast ref="uToast2"></u-toast>
+			<!-- 存取的弹出层 -->
+			        <u-modal :closeOnClickOverlay="true" :showConfirmButton="false"  @close="showoutandsave=false" :show="showoutandsave" title="存取页面" :content='content'>
+					    <view style="display: block;width: 120%;">
+							<u--text size="16" align="center" type="info" :text="'剩余金额(单位元)： '+balance"></u--text>
+							<view style="padding-top: 5%;">
+								<u--input
+								    type="number"
+								    placeholder="请输入金额"
+								    border="surround"
+								    v-model="saveorout"
+								    @change="change"
+								></u--input>
+							</view>
+							<view style="display: flex;padding-top: 2%;">
+								<u-button style="flex: 2;"  type="warning" plain text="取钱" @click="outorsave(2)" ></u-button>
+								<text v-if="current==0" style="flex: 1;"></text>
+								<u-button v-if="current==0" style="flex: 2;" type="success" plain text="存钱" @click="outorsave(1)" ></u-button>
+							</view>
+						</view>
+						<u-toast ref="uToastout"></u-toast>
+					</u-modal>
+			<!-- 开户的弹出层 -->		
+				    <u-popup class="popup2" :show="show2" :round="5" mode="bottom"   @close="close2" @open="open2">
+							<u-toast ref="uToast"></u-toast>
+							<view  style="padding: 5%;width: 90%;">
+				                <view>
+									    <u--text bold text="信息验证"></u--text>
+				                		<!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
+				                		<u--form
+				                				labelPosition="left"
+				                				:model="model"
+				                				ref="uForm"
+				                		>
+				                			<u-form-item
+				                					label="姓名"
+				                					prop="userInfo.name"
+				                					borderBottom
+													
+				                					ref="item1"
+				                			>
+				                				<u--input
+												border="bottom"
+				                						v-model="model.userInfo.name"
+				                				></u--input>
+				                			</u-form-item>
+											<u-form-item
+													label="身份证号码"
+													prop="userInfo.idnumber"
+													borderBottom
+													ref="item1"
+											>
+												<u--input 
+														v-model="model.userInfo.idnumber"
+												></u--input>
+											</u-form-item>
+											<u-form-item
+													label="电话号码"
+													prop="mobile"
+													borderBottom
+													ref="item1"
+											>
+												<u--input
+												        type="number"
+														v-model="model.userInfo.phone"
+												>
+												<template slot="suffix">
+																	<u-code
+																		ref="uCode"
+																		@change="codeChange"
+																		seconds="60"
+																		changeText="X秒重新获取"
+																	></u-code>
+																	<u-button
+																		@tap="getCode"
+																		:text="tips"
+																		type="success"
+																		size="mini"
+																	></u-button>
+																</template>
+												</u--input>
+											</u-form-item>
+											<u-form-item label="验证码" ref="item1" v-if="flag==true">
+												<u-code-input @finish="finish" style="margin: 0 auto;" mode="line" v-model="codewords" :maxlength="6"></u-code-input>
+											</u-form-item>
+				                		</u--form>
+				                	</view>
+				            </view>
+				    </u-popup>	
+					<u-modal @confirm="createCard(type)" @cancel="cancel" :show="show3" :title="title" content="是否确认开通？开通后注销账户需到线下柜台处持身份证及相应证件办理" showCancelButton="true" ></u-modal>
+				
 		
 	</view>
 		
@@ -371,6 +371,7 @@
 					//如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
 			    	this.$refs.uForm.setRules(this.rules)},
 			detail(val){//明细
+			    console.log("val"+val)
 			    this.getCards().then(e=>{
 					for(let i=0;i<this.mycards.length;i++){
 						if(this.mycards[i].type===val){
@@ -389,6 +390,22 @@
 				uni.navigateTo({
 					url:"/pages/bankcards/detail/detail"
 				})
+			},
+			returnm(){//跳转到还款
+				this.getCards().then(e=>{
+					for(let i=0;i<this.mycards.length;i++){
+						if(this.mycards[i].type===3){
+							console.log(this.mycards[i])
+							uni.setStorageSync('bankdetail',this.mycards[i])
+							break
+					    }
+					}
+				}).then(e=>{
+					uni.navigateTo({
+						url:"/pages/bankcards/returncredit/returncredit"
+					})
+				});
+				
 			},
 			codeChange(text) {//验证码输入
                      this.tips = text;

@@ -31,7 +31,7 @@
 			</view>	   
 	
 	        <view v-if="current==1">
-	        	<view v-for="(item,index) in userProductsnow" style="margin-top: 3%;">
+	        	<view v-for="(item,index) in userProductslast" style="margin-top: 3%;">
 	        		<view class="box"  >
 	        			<view style="padding: 3%;">
 							<view style="display: flex;">

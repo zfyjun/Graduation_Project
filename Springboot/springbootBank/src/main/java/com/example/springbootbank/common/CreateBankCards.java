@@ -61,7 +61,7 @@ public class CreateBankCards {
                 id=id+number;
             }
         }
-        else if(type==2){
+        else if(type==3){
             id="427039";
             for(int i=0;i<9;i++){
                 int number=random.nextInt(9);

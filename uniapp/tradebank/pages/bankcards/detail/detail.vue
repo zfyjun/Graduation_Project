@@ -5,10 +5,11 @@
 				<view style="display: flex;">
 					<u--text style="padding-top: 1%;padding-left: 3%;" align="left" type="info" :text="text"></u--text>
 					<u--text @click="show=true" align="right" style="padding-top: 1%;padding-right: 3%" type="primary" prefixIcon="search" text="卡号详情" ></u--text>
-				
 				</view>
 				<view style="padding-top:3%;padding-left: 3%">
-					<u--text size="20" mode="price" :text="mycarddetail.balance"></u--text>
+					<view>
+						<u--text  size="20" mode="price" :text="mycarddetail.balance"></u--text>
+					</view>
 					<view style="display: flex;padding-bottom: 2%;">
 						<u--text style="flex: 6;" size="13" suffixIcon="arrow-down-fill" :text="begintext" @click="timeshow1=true" ></u--text>
 						<u--text style="flex: 6;" size="13" suffixIcon="arrow-down-fill" :text="endtext" @click="timeshow2=true" ></u--text>
@@ -119,6 +120,9 @@
 			else if(this.mycarddetail.type==2){
 				this.text='个人养老账户('+this.mycarddetail.cardnumber.slice(-4)+')'
 			}
+			else if(this.mycarddetail.type==3){
+				this.text='信用卡('+this.mycarddetail.cardnumber.slice(-4)+')'
+			}
 			this.search()
 		},
 		methods:{
@@ -201,6 +205,7 @@
 				}).then(res=>{
 					if(res.code==='200'){
 						this.mycarddetail=res.data
+						console.log(this.mycarddetail)
 					}
 					else{
 						this.mycarddetail={}

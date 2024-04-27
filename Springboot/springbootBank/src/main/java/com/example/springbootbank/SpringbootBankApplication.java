@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringbootBankApplication {
 
     public static void main(String[] args) {
+        System.out.println("hello word");
         SpringApplication.run(SpringbootBankApplication.class, args);
     }
 

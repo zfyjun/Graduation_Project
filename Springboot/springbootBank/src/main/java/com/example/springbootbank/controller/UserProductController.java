@@ -135,6 +135,7 @@ public class UserProductController {
                     LocalDate ltime=details.get(i).getPaytime().plusDays(product.getMinday()).toLocalDate();//最早能取出的期限
                     LocalDate now=LocalDateTime.now().toLocalDate();//今天
                     long days= ChronoUnit.DAYS.between(ltime,now);//时间差
+                    System.out.println(days);
                     if(days>=0){//今天的日期能取出
                         details.get(i).setState(2);//设置为结束状态
                         //进行银行卡的操作
@@ -156,7 +157,7 @@ public class UserProductController {
                         detail.setPlace("网上银行");
                         carddetails.add(detail);
                         //产品的进度更改
-                        product.setSum(product.getSum()-details.get(i).getBalance());
+                        product.setSum(product.getSum()-details.get(i).getCost());
                         bankCard.setDetail(JSONArray.toJSONString(carddetails));
                         userProduct.setProduct(JSONArray.toJSONString(details));
                         productMapper.updateById(product);

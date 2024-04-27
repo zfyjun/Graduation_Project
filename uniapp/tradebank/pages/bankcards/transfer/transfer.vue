@@ -83,7 +83,6 @@
 							<u--input
 							        placeholder="请输入转账用途(选填)"
 							        style="width: 80%;"
-									type="number"
 									v-model="model2.userInfo.describe"
 									border="none"
 							></u--input>
@@ -145,6 +144,13 @@
 											type:'warning',
 											duration:'1500',
 											message:"转账账户不能为本账户",
+										})
+					}
+					else if(this.model1.userInfo.cardnumber.length<19){
+						this.$refs.uToast.show({
+											type:'warning',
+											duration:'1500',
+											message:"收款账户不能为信用卡账户",
 										})
 					}
 					else{

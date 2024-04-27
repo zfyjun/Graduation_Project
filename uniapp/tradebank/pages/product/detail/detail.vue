@@ -263,6 +263,7 @@
 														message:"加购成功！",
 													})
 									this.addmoney=""
+									this.getproduct()
 									this.getUserProduct()
 									this.getcard()
 								}

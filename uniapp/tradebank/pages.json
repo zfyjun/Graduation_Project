@@ -78,6 +78,22 @@
 				"navigationBarTitleText" : "理财",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/bankcards/returncredit/returncredit",
+			"style" : 
+			{
+				"navigationBarTitleText" : "还款账单",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/bankcards/returncredit/returnDetailCredit/returnDetailCredit",
+			"style" : 
+			{
+				"navigationBarTitleText" : "还款",
+				"enablePullDownRefresh" : false
+			}
 		}
 		
 	],
