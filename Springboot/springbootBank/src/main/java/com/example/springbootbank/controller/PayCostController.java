@@ -112,7 +112,7 @@ public class PayCostController {
                 Integer id=(Integer) map.get("cardid") ;//银行卡id
                 float cost=Float.valueOf((String)map.get("cost"));//金额
                 String describe=(String)map.get("describe") ;//用途
-                if(maketans(id,bankCard.getId(),cost,describe,1)==1){
+                if(maketans(id,bankCard.getId(),cost,describe,1,0)==1){
                     return Result.success();
                 }
                 return Result.error("500","错误！转账过程中服务器出错，请联系客服");
@@ -148,25 +148,33 @@ public class PayCostController {
         Integer ccid=(Integer) map.get("ccid");//信用卡账号
         String id=(String) map.get("id");//账单id
         float cost=Float.valueOf(String.valueOf (map.get("cost")));//金额
+        float reallcost=cost;
         BankCard pbankCard=bankCardMapper.selectById(pcid);
-        if(cost<=pbankCard.getBalance()){
+        if(cost<=pbankCard.getBalance()){//金额足够还款
             CreditCard creditCard=creditCardMapper.selectOne(Wrappers.<CreditCard>lambdaQuery().eq(CreditCard::getCid,ccid));
             List<Debt> debts= JSONArray.parseArray(creditCard.getDebt(),Debt.class);
-            if(maketans(pcid,ccid,cost,"",2)==1){
-                for(int i=0;i<debts.size();i++){
-                    if(id.equals(String.valueOf(debts.get(i).getId()))){
-                        if(debts.get(i).getInterest()<cost){//还款额度大于利息
-                            cost=cost-debts.get(i).getInterest();
-                            debts.get(i).setInterest(0);//先还利息
-                            debts.get(i).setNeedreturn((debts.get(i).getNeedreturn()-cost));//后还本金
+            //先进行账单操作
+            for(int i=0;i<debts.size();i++){//遍历账单
+                if(id.equals(String.valueOf(debts.get(i).getId()))){//找到了对应账单
+                    debts.get(i).setReturnmoney(debts.get(i).getReturnmoney()+cost);//先设置还款金额
+                    if(debts.get(i).getInterest()<cost){//还款额度大于利息
+                        cost=cost-debts.get(i).getInterest();//还款金额减去利息，剩下的还本金
+                        debts.get(i).setInterest(0);//先还利息
+                        if((debts.get(i).getNeedreturn()-cost)<=0.01){//后还本金
+                            debts.get(i).setNeedreturn(0);
                         }
-                        else {//还款额度小于等于利息
-                            debts.get(i).setInterest((debts.get(i).getInterest()-cost));
+                        else {
+                            debts.get(i).setNeedreturn((debts.get(i).getNeedreturn()-cost));
                         }
-                        debts.get(i).setReturnmoney(debts.get(i).getReturnmoney()+cost);
-                        break;
                     }
+                    else {//还款额度小于等于利息
+                        debts.get(i).setInterest((debts.get(i).getInterest()-cost));
+                        cost=0;//设置还本金的还款金额为0
+                    }
+                    break;
                 }
+            }
+            if(maketans(pcid,ccid,reallcost,"",2,cost)==1){
                 creditCard.setDebt(JSONArray.toJSONString(debts));//设置账单信息
                 if(creditCardMapper.updateById(creditCard)==1){
                     return Result.success();
@@ -180,7 +188,7 @@ public class PayCostController {
     }
     //信用卡还款操作
     //转账操作
-    public int maketans(int payid,int payeeid,float cost,String describe,int type){//转账方id，收款方id,转账金额,转账用途
+    public int maketans(int payid,int payeeid,float cost,String describe,int type,float reallcost){//转账方id，收款方id,转账金额,转账用途
         BankCard bankCardpay=bankCardMapper.selectById(payid);//付款方
         BankCard bankCardpayee=bankCardMapper.selectById(payeeid);//收款方
         Detail detailpay=new Detail();//转账方细节
@@ -205,15 +213,8 @@ public class PayCostController {
         detailpay.setCost(cost);
         bankCardpay.setBalance((bankCardpay.getBalance()-cost));
         if(type==2){
-            CreditCard card=creditCardMapper.selectOne(Wrappers.<CreditCard>lambdaQuery().eq(CreditCard::getCid,bankCardpayee.getId()));
-            if(card.getLimits()<(bankCardpayee.getBalance()+cost)){
-                bankCardpayee.setBalance(card.getLimits());
-            }
-            else {
-                bankCardpayee.setBalance((bankCardpayee.getBalance()+cost));
-            }
-        }
-        else if(type==1){
+            bankCardpayee.setBalance((bankCardpayee.getBalance()+reallcost));
+        } else if (type==1) {
             bankCardpayee.setBalance((bankCardpayee.getBalance()+cost));
         }
         //设置转账类型

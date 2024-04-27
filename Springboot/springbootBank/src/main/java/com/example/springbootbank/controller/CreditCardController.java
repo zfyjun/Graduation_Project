@@ -62,5 +62,26 @@ public class CreditCardController {
         }
         return Result.success(maps);
     }
+    @PostMapping("/getBill")//获取当前信用卡的每月账单
+    public Result getBill(@RequestBody Map map){
+        Integer cid=(Integer) map.get("cid");
+        String id=(String) map.get("id");
+        CreditCard creditCard=creditCardMapper.selectOne(Wrappers.<CreditCard>lambdaQuery().eq(CreditCard::getCid,cid));
+        if(creditCard!=null){
+            List<Debt> debts= JSONArray.parseArray(creditCard.getDebt(),Debt.class);
+            for(int i=0;i<debts.size();i++){
+                if(id.equals(String.valueOf(debts.get(i).getId()))){
+                    Map map1=new HashMap<>();
+                    List<String> stringList=(debts.get(i).getBills()).stream().map(Object::toString).collect(Collectors.toList());
+                    debts.get(i).setBills(null);
+                    map1.put("id",String.valueOf(debts.get(i).getId()));
+                    map1.put("debt",debts.get(i));
+                    map1.put("bills",stringList);
+                    return Result.success(map1);
+                }
+            }
+        }
+        return Result.error("404","该信用卡不存在");
 
+    }
 }

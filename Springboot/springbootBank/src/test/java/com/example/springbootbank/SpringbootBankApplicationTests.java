@@ -19,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -48,53 +50,65 @@ class SpringbootBankApplicationTests {
     CreditCardMapper creditCardMapper;
     @Test
     void contextLoads() {
-        productwork();
-    //        setoverdue();
-//        cbills(8);
+//        productwork();
+            setoverdue();
+//        cbills(10);
     }
     //创建月初账单
     public void cbills(Integer ccid){
         //月初创建上个月的账单
 
         LocalDateTime now=LocalDateTime.now();
-        now=now.plusMonths(1);//本月
+        now=now.plusMonths(0);//本月
         LocalDateTime localDatestart=LocalDateTime.of(now.minusMonths(1L).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),LocalTime.MIN);
         LocalDateTime localDateslast=LocalDateTime.of(now.minusMonths(1L).with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(),LocalTime.MAX);
         System.out.println("月初："+localDatestart+"  月末："+localDateslast);
         BankCard bankCard=bankCardMapper.selectById(ccid);
-        List<Detail> details= JSONArray.parseArray(bankCard.getDetail(),Detail.class);
-        System.out.println(details);
-        Debt debt=new Debt();
-        List<Long> pays=new ArrayList<>();
-        float needreturn=0;
-        for(int i=0;i<details.size();i++){
-            //筛选出范围内的
-            if(localDateslast.isAfter(details.get(i).getPaytime())&&localDatestart.isBefore(details.get(i).getPaytime())){
-                if(details.get(i).getType().equals("消费")||details.get(i).getType().equals("取出")){
-                    needreturn=needreturn+details.get(i).getCost();
-                    pays.add(details.get(i).getId());
+        if(bankCard!=null){//存在该银行卡
+            List<Detail> details= JSONArray.parseArray(bankCard.getDetail(),Detail.class);
+            System.out.println(details);
+            Debt debt=new Debt();
+            List<Long> pays=new ArrayList<>();
+            float needreturn=0;
+            for(int i=0;i<details.size();i++){
+                //筛选出范围内的
+                if(localDateslast.isAfter(details.get(i).getPaytime())&&localDatestart.isBefore(details.get(i).getPaytime())){
+                    if(details.get(i).getType().equals("消费")||details.get(i).getType().equals("取出")){
+                        needreturn=needreturn+details.get(i).getCost();
+                        pays.add(details.get(i).getId());
+                    }
+                }
+            }
+            //创建账单
+            if(pays.size()>0){//存在账单才进入
+                debt.setInterest(0);
+                debt.setNeedreturn(Math.round(needreturn*100)/100f);
+                debt.setDays(0);
+                debt.setId(IdGeneratorSnowlake.getInstance().snowflakeId());
+                debt.setCost(Math.round(needreturn*100)/100f);
+                debt.setReturnmoney(0);
+                //后面要改
+                debt.setTime(localDatestart.plusMonths(1).toLocalDate());
+                debt.setTimelast(localDatestart.plusMonths(1).plusDays(9).toLocalDate());
+                //
+                debt.setBills(pays);
+                //添加账单
+                CreditCard creditCard=creditCardMapper.selectOne(Wrappers.<CreditCard>lambdaQuery().eq(CreditCard::getCid,ccid));
+                if(creditCard!=null){//存在该信用卡
+                    List<Debt> Debts= JSONArray.parseArray(creditCard.getDebt(),Debt.class);
+                    Debts.add(debt);
+                    creditCard.setDebt(JSONArray.toJSONString(Debts));
+                    System.out.println(creditCard);
+                    creditCardMapper.updateById(creditCard);
+                }
+                else {
+                    System.out.println("不存在该信用卡卡");
                 }
             }
         }
-        //创建账单
-        debt.setInterest(0);
-        debt.setNeedreturn(Math.round(needreturn*100)/100f);
-        debt.setDays(0);
-        debt.setId(IdGeneratorSnowlake.getInstance().snowflakeId());
-        debt.setCost(Math.round(needreturn*100)/100f);
-        debt.setReturnmoney(0);
-        //后面要改
-        debt.setTime(localDatestart.plusMonths(1).toLocalDate());
-        debt.setTimelast(localDatestart.plusMonths(1).plusDays(9).toLocalDate());
-        //
-        debt.setBills(pays);
-        //添加账单
-        CreditCard creditCard=creditCardMapper.selectOne(Wrappers.<CreditCard>lambdaQuery().eq(CreditCard::getCid,ccid));
-        List<Debt> Debts= JSONArray.parseArray(creditCard.getDebt(),Debt.class);
-        Debts.add(debt);
-        creditCard.setDebt(JSONArray.toJSONString(Debts));
-        System.out.println(creditCard);
-        creditCardMapper.updateById(creditCard);
+        else{
+            System.out.println("不存在该银行卡");
+        }
     }
     //每天检查是否存在逾期账单并设置逾期天数
     public void setoverdue(){
@@ -103,21 +117,25 @@ class SpringbootBankApplicationTests {
             Integer flag=0;
             List<Debt> Debts= JSONArray.parseArray(creditCards.get(i).getDebt(),Debt.class);
             for(int j=0;j<Debts.size();j++){
-                if((Debts.get(j).getNeedreturn()+Debts.get(j).getInterest())!=0){//账单未还清
+                if((Debts.get(j).getNeedreturn()+Debts.get(j).getInterest())>=0.01){//账单未还清
                     if(Debts.get(j).getDays()>0){//已经逾期的
                         flag=1;
                         Debts.get(j).setDays(Debts.get(j).getDays()+1);
-                        float rates=(Debts.get(j).getNeedreturn()+Debts.get(j).getInterest())*creditCards.get(i).getRate();//每日利率
-                        Debts.get(j).setInterest(rates);
+                        float rates=Debts.get(j).getInterest()+(Debts.get(j).getNeedreturn()+Debts.get(j).getInterest())*((creditCards.get(i).getRate()));//每日利率
+                        BigDecimal bigDecimal=new BigDecimal(rates);
+                        float balance2=bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue();
+                        Debts.get(j).setInterest(balance2);
                     }
                     else{//尚未逾期的
                         LocalDate now=LocalDate.now();
-                        if(Debts.get(j).getTimelast().isBefore(now)){//检查是否逾期，比如今天已经11号了，最后期限为10号，但是对方仍为还完
+                        if(Debts.get(j).getTimelast().isBefore(now)){//第一天逾期
                             flag=1;
                             Debts.get(j).setDays(1);
                             float overdue=Debts.get(j).getNeedreturn()*creditCards.get(i).getOverdue();//本金滞留金
                             float rates=Debts.get(j).getNeedreturn()*creditCards.get(i).getRate();//每日利率
-                            Debts.get(j).setInterest(overdue+rates);
+                            BigDecimal bigDecimal=new BigDecimal(rates+overdue);
+                            float balance2=bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue();
+                            Debts.get(j).setInterest(balance2);
                         }
                     }
                 }
@@ -136,7 +154,7 @@ class SpringbootBankApplicationTests {
             //获取当前用户的理财产品购买记录
             List<UserProductDetails> details= JSONArray.parseArray(userProducts.get(i).getProduct(),UserProductDetails.class);
             int flag=0;//看该用户其下是否有产品的余额发生了变化,用于节省性能
-            System.out.println(userProducts.get(i));
+
             for(int j=0;j<details.size();j++){//该用户购买的所有产品
                 if(details.get(j).getState()==1){//该用户的该产品还未结束
                     flag=1;
@@ -149,12 +167,13 @@ class SpringbootBankApplicationTests {
                         float rate=(float) (100+(product.getRate()/(product.getMinday())))/100;
                         balance=(details.get(j).getBalance())*(rate);
                     }
-                    details.get(j).setBalance(balance);
+                    BigDecimal bigDecimal=new BigDecimal(balance);
+                    float balance2=bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue();
+                    details.get(j).setBalance(balance2);
                 }
             }
             if(flag==1){//更新该用户的理财产品情况
                 userProducts.get(i).setProduct(JSONArray.toJSONString(details));
-                System.out.println(userProducts.get(i));
                 userProductMapper.updateById(userProducts.get(i));
             }
         }

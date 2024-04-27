@@ -10,11 +10,11 @@
 					<u--text size="12" type="info" text="当前已购买本产品并且正在产生效益"></u--text>
 					<u--text size="15" :text="'购买时间：'+userProduct.paytime"></u--text>
 					<view style="display: flex;padding-top: 2%;padding-bottom: 2%;">
-						<u--text size="20" bold :text="'余额：￥'+userProduct.balance"></u--text>
-						<u--text size="15"  :text="'本金：￥'+userProduct.cost"></u--text>
+						<u--text size="20" bold :text="'余额：￥'+userProduct.balance.toFixed(2)"></u--text>
+						<u--text size="15"  :text="'本金：￥'+userProduct.cost.toFixed(2)"></u--text>
 					</view>
-					<u--text type="success" v-if="(userProduct.balance-userProduct.cost>=0)" :text="'盈利：￥'+(userProduct.balance-userProduct.cost)" > </u--text>
-					<u--text type="error" v-if="(userProduct.balance-userProduct.cost<0)" :text="'亏损：￥'+(userProduct.balance-userProduct.cost)" > </u--text>
+					<u--text type="success" v-if="(userProduct.balance-userProduct.cost>=0)" :text="'盈利：￥'+(userProduct.balance-userProduct.cost).toFixed(2)" > </u--text>
+					<u--text type="error" v-if="(userProduct.balance-userProduct.cost<0)" :text="'亏损：￥'+(userProduct.balance-userProduct.cost).toFixed(2)" > </u--text>
 				</view>
 			</view>
 			<view class="box">

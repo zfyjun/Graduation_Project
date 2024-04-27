@@ -4,9 +4,9 @@
 		   <view class="box">
 		   	<view style="padding: 5%;">
 		   			<view >
-		   				<u--text size="17" type="error" bold align="center" :text="'欠款额度：￥'+(item.debt.needreturn+item.debt.interest)"></u--text>
+		   				<u--text size="17" type="error" bold align="center" :text="'欠款额度：￥'+(item.debt.needreturn+item.debt.interest).toFixed(2)"></u--text>
 		   			</view>
-		   			<u--text size="13"  type="info" :text="'其中本金为￥'+item.debt.needreturn+'，利息为￥'+item.debt.interest"></u--text>
+		   			<u--text size="13"  type="info" :text="'其中本金为￥'+item.debt.needreturn.toFixed(2)+'，利息为￥'+item.debt.interest.toFixed(2)"></u--text>
 					<u-divider ></u-divider>
 					<u--form
 									labelPosition="left"
@@ -29,13 +29,13 @@
 								>
 									<u--input
 									        
-									         :placeholder="'还需还款￥'+(item.debt.needreturn+item.debt.interest)"
+									         :placeholder="'还需还款￥'+(item.debt.needreturn+item.debt.interest).toFixed(2)"
 									        type="number"
 											v-model="pay.cost"
 											border="none"
 									>
 									    <template slot="suffix">
-									    	<u--text @click="input(item.debt.needreturn+item.debt.interest)" type="primary" size="12" text="一键填入"></u--text>				
+									    	<u--text @click="input((item.debt.needreturn+item.debt.interest).toFixed(2))" type="primary" size="12" text="一键填入"></u--text>				
 									    </template>
 									</u--input>
 								</u-form-item>
@@ -46,7 +46,7 @@
 		   				<u--text align="right" style="flex: 1;" size="13" type="primary" v-if="item.debt.days==0" text="尚未逾期"></u--text>
 		   				<u--text style="flex: 1;" size="13" type="error" v-if="item.debt.days>0" :text="'已逾期'+item.debt.days+'天'"></u--text>
 		   			</view>
-		   			<u--text type="success":text="'已还款：￥'+(item.debt.cost-item.debt.needreturn)"></u--text>
+		   			<u--text type="success":text="'已还款：￥'+(item.debt.returnmoney).toFixed(2)"></u--text>
 		   	</view>
 		   </view>
 		</u-sticky>
@@ -97,7 +97,7 @@
 			<u-toast ref="uToast2"></u-toast>
 		     <view style="width: 90%;margin: 0 auto;padding-top: 5%;padding-bottom: 5%;">
 				 <u--text size="14" :text="'确定使用账户：'+cardtext+'进行还款操作？还款金额为：￥'+pay.cost"></u--text>
-				 <u--input style="margin-top: 2%;" type="password" v-model="password"></u--input>
+				 <u--input style="margin-top: 2%;" type="password"  placeholder="请输入该账号的密码" v-model="password"></u--input>
 				 <u-button type="primary" text="确定" style="margin-top: 2%;" @click="surereturn"></u-button>
 		     </view>      
 		</u-popup>
@@ -269,7 +269,8 @@
 												duration:'1500',
 												message:"还款成功",
 											})
-							
+							this.getCreditCardDetails()
+							this.pay.cost=''
 						}
 						else{
 							this.$refs.uToast2.show({
@@ -288,6 +289,21 @@
 									})
 					this.password=''
 				}
+			},
+			getCreditCardDetails(){
+				this.request({
+					url:"/CreditCard/getBill",
+					method:"POST",
+					data:{
+						cid:uni.getStorageSync('bankdetail').id,
+						id:uni.getStorageSync('CreditCardDetails').id
+					}
+				}).then(res=>{
+					if(res.code==='200'){
+						this.item=res.data
+						uni.setStorageSync('CreditCardDetails',res.data)
+					}
+				})
 			}
 		}
 	}

@@ -68,6 +68,9 @@ public class BankCardController {
             card.setCid(bankCard.getId());
             card.setStages("[]");
             card.setDebt("[]");
+            card.setLimits(1000);
+            card.setOverdue((float) 0.05);
+            card.setRate((float) 0.0005);
             creditCardMapper.insert(card);
             bankCard.setBalance(card.getLimits());
             bankCardMapper.updateById(bankCard);

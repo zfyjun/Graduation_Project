@@ -82,6 +82,9 @@
 			}
 		},
 		onLoad() {
+			
+		},
+		onShow(){
 			this.getCards()
 		},
 		methods: {
@@ -126,6 +129,7 @@
 				}
 			},
 			getCards(){//获取卡号以及银行卡类型等元素的操作
+			    this.list=[]
 				this.request({
 					url:"/BankCard/getCards",
 					method:"POST",

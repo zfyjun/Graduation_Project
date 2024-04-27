@@ -10,9 +10,9 @@
 				<view class="box" @click="intoreturn(item)" >
 					<view style="padding: 2%;" >
 						<view >
-							<u--text size="17" type="error" bold align="center" :text="'欠款额度：￥'+(item.debt.needreturn+item.debt.interest)"></u--text>
+							<u--text size="17" type="error" bold align="center" :text="'欠款额度：￥'+(item.debt.needreturn+item.debt.interest).toFixed(2)"></u--text>
 						</view>
-						<u--text size="13"  type="info" :text="'其中本金为￥'+item.debt.needreturn+'，利息为￥'+item.debt.interest"></u--text>
+						<u--text size="13"  type="info" :text="'其中本金为￥'+item.debt.needreturn.toFixed(2)+'，利息为￥'+item.debt.interest.toFixed(2)"></u--text>
 						<u-divider ></u-divider>
 						<u--text bold style="flex: 2;" :text="'账单生成时间：'+item.debt.time"></u--text>
 						<view style="display: flex;">
@@ -20,8 +20,8 @@
 							<u--text style="flex: 1;" size="13" type="primary" v-if="item.debt.days==0" text="尚未逾期"></u--text>
 							<u--text style="flex: 1;" size="13" type="error" v-if="item.debt.days>0" :text="'已逾期'+item.debt.days+'天'"></u--text>
 						</view>
-						<u--text size="13" type="info" :text="'总消费：￥'+item.debt.cost"></u--text>
-						<u--text type="success":text="'已偿还：￥'+(item.debt.cost-item.debt.needreturn)"></u--text>
+						<u--text size="13" type="info" :text="'总消费：￥'+item.debt.cost.toFixed(2)"></u--text>
+						<u--text type="success":text="'已还款：￥'+(item.debt.returnmoney).toFixed(2)"></u--text>
 						
 					</view>
 					
@@ -39,9 +39,9 @@
 					<view style="padding: 2%;">
 						<view style="padding: 2%;" >
 							<view >
-								<u--text size="17" type="error" bold align="center" :text="'共还款：￥'+(item.debt.returnmoney)"></u--text>
+								<u--text size="17" type="error" bold align="center" :text="'共还款：￥'+(item.debt.returnmoney).toFixed(2)"></u--text>
 							</view>
-							<u--text size="13"  type="info" :text="'其中本金为￥'+item.debt.cost+'，利息为￥'+(item.debt.returnmoney-item.debt.cost)"></u--text>
+							<u--text size="13"  type="info" :text="'其中本金为￥'+item.debt.cost.toFixed(2)+'，利息为￥'+(item.debt.returnmoney-item.debt.cost).toFixed(2)"></u--text>
 							<u-divider ></u-divider>
 							<u--text bold style="flex: 2;" :text="'账单生成时间：'+item.debt.time"></u--text>
 							<view style="display: flex;">
@@ -73,6 +73,9 @@
 			};
 		},
 		onLoad(){
+			
+		},
+		onShow(){
 			this.getbills()
 		},
 		methods:{
@@ -80,6 +83,9 @@
 							this.current = index;
 						},
 			getbills(){
+				this.returnedbills=[]
+				this.bills=[]
+				this.needreturndbills=[]
 				this.request({
 					url:"/CreditCard/getBills",
 					method:"POST",
@@ -90,7 +96,7 @@
 					if(res.code==='200'){
 						this.bills=res.data
 						for(let i=0;i<this.bills.length;i++){
-							if(this.bills[i].debt.needreturn==0){
+							if(this.bills[i].debt.needreturn<0.01){
 								this.returnedbills.push(this.bills[i])
 							}
 							else{

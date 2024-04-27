@@ -5,7 +5,10 @@
 			<u-sticky bgColor="#fff">
 			   <u-subsection class="subsection" :list="list" mode="button" :current="current" @change="sectionChange"></u-subsection>
 			</u-sticky>
+			
 			<view v-if="current==0">
+				<u-empty v-if="userProductsnow.length==0" style="padding-top: 20%;" mode="search" text="暂无正在生效的理财产品" >
+				</u-empty>
 				<view v-for="(item,index) in userProductsnow" style="margin-top: 3%;">
 					<view class="box"  >
 						<view style="padding: 3%;">
@@ -31,6 +34,8 @@
 			</view>	   
 	
 	        <view v-if="current==1">
+				<u-empty v-if="userProductslast.length==0" style="padding-top: 20%;" mode="search" text="暂无失效的历史理财产品" >
+				</u-empty>
 	        	<view v-for="(item,index) in userProductslast" style="margin-top: 3%;">
 	        		<view class="box"  >
 	        			<view style="padding: 3%;">

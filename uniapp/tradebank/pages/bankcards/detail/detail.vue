@@ -1,5 +1,6 @@
 <template>
 	<view>
+		
 		<u-sticky>
 			<view class="box" >
 				<view style="display: flex;">
@@ -18,6 +19,7 @@
 				</view>
 			</view>
 		</u-sticky>
+		<u-loading-icon :show="showflag"></u-loading-icon>
 		<u-empty v-if="Detail.length==0" mode="search" text="所选时间内暂无收支记录" >
 		</u-empty>
 		<view v-if="Detail.length>0">
@@ -108,9 +110,11 @@
 				Detail:[],
 				Onedetail:{},
 				showDetail:false,
+				showflag:false
 			};
 		},
 		onLoad(){
+			this.showflag=true
 			this.getdate();
 			////////////////////////
 			this.search2();
@@ -124,13 +128,14 @@
 				this.text='信用卡('+this.mycarddetail.cardnumber.slice(-4)+')'
 			}
 			this.search()
+			this.showflag=false
 		},
 		methods:{
 			getdate(){//获取各种需要的日期
-				this.nowdate=Number(new Date());//今天
-				this.enddate=Number(new Date());//选择的结束日期（默认为今天）
+				this.nowdate=Number(new Date().setHours(0,0,0,0));//今天
+				this.enddate=Number(new Date().setHours(23,59,59,0));//选择的结束日期（默认为今天）
 				
-				var currentDate=new Date()
+				var currentDate=new Date(new Date().setHours(0,0,0,0))
 				currentDate.setMonth(currentDate.getMonth() - 1)
 				this.begindate=Number(currentDate);//选择的开始日期(默认为上个月)
 				
