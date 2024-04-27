@@ -1,7 +1,8 @@
 package com.example.springbootbank.mapper;
 
-import cn.hutool.core.lang.Dict;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.springbootbank.entity.Dict;
 
 /**
  * <p>
