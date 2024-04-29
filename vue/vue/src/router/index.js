@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from "@/store";
-import HomeView from '../views/Manage.vue'
 import Manage from "@/views/Manage";
 
 Vue.use(VueRouter)
@@ -24,14 +23,7 @@ const routes = [
     component: () => import('../views/404.vue')
   },
   {
-<<<<<<< HEAD
-=======
-    path: '/newsManagement',
-    name: 'newsManagement',
-    component: () => import(/* webpackChunkName: "about" */ '../views/NewsManagement.vue')
-  },
-  {
->>>>>>> fqh4
+
     path: '/front',
     name: 'Front',
     component: () => import('../views/front/Front.vue'),
