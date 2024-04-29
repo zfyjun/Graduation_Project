@@ -24,6 +24,14 @@ const routes = [
     component: () => import('../views/404.vue')
   },
   {
+<<<<<<< HEAD
+=======
+    path: '/newsManagement',
+    name: 'newsManagement',
+    component: () => import(/* webpackChunkName: "about" */ '../views/NewsManagement.vue')
+  },
+  {
+>>>>>>> fqh4
     path: '/front',
     name: 'Front',
     component: () => import('../views/front/Front.vue'),
