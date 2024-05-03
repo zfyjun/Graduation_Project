@@ -91,7 +91,7 @@
 				this.login()
 			},
 //分割=================================================================================
-			login(){
+			login(){//登录
 				this.request({
 					url:"/User/login",
 					method:"POST",
@@ -108,6 +108,7 @@
 											message:"登陆成功",
 										})
 						this.password=""
+						this.enterprise(res.data.id)
 						this.setlogintime(res.data.id)
 					}
 					else if(res.code==='404'){
@@ -126,10 +127,10 @@
 					}
 				})
 			},
-		    forgetpassword(){
+		    forgetpassword(){//忘记密码
 				alert("忘记了密码");
 			},
-			setlogintime(val){
+			setlogintime(val){//设置登陆时间
 				this.request({
 					url:"/User/setLoginTime",
 					method:"POST",
@@ -140,6 +141,19 @@
 					uni.reLaunch({
 						url:"/pages/index/index"
 					})
+				})
+			},
+			enterprise(val){//判断是不是企业
+				this.request({
+					url:"/enterprise/IsEnterprise",
+					method:"POST",
+					data:{
+						uid:val,
+					}
+				}).then(res=>{
+					if(res.code==='200'){
+						uni.setStorageSync('enterprise',res.data)
+					}
 				})
 			}
 		}

@@ -50,16 +50,16 @@ class SpringbootBankApplicationTests {
     CreditCardMapper creditCardMapper;
     @Test
     void contextLoads() {
-//        productwork();
-            setoverdue();
-//        cbills(10);
+        productwork();//理财产品计算利润
+//            setoverdue();//寻找逾期信用卡账单并计算利率
+//        cbills(8);//生成信用卡账单
     }
     //创建月初账单
     public void cbills(Integer ccid){
         //月初创建上个月的账单
 
         LocalDateTime now=LocalDateTime.now();
-        now=now.plusMonths(0);//本月
+        now=now.plusMonths(1);//本月
         LocalDateTime localDatestart=LocalDateTime.of(now.minusMonths(1L).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),LocalTime.MIN);
         LocalDateTime localDateslast=LocalDateTime.of(now.minusMonths(1L).with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(),LocalTime.MAX);
         System.out.println("月初："+localDatestart+"  月末："+localDateslast);

@@ -83,7 +83,7 @@
 			"path" : "pages/bankcards/returncredit/returncredit",
 			"style" : 
 			{
-				"navigationBarTitleText" : "还款账单",
+				"navigationBarTitleText" : "信用卡账单",
 				"enablePullDownRefresh" : false
 			}
 		},
@@ -91,7 +91,15 @@
 			"path" : "pages/bankcards/returncredit/returnDetailCredit/returnDetailCredit",
 			"style" : 
 			{
-				"navigationBarTitleText" : "还款",
+				"navigationBarTitleText" : "信用卡还款",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/bankcards/updateCreditCard/updateCreditCard",
+			"style" : 
+			{
+				"navigationBarTitleText" : "信用卡升级",
 				"enablePullDownRefresh" : false
 			}
 		}
