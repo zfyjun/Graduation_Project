@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +13,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Vue Single File Component" />
+        <option value="package.json" />
       </list>
     </option>
   </component>
@@ -68,7 +65,7 @@
       <workItem from="1714752415897" duration="2956000" />
       <workItem from="1714791492165" duration="30617000" />
       <workItem from="1714833300104" duration="1159000" />
-      <workItem from="1714876560134" duration="302000" />
+      <workItem from="1714876560134" duration="617000" />
     </task>
     <servers />
   </component>

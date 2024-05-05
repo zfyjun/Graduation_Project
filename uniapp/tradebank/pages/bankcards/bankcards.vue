@@ -85,7 +85,7 @@
 								    <u-button plain style="width: 80%;" type="" text="存取" @click="opneoutandsave(3)" ></u-button>
 								</u-col>
 								<u-col span="3">
-								    <u-button plain style="width: 80%;" type="" text="升级" @click="updateCreditCard(3)"></u-button>
+								    <u-button plain style="width: 80%;" type="" text="升级" ></u-button>
 								</u-col>
 						    </u-row>
 						</view>
@@ -383,21 +383,8 @@
 				}).then(e=>{
 					this.toDetail()
 				});
-			},
-			updateCreditCard(val){//银行卡升级页面
-				this.getCards().then(e=>{
-					for(let i=0;i<this.mycards.length;i++){
-						if(this.mycards[i].type===val){
-							console.log(this.mycards[i])
-							uni.setStorageSync('bankdetail',this.mycards[i])
-							break
-					    }
-					}
-				}).then(e=>{
-					uni.navigateTo({
-						url:"/pages/bankcards/updateCreditCard/updateCreditCard"
-					})
-				});
+					
+				
 			},
 			toDetail(){//跳转到明细页面
 				uni.navigateTo({

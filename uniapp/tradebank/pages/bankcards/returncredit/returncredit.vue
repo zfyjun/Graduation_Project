@@ -6,9 +6,6 @@
 		
 		
 		<view v-if="current==0">
-			<view  >
-			    <u-notice-bar text="信用卡账单每月月初生成, 账单生成后的消费记录将记入下一个月的账单. 在账单生成10天内还清欠款将不收取任何额外费用.  逾期的金额将会一次收取%5的滞留金, 此外每天再额外收取剩余欠款0.05%的利率" mode="closable"></u-notice-bar>
-			  </view>
 			<view v-if="needreturndbills.length>0" v-for="(item,index) in needreturndbills">
 				<view class="box" @click="intoreturn(item)" >
 					<view style="padding: 2%;" >

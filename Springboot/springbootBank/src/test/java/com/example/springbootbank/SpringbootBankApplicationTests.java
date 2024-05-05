@@ -1,6 +1,8 @@
 package com.example.springbootbank;
 
+
 import cn.hutool.core.date.LocalDateTimeUtil;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -9,6 +11,7 @@ import com.example.springbootbank.common.CreateBankCards;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.*;
+
 import com.example.springbootbank.mapper.*;
 import com.example.springbootbank.service.CodeService;
 import lombok.Data;
@@ -16,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
 
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
@@ -31,6 +35,7 @@ import java.util.*;
 @SpringBootTest
 @MapperScan("com.example.springbootbank.mapper")
 class SpringbootBankApplicationTests {
+
     @Resource
     @Autowired
     private UserMapper userMapper;
@@ -42,6 +47,7 @@ class SpringbootBankApplicationTests {
     private BankCardMapper bankCardMapper;
     @Autowired
     private ProductMapper productMapper;
+
 
     @Autowired
     UserProductMapper userProductMapper;

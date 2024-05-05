@@ -3,7 +3,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://47.109.177.224:3306/bank?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
     username: root
+<<<<<<< HEAD
     password: Zfyroot123@
+=======
+    password: root
+
+>>>>>>> 2117da6693903efee6ba955c0ed1d2f4ca2a0069
   servlet:
     multipart:
       enabled: true
@@ -11,5 +16,9 @@ spring:
       max-request-size: 50MB
 server:
   port: 9090
+
+files:
+  upload:
+    path: E:/Desktop/毕设项目/Springboot/springbootBank/files/
 
 spring.mvc.pathmatch.matching-strategy: ANT_PATH_MATCHER

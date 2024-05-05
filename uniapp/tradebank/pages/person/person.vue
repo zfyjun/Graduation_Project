@@ -7,8 +7,7 @@
 					<u-avatar  size="60" class="avatar" ></u-avatar>
 					<u--text color="#fff" class="text1" mode="name"  format="encrypt" bold :text="user.name"></u--text>
 					<view style="flex: 1;">
-						<u--text v-if="enterprise==''" color="#fff" prefixIcon="integral"  iconStyle="font-size: 15px;color:#fff"  align="right"  bold size="12" text="个人账户"></u--text>
-						<u--text v-if="(enterprise!='')" color="gold" prefixIcon="integral"  iconStyle="font-size: 15px;color:#fff"  align="right"  bold size="12" text="企业账户"></u--text>
+						<u--text color="#fff" prefixIcon="integral"  iconStyle="font-size: 15px;color:#fff"  align="right"  bold size="12" text="个人账户"></u--text>
 						<u--text  color="#fff"  align="right" size="15" text="上次登录"></u--text>
 						<u--text  style="margin-bottom: 12%;" align="right"  size="12" :text="user.lasttime"></u--text>
 					</view>
@@ -117,7 +116,6 @@
 	export default {
 		data() {
 			return {
-				enterprise:uni.getStorageSync('enterprise'),
 				user:uni.getStorageSync('user'),
 				show:false,
 				model:{userInfo:{
@@ -138,7 +136,9 @@
 		},
 		methods:{
 			outlogin(){//安全退出
-				uni.clearStorageSync()
+				uni.removeStorageSync('user')
+				uni.removeStorageSync('userId')
+				uni.removeStorageSync('bankdetail')
 				uni.reLaunch({
 					url:"/pages/login/login"
 				})
