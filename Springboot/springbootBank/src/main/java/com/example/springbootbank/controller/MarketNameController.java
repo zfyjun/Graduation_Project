@@ -31,7 +31,7 @@ public class MarketNameController {
     @Autowired
     MarketNameMapper marketNameMapper;
 
-    @PostMapping("/ProductToGetMarketName")//获取所有商品
+    @PostMapping("/ProductToGetMarketName")//获取当前商品的市场对象
     public Result getMarketName(@RequestBody Map map){
         String targetmarket=(String) map.get("targetmarket");
         JSONArray jsonArray=JSONArray.parseArray(targetmarket);
@@ -47,4 +47,12 @@ public class MarketNameController {
         return Result.error("500","该产品暂无明确目标市场");
     }
 
+    @PostMapping("/getMarketNames")//获取所有市场名称数据
+    public Result getMarketNames(@RequestBody Map map){
+        List<MarketName>marketNames=marketNameMapper.selectList(null);
+        if(marketNames.size()>0){
+            return Result.success(marketNames);
+        }
+        return Result.error("500","获取数据为空！");
+    }
 }

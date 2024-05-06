@@ -72,7 +72,7 @@ public class PayCostController {
         return Result.error("404","错误，获取银行卡失败！请联系客服");
     }
 
-    @PostMapping("/save")//取钱
+    @PostMapping("/save")//存钱
     public Result save(@RequestBody Map map){
         Integer id=(Integer) map.get("cardid") ;
         float cost=Float.valueOf((String)map.get("cost"));

@@ -6,6 +6,7 @@ import cn.hutool.core.date.LocalDateTimeUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.springbootbank.common.CreateBankCards;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
@@ -54,18 +55,21 @@ class SpringbootBankApplicationTests {
 
     @Autowired
     CreditCardMapper creditCardMapper;
+    @Autowired
+    MarketMapper marketMapper;
     @Test
     void contextLoads() {
-        productwork();//理财产品计算利润
-//            setoverdue();//寻找逾期信用卡账单并计算利率
-//        cbills(8);//生成信用卡账单
+        QueryWrapper<Market> queryWrapper=new QueryWrapper<Market>();
+        List<Market>list=marketMapper.selectList(queryWrapper.eq("marketid",1));
+        System.out.println(list);
     }
+
     //创建月初账单
     public void cbills(Integer ccid){
         //月初创建上个月的账单
 
         LocalDateTime now=LocalDateTime.now();
-        now=now.plusMonths(1);//本月
+        now=now.plusMonths(0);//上个月为0，本月为1
         LocalDateTime localDatestart=LocalDateTime.of(now.minusMonths(1L).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),LocalTime.MIN);
         LocalDateTime localDateslast=LocalDateTime.of(now.minusMonths(1L).with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(),LocalTime.MAX);
         System.out.println("月初："+localDatestart+"  月末："+localDateslast);
@@ -148,7 +152,7 @@ class SpringbootBankApplicationTests {
             }
             if(flag==1){//有修改的
                 creditCards.get(i).setDebt(JSONArray.toJSONString(Debts));
-//                creditCardMapper.updateById(creditCards.get(i));
+                creditCardMapper.updateById(creditCards.get(i));
                 System.out.println(Debts);
             }
         }
