@@ -2,21 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/Market.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/MarketMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/views/Market.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketNameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketNameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/PayCostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/PayCostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/MarketName.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/MarketName.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/xlsx/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/xlsx/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/vue/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/vue/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/DataClean.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/DataClean.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/Market.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Market.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +43,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/课程作业（所有）/图层/weitu-vue-master",
+    "last_opened_file_path": "D:/课程作业（所有）/实训课/vueykj",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -94,7 +86,9 @@
       <workItem from="1714833300104" duration="1159000" />
       <workItem from="1714876560134" duration="2471000" />
       <workItem from="1714909221256" duration="2105000" />
-      <workItem from="1714956299238" duration="22050000" />
+      <workItem from="1714956299238" duration="42171000" />
+      <workItem from="1715009938548" duration="1211000" />
+      <workItem from="1715044016649" duration="13309000" />
     </task>
     <servers />
   </component>

@@ -102,17 +102,31 @@ export default {
         }
       }
     },
+    /*字符串转时间的函数*/
+     stringToDate(dateStr,separator){
+      if(!separator){
+        separator="-";
+      }
+      let dateArr = dateStr.split(separator);
+      let year = parseInt(dateArr[0]);
+      let month;
+      if(dateArr[1].indexOf("0") == 0){
+        month = parseInt(dateArr[1].substring(1));
+      }else{
+        month = parseInt(dateArr[1]);
+      }
+      let day = parseInt(dateArr[2]);
+      let date = new Date(year,month -1,day);
+      return date;
+    },
     timeSelect(val){//时间选择
       let start=val[0]
       let ended=val[1]
       start=Number(start.replace(/-/g,''))
       ended=Number(ended.replace(/-/g,''))
-      if(ended-start>=30){
-        this.startdate=start
-        this.endate=ended
-        this.getmarketDate()
-      }
-
+      this.startdate=start
+      this.endate=ended
+      this.getmarketDate()
     },
     changemarket(val){//变换市场
       this.mid=val

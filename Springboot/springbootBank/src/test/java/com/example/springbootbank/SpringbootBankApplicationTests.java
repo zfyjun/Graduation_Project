@@ -59,9 +59,15 @@ class SpringbootBankApplicationTests {
     MarketMapper marketMapper;
     @Test
     void contextLoads() {
-        QueryWrapper<Market> queryWrapper=new QueryWrapper<Market>();
-        List<Market>list=marketMapper.selectList(queryWrapper.eq("marketid",1));
-        System.out.println(list);
+        double[] xData = new double[]{1, 2, 3, 4,5,6,7,8,9,10,11,12};
+        double[] yData = new double[]{4200,4300,4000,4400,5000,4700,5300,4900,5400,5700,6300,6000};
+        LineRegression lineRegression= new LineRegression();
+        System.out.println(lineRegression.leastSquareMethod(xData, yData));
+        //预测
+        System.out.println(lineRegression.getY(10d));
+//        QueryWrapper<Market> queryWrapper=new QueryWrapper<Market>();
+//        List<Market>list=marketMapper.selectList(queryWrapper.eq("marketid",1));
+//        System.out.println(list);
     }
 
     //创建月初账单
@@ -234,3 +240,138 @@ class Myutils {
 
 }
 
+class LineRegression {
+
+    /** 直线斜率 */
+    private static double k;
+    /** 截距 */
+    private static double b;
+    /**
+     * 最小二乘法
+     * @param xs
+     * @param ys
+     * @return y = kx + b, r
+     */
+    public Map<String, Double> leastSquareMethod(double[] xs, double[] ys) {
+        if(0 == xs.length || 0 == ys.length || xs.length != ys.length) {
+            throw new RuntimeException();
+        }
+        // x平方差和
+        double Sx2 = varianceSum(xs);
+        // y平方差和
+        double Sy2 = varianceSum(ys);
+        // xy协方差和
+        double Sxy = covarianceSum(xs, ys);
+
+        double xAvg = arraySum(xs) / xs.length;
+        double yAvg = arraySum(ys) / ys.length;
+
+        k = Sxy / Sx2;
+        b = yAvg - k * xAvg;
+        //拟合度
+        double r = Sxy / Math.sqrt(Sx2 * Sy2);
+        Map<String, Double> result = new HashMap<>(5);
+        result.put("k", k);
+        result.put("b", b);
+        result.put("r", r);
+        return result;
+    }
+
+    /**
+     * 根据x值预测y值
+     *
+     * @param x x值
+     * @return y值
+     */
+    public double getY(double x) {
+        return k*x+b;
+    }
+
+    /**
+     * 根据y值预测x值
+     *
+     * @param y y值
+     * @return x值
+     */
+    public double getX(double y) {
+        return (y-b)/k;
+    }
+
+
+    /**
+     * 计算方差和
+     * @param xs
+     * @return
+     */
+    private double varianceSum(double[] xs) {
+        double xAvg = arraySum(xs) / xs.length;
+        return arraySqSum(arrayMinus(xs, xAvg));
+    }
+
+    /**
+     * 计算协方差和
+     * @param xs
+     * @param ys
+     * @return
+     */
+    private double covarianceSum(double[] xs, double[] ys) {
+        double xAvg = arraySum(xs) / xs.length;
+        double yAvg = arraySum(ys) / ys.length;
+        return arrayMulSum(arrayMinus(xs, xAvg), arrayMinus(ys, yAvg));
+    }
+
+    /**
+     * 数组减常数
+     * @param xs
+     * @param x
+     * @return
+     */
+    private double[] arrayMinus(double[] xs, double x) {
+        int n = xs.length;
+        double[] result = new double[n];
+        for(int i = 0; i < n; i++) {
+            result[i] = xs[i] - x;
+        }
+        return result;
+    }
+
+    /**
+     * 数组求和
+     * @param xs
+     * @return
+     */
+    private double arraySum(double[] xs) {
+        double s = 0 ;
+        for( double x : xs ) {
+            s = s + x ;
+        }
+        return s ;
+    }
+
+    /**
+     * 数组平方求和
+     * @param xs
+     * @return
+     */
+    private double arraySqSum(double[] xs) {
+        double s = 0 ;
+        for( double x : xs ) {
+            s = s + Math.pow(x, 2);
+        }
+        return s ;
+    }
+
+    /**
+     * 数组对应元素相乘求和
+     * @param xs
+     * @return
+     */
+    private double arrayMulSum(double[] xs, double[] ys) {
+        double s = 0 ;
+        for( int i = 0 ; i < xs.length ; i++ ){
+            s = s + xs[i] * ys[i] ;
+        }
+        return s ;
+    }
+
+}

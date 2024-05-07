@@ -1,5 +1,17 @@
 <template>
-  <div id="app" style="padding: 2%">
+  <div id="app" style="padding: 2%" v-loading="loading" >
+    <el-form ref="form"  label-width="100px">
+      <el-form-item label="选择市场：">
+        <el-select  @change="changemarket" v-model="valuemarket" filterable  placeholder="请选择">
+          <el-option
+              v-for="item in marketname"
+              :key="item.id"
+              :label="item.marketname"
+              :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
     <div style="display:flex;">
       <el-upload
           action
@@ -11,6 +23,7 @@
       </el-upload>
       <el-button style="margin-left: 5%" type="primary" @click="clearData" :disabled="disabled" >手动清洗</el-button>
       <el-button style="margin-left: 5%" type="primary" @click="AutoclearData" :disabled="disabled" >自动清洗</el-button>
+      <el-button style="margin-left: 5%" type="primary" @click="addDate" :disabled="disabled" >上传数据</el-button>
     </div>
     <div style="margin-top: 1%">
       <el-table
@@ -28,6 +41,7 @@
             fixed
             prop="date"
             label="日期"
+
             width="150">
         </el-table-column>
         <el-table-column
@@ -65,7 +79,7 @@
     </div>
 
     <div style="margin-top: 5%" v-if="handworkflag==true">
-      <h4>手动清洗详情表</h4>
+      <h4 style="margin-top: 2%;margin-bottom: 2%">清洗详情表</h4>
       <el-table
           border
           :data="clearDateWork"
@@ -149,9 +163,9 @@
         <div>
           <div v-for="(item,index) in keyarr">
             <div>
-              <div style="display: flex">
+              <div style="display: flex;justify-content: space-between">
                 <span>{{item.keyname}}</span>
-                <el-select style=" " v-model="value[index]" placeholder="请选择"  >
+                <el-select clearable style=" " v-model="value[index]" placeholder="请选择"  >
                   <el-option
                       v-for="items in options"
                       :key="items.value"
@@ -279,10 +293,75 @@
       </el-dialog>
     </div>
 
+    <div >
+      <el-dialog  close-on-press-escape="true" title="数据上传" :visible.sync="ctableDataflag">
+        <span style="margin-bottom: 2%;color: orange" >以下数据与数据库中数据的时间重复，请选择需要覆盖数据库的数据进行数据更新</span>
+        <el-table
+            v-loading="loading2"
+            ref="multipleTable"
+            :data="ctableData"
+            tooltip-effect="dark"
+            style="width: 100%"
+            height="250"
+            @selection-change="handleSelectionChange"
+        >
+          <el-table-column
+              type="selection"
+              width="55">
+          </el-table-column>
+          <el-table-column
+              type="index"
+              width="50">
+          </el-table-column>
+          <el-table-column
+              fixed
+              prop="date"
+              label="日期"
+              width="150">
+          </el-table-column>
+          <el-table-column
+              prop="open"
+              label="开盘价"
+              width="120">
+          </el-table-column>
+          <el-table-column
+              prop="high"
+              label="最高价"
+              width="120">
+          </el-table-column>
+          <el-table-column
+              prop="low"
+              label="最低价"
+              width="120">
+          </el-table-column>
+          <el-table-column
+              prop="close"
+              label="收盘价"
+              width="120">
+          </el-table-column>
+          <el-table-column
+              prop="volume"
+              label="成交量"
+              width="120">
+          </el-table-column>
+          <el-table-column
+              fixed="right"
+              prop="adjustedclose"
+              label="加权平均价"
+              width="200">
+          </el-table-column>
+        </el-table>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="ctableDataflag = false">取 消</el-button>
+            <el-button type="primary" @click="updatemarketdate()">确 定</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script>
+import request from "@/utils/request";
 import * as XLSX from 'xlsx/xlsx.mjs'
 export default {
   name: 'DataClean',
@@ -296,6 +375,9 @@ export default {
       dialogVisible:false,
       edithand:false,
       handworkflag:false,
+      marketname:[],
+      mid:1,
+      valuemarket:'',
       options: [
           {
         value: '0',
@@ -337,8 +419,18 @@ export default {
       value: [],
       tableData:[],
       clearDateWork:[],//用于保存有错误的数据
-      editrow:{}
+      editrow:{},
+      ctableData:[],
+      ctableDataflag:false,
+      multipleSelection:[],
+      loading:false,
+      loading2:false
+
     }
+  },
+  created() {
+    // 从后台获取数据
+    this.getmarketname()
   },
   methods:{
     readFile(file){//文件读取
@@ -378,7 +470,7 @@ export default {
         this.startin()
       }
     },
-    handleClose(done) {
+    handleClose(done) {//关闭面板
       this.$confirm('确认关闭？')
           .then(_ => {
             done();
@@ -559,24 +651,84 @@ export default {
       }
       this.clearData()
     },
-    clearData(){//数据清洗
+    AutoclearData(){//自动清洗数据
+      this.autodeleteDate()
+      this.autoinputnull()
+    },
+    autodeleteDate(){//自动数据删除重复
+      for(let i=0;i<this.clearDateWork.length;i++){
+        if(this.clearDateWork[i].type===1){//完全一致
+          let flag=0
+          for(let j=i+1;j<this.clearDateWork.length;j++){
+            if((this.clearDateWork[i].open===this.clearDateWork[j].open)&&this.clearDateWork[j].type===1){
+              flag=1
+              for(let n=0;n<this.tableData.length;n++){
+                if(this.tableData[n].id===this.clearDateWork[j].id){
+                  this.tableData.splice(n,1)
+                  break
+                }
+              }
+              this.clearDateWork.splice(j,1);
+              j--
+            }
+          }
+          if(flag==1){
+            this.clearDateWork.splice(i,1)
+            i--
+          }
+        }
+      }
+    },
+    autoinputnull(){//自动填空
+      for(let i=0;i<this.clearDateWork.length;i++){
+        if(this.clearDateWork[i].type==2&&(this.clearDateWork[i].date!=null||this.clearDateWork[i].date!='')){
+          let index=-1
+          for(let j=0;j<this.tableData.length;j++){
+            if(this.tableData[j].id===this.clearDateWork[i].id){
+              this.editrow=JSON.parse(JSON.stringify(this.tableData[j]))
+              break
+            }
+          }
+
+          for(let key in this.tableData[0]){
+            if(index>=1&&(this.clearDateWork[i][key]==null||this.clearDateWork[i][key]=='')){
+              console.log(index)
+              this.autoTonumber(index)
+            }
+            index++
+          }
+          this.sureedit()
+          this.editrow={}
+          this.clearDateWork.splice(i,1)
+          i--
+        }
+      }
+    },
+    clearData(){//数据清洗手动点开
       this.clearDateWork=[]
       this.repetition()
+      console.log(this.clearDateWork)
     },
     repetition(){//重复数据
       for(let i=0;i<this.tableData.length;i++){
 
         for(let j=0;j<this.tableData.length;j++){
-          if(this.tableData[i]==this.tableData[j]&&(i!=j)){//完全重复
+          if((this.tableData[i].date==this.tableData[j].date)&&(i!=j)&&(this.tableData[i].low==this.tableData[j].low)
+              &&(this.tableData[i].high==this.tableData[j].high)&&(this.tableData[i].close==this.tableData[j].close)
+              &&(this.tableData[i].open==this.tableData[j].open)&&(this.tableData[i].volume==this.tableData[j].volume)
+              &&(this.tableData[i].adjustedclose==this.tableData[j].adjustedclose)
+          ){//完全重复
             let val=Object.assign({},this.tableData[i])
             val.id=(i+1)
             val.msg='与原表格中第'+(j+1)+'条数据完全重复'
+            val.type=1
             this.clearDateWork.push(val)
           }
           else if(this.tableData[i].date==this.tableData[j].date&&i!=j){//只有时间上的重复
             let val=Object.assign({},this.tableData[i])
             val.id=(i+1)
             val.msg='与原表格中第'+(j+1)+'条数据存在时间上的重复'
+            val.type=5
             this.clearDateWork.push(val)
           }
         }
@@ -584,13 +736,22 @@ export default {
         this.DataFormat(this.tableData[i])
         this.Datedate(this.tableData[i])
       }
-      this.handworkflag=true
+      if(this.clearDateWork.length>0){
+        this.handworkflag=true
+      }
+      else {
+        this.$message({
+          showClose: true,
+          message: '暂无需要清洗的数据',
+          type: 'success'
+        })
+      }
     },
     DataFormat(tableDatanow){//错误格式
       var msg1='字段：'
       let flag1=0;
       if(!(typeof tableDatanow.date ==='number')&&!(tableDatanow.date==''||tableDatanow.date==null)){
-        flag1=1;
+        flag1=2;
         msg1=msg1+'日期（date）;'
       }
       if(!(typeof tableDatanow.open ==='number')&&!(tableDatanow.open==''||tableDatanow.open==null)){
@@ -617,12 +778,106 @@ export default {
         flag1=1;
         msg1=msg1+'加权平均价(adjust);'
       }
-      if(flag1==1){
+      if(flag1!=0){
         msg1=msg1+'格式错误，应当全部为数字格式';
         let val=Object.assign({},tableDatanow)
         val.msg=msg1
+        if(flag1==1){
+          val.type=3
+        }
+        else {
+          val.type=6//日期格式错误
+        }
         this.clearDateWork.push(val)
       }
+    },
+    addDate(){//上传数据
+      this.loading=true
+      this.clearData()
+      let tableupdate=JSON.parse(JSON.stringify(this.tableData))
+      if(this.clearDateWork.length==0){//数据清洗完毕
+        for(let i=0;i<tableupdate.length;i++){
+          tableupdate[i].id=null
+          tableupdate[i].marketid=this.mid
+        }
+        request.post("/market/adddate",tableupdate).then(res => {
+          if(res.code==='200'){
+            if(res.data!=null){//有重复数据
+              this.ctableData=res.data
+              this.ctableDataflag=true
+            }
+            else {
+              this.$message({
+                showClose: true,
+                message: '数据上传成功',
+                type: 'success'
+              })
+            }
+          }
+          else {
+            this.$message({
+              showClose: true,
+              message: res.msg,
+              type: 'error'
+            })
+          }
+          this.loading=false
+        })
+      }
+      else {
+        this.$message({
+          showClose: true,
+          message: '存在未清洗的数据！请进行清洗',
+          type: 'warning'
+        });
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    updatemarketdate(){//覆盖数据
+      this.loading2=true
+      if(this.multipleSelection.length==0){
+        this.$message({
+          showClose: true,
+          message: '未选择任何数据！请选择数据或者退出',
+          type: 'warning'
+        })
+        this.loading2=false
+      }
+      else {
+        request.post("/market/updatedate",this.ctableData).then(res => {
+          if(res.code==='200'){
+              this.$message({
+                showClose: true,
+                message: '数据更新成功',
+                type: 'success'
+              })
+            this.ctableDataflag=false
+          }
+          else{
+            this.$message({
+              showClose: true,
+              message: res.msg,
+              type: 'error'
+            })
+          }
+          this.loading2=false
+        })
+      }
+    },
+    getmarketname(){//获取现有的市场数据
+      request.post("/MarketName/getMarketNames",{
+      }).then(res => {
+        if(res.code==='200'){
+          this.marketname=res.data
+          this.valuemarket=res.data[0].marketname
+          this.mid=res.data[0].id
+        }
+      })
+    },
+    changemarket(val){//变换市场
+      this.mid=val
     },
     Datedate(tableDatanow){//日期格式
       let msg4='';
@@ -659,6 +914,7 @@ export default {
       if(flag==1){
         let val4=Object.assign({},tableDatanow)
         val4.msg=msg4
+        val4.type=4
         this.clearDateWork.push(val4)
       }
     },
@@ -727,6 +983,7 @@ export default {
         msg=msg+'为空';
         let val2=Object.assign({},tableDatanow)
         val2.msg=msg
+        val2.type=2
         this.clearDateWork.push(val2)
       }
     },
