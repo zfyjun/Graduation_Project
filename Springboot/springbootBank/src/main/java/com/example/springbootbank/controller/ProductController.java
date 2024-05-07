@@ -3,6 +3,7 @@
 package com.example.springbootbank.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
@@ -11,6 +12,7 @@ import com.example.springbootbank.mapper.BankCardMapper;
 import com.example.springbootbank.mapper.EnterpriseMapper;
 import com.example.springbootbank.mapper.ProductMapper;
 import com.example.springbootbank.mapper.UserProductMapper;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,15 +42,55 @@ public class ProductController {
 
     @Autowired
     EnterpriseMapper enterpriseMapper;
-    @PostMapping("/getProduct")//获取所有商品
+
+    @Autowired
+    UserProductMapper userProductMapper;
+    @PostMapping("/getProduct")//获取所有商品(上架的产品)
     public Result getProduct(){
-        List<Product> products=productMapper.selectList(null);
+        QueryWrapper<Product> queryWrapper=new QueryWrapper<>();
+        List<Product> products=productMapper.selectList(queryWrapper.eq("isdeleted",1));
         if(products.size()>0){
             return Result.success(products);
         }
-        return Result.error("300","搜索不到任何商品！");
+        return Result.error("300","搜索不到任何已上架的商品！");
     }
-
+    @PostMapping("/getProductremove")//获取所有商品(下架的产品)
+    public Result getProductremove(){
+        QueryWrapper<Product> queryWrapper=new QueryWrapper<>();
+        List<Product> products=productMapper.selectList(queryWrapper.eq("isdeleted",0));
+        if(products.size()>0){
+            return Result.success(products);
+        }
+        return Result.error("300","搜索不到任何已下架的商品！");
+    }
+    @PostMapping("/upProduct")//商品上架
+    public Result upProduct(@RequestBody Product product){
+        //先查找是否有用户购买该产品并且还在生效当中
+        product.setIsdeleted(1);
+        if(productMapper.updateById(product)==1){
+            return Result.success();
+        }
+        return Result.error("300","产品上架失败！");
+    }
+    @PostMapping("/removeProduct")//商品下架
+    public Result removeProduct(@RequestBody Product product){
+        //先查找是否有用户购买该产品并且还在生效当中
+        List<UserProduct> userProducts=userProductMapper.selectList(null);
+        for(int i=0;i<userProducts.size();i++){
+            //获取当前用户的理财产品购买记录
+            List<UserProductDetails> details= JSONArray.parseArray(userProducts.get(i).getProduct(),UserProductDetails.class);
+            for(int j=0;j<details.size();j++){
+                if((details.get(j).getProductid()==product.getId())&&details.get(j).getState()==1){
+                    return Result.error("500","该产品有用户购买并在生效阶段，暂时无法下架！");
+                }
+            }
+        }
+        product.setIsdeleted(0);
+        if(productMapper.updateById(product)==1){
+            return Result.success();
+        }
+        return Result.error("300","产品下架失败！");
+    }
     @PostMapping("/getProductOne")//获取某个商品
     public Result getProduct(@RequestBody Map map){
         Integer id=(Integer)map.get("id");
@@ -57,7 +100,54 @@ public class ProductController {
         }
         return Result.error("300","搜索不到任何商品！");
     }
-
+    @PostMapping("/addProduct")//添加商品
+    public Result addProduct(@RequestBody Product product){
+        System.out.println(product);
+        List<Rates> rates= JSONArray.parseArray(product.getHistoricalrate(),Rates.class);
+        LocalDate now=LocalDate.now();
+        Rates rate=new Rates();
+        rate.setRate(product.getRate());
+        rate.setTime(now);
+        rates.add(rate);
+        product.setHistoricalrate(JSONArray.toJSONString(rates));
+        LocalDateTime localDateTime=LocalDateTime.now();
+        product.setCreatetime(localDateTime);
+        if(productMapper.insert(product)==1){
+            return Result.success();
+        }
+        return Result.error("500","添加商品失败！");
+    }
+    @PostMapping("/editProduct")//编辑更新商品(不修改利率)
+    public Result editProduct(@RequestBody Product product){
+        if(productMapper.updateById(product)==1){
+            return Result.success();
+        }
+        return Result.error("500","更新商品失败！");
+    }
+    @PostMapping("/RateChange")//修改利率
+    public Result RateChange(@RequestBody Product product){
+        List<Rates> rates= JSONArray.parseArray(product.getHistoricalrate(),Rates.class);
+        LocalDate now=LocalDate.now();
+        int flag=0;
+        for(int i=0;i<rates.size();i++){
+            if(now.isEqual(rates.get(i).getTime())){//修改今日利率
+                flag=1;
+                rates.get(i).setRate(product.getRate());
+                break;
+            }
+        }
+        if(flag==0){//新添加的今日利率
+            Rates rateOne=new Rates();
+            rateOne.setTime(now);
+            rateOne.setRate(product.getRate());
+            rates.add(rateOne);
+        }
+        product.setHistoricalrate(JSONArray.toJSONString(rates));
+        if(productMapper.updateById(product)==1){
+            return Result.success();
+        }
+        return Result.error("500","利率修改失败！");
+    }
     @PostMapping("/BuyProduct")//购买某个商品
     public Result BuyProduct(@RequestBody Map map){
         Integer productId=(Integer) map.get("productid");
@@ -145,4 +235,9 @@ public class ProductController {
         return 0;
     }
 
+}
+@Data
+class Rates{
+    public double rate;
+    public LocalDate time;
 }

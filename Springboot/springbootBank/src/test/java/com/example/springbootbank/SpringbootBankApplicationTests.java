@@ -59,15 +59,8 @@ class SpringbootBankApplicationTests {
     MarketMapper marketMapper;
     @Test
     void contextLoads() {
-        double[] xData = new double[]{1, 2, 3, 4,5,6,7,8,9,10,11,12};
-        double[] yData = new double[]{4200,4300,4000,4400,5000,4700,5300,4900,5400,5700,6300,6000};
-        LineRegression lineRegression= new LineRegression();
-        System.out.println(lineRegression.leastSquareMethod(xData, yData));
-        //预测
-        System.out.println(lineRegression.getY(10d));
-//        QueryWrapper<Market> queryWrapper=new QueryWrapper<Market>();
-//        List<Market>list=marketMapper.selectList(queryWrapper.eq("marketid",1));
-//        System.out.println(list);
+        LocalDate now=LocalDate.now();
+        System.out.println(now);
     }
 
     //创建月初账单
