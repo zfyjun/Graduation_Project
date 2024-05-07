@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +37,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/课程作业（所有）/毕设/git/springboot/vue&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/课程作业（所有）/毕设/git/python/pythonProject&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -85,6 +84,7 @@
       <workItem from="1715009938548" duration="1211000" />
       <workItem from="1715044016649" duration="13309000" />
       <workItem from="1715060306373" duration="21400000" />
+      <workItem from="1715091275591" duration="1350000" />
     </task>
     <servers />
   </component>
