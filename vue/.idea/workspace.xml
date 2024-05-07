@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" afterDir="false" />
     </list>
@@ -87,7 +85,7 @@
       <workItem from="1714956299238" duration="42171000" />
       <workItem from="1715009938548" duration="1211000" />
       <workItem from="1715044016649" duration="13309000" />
-      <workItem from="1715060306373" duration="19487000" />
+      <workItem from="1715060306373" duration="21093000" />
     </task>
     <servers />
   </component>

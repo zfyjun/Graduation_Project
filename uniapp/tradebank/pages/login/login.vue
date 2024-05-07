@@ -108,22 +108,30 @@
 											message:"登陆成功",
 										})
 						this.password=""
+						this.getenterprise(res.data.id)
 						this.setlogintime(res.data.id)
 					}
-					else if(res.code==='404'){
+					else{
 						this.$refs.uToast.show({
-											type:'error',
-											duration:'800',
-											message:"错误！该账户不存在",
-										})
+						 						type:'error',
+						 						duration:'800',
+						 						message:res.msg,
+						 					})
 					}
-					else if(res.code==='500'){
-						this.$refs.uToast.show({
-											type:'error',
-											duration:'800',
-											message:"账号或密码错误！",
-										})
-					}
+					// else if(res.code==='404'){
+					// 	this.$refs.uToast.show({
+					// 						type:'error',
+					// 						duration:'800',
+					// 						message:"错误！该账户不存在",
+					// 					})
+					// }
+					// else if(res.code==='500'){
+					// 	this.$refs.uToast.show({
+					// 						type:'error',
+					// 						duration:'800',
+					// 						message:"账号或密码错误！",
+					// 					})
+					// }
 				})
 			},
 		    forgetpassword(){
@@ -140,6 +148,19 @@
 					uni.reLaunch({
 						url:"/pages/index/index"
 					})
+				})
+			},
+			getenterprise(val){
+				this.request({
+					url:"/enterprise/IsEnterprise",
+					method:"POST",
+					data:{
+						uid:val,
+					}
+				}).then(res=>{
+					if(res.code=='200'){
+						uni.setStorageSync('enterprise',res.data)
+					}
 				})
 			}
 		}

@@ -174,7 +174,7 @@
     </div>
     <div>
       <el-dialog
-          title="提示"
+          title="历史利率"
           :visible.sync="dialogVisible"
           width="70%"
           close-on-press-escape="true"
@@ -183,7 +183,7 @@
       </el-dialog>
 
       <el-dialog
-          title="编辑"
+          title="表单填写"
           :visible.sync="dialogVisible2"
           width="30%"
       >
@@ -654,6 +654,7 @@ export default {
     handleSelect(key, keyPath) {
       this.activeIndex=key
       if(key==1){
+        this.targetmarket=[]
         this.getproduct()
       }
       else if(key==2){
