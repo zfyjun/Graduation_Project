@@ -219,11 +219,11 @@
           <el-form-item v-if="dialogVisible3===true||activeIndex==2" label="风险等级">
             <el-input-number v-model="producteditOne.risk" step-strictly="true" :step="1" :min="1" :max="5"  ></el-input-number>
           </el-form-item>
-          <el-form-item label="起购价￥">
-            <el-input-number style="width: 50%" controls-position="right" v-model="producteditOne.price" step-strictly="true" :step="1" :min="1" :max="producteditOne.amount" ></el-input-number>
-          </el-form-item>
           <el-form-item label="总额度￥">
             <el-input-number style="width: 50%" controls-position="right" v-model="producteditOne.amount" step-strictly="true" :step="1" :min="1" ></el-input-number>
+          </el-form-item>
+          <el-form-item label="起购价￥">
+            <el-input-number style="width: 50%" controls-position="right" v-model="producteditOne.price" step-strictly="true" :step="1" :min="1" :max="producteditOne.amount" ></el-input-number>
           </el-form-item>
           <el-form-item label="详情描述">
             <el-input type="textarea" v-model="producteditOne.description"></el-input>
