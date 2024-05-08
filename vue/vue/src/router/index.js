@@ -17,6 +17,11 @@ const routes = [
     name: 'Register',
     component: () => import('../views/Register.vue')
   },
+  // {
+  //   path: '/index',
+  //   name: 'Indexxx',
+  //   component: () => import('../views/indexxx.vue')
+  // },
   {
     path: '/404',
     name: '404',

@@ -813,6 +813,7 @@ export default {
                 type: 'success'
               })
             }
+            this.loading=false
           }
           else {
             this.$message({
@@ -830,6 +831,7 @@ export default {
           message: '存在未清洗的数据！请进行清洗',
           type: 'warning'
         });
+        this.loading=false
       }
     },
     handleSelectionChange(val) {

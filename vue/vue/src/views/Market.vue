@@ -1,6 +1,8 @@
 <template>
   <div style="padding: 2%" >
-
+    <div @click="handerVideo(1)">
+      市场分析
+    </div>
     <el-form ref="form"  label-width="100px">
       <el-form-item label="选择市场：">
         <el-select @change="changemarket" v-model="value" filterable  placeholder="请选择">
@@ -253,6 +255,9 @@ export default {
         series: seriesmarketone
       };
       option2 && myChart.setOption(option2);
+    },
+    handerVideo(val) {
+      window.location.href = `../static/indexx.html`; // 这里替换成你想要跳转的外部HTML页面的URL
     },
     workbie2(seriesmarketone){//绘制折线图（市场数据的平均加权值）
       let myChart = echarts.getInstanceByDom(document.getElementById("market2"))
