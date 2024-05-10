@@ -21,9 +21,9 @@ from sklearn.neural_network import MLPClassifier, MLPRegressor
 #读取数据
 #from fontTools.misc.symfont import y
 
-def trianXY(type):
-    data=pd.read_csv('train.csv') #读取训练集数据
-    data2=pd.read_csv('test.csv') #读取测试集数据
+def trianXY(type,train,test):
+    data=pd.json_normalize(train) #读取训练集数据
+    data2=pd.json_normalize(test) #读取测试集数据
 #print(data.head(5))
 #print(data2.head(5))
     X=data.copy()
@@ -132,12 +132,14 @@ CORS(app) # 允许跨域请求
 @app.route("/train", methods=["POST"])
 def train():
     data = request.json.get("type")
-    print(data)
-    preds = trianXY(data)
+    train = request.json.get("train")
+    test = request.json.get("test")
+    # print(data)
+    # print(test)
+    # print(train)
+    preds = trianXY(data,train,test)
     data_str = preds.to_json(orient='split',force_ascii=False)
-    print(data_str)
     # 逻辑回归
-
     return jsonify({"code":200,'data':json.loads(data_str)})
 
 if __name__ == '__main__':

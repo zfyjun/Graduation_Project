@@ -15,9 +15,22 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="">
-          <el-button @click="predictflag=true">市场预测</el-button>
+        <el-form-item style="margin-left: 5%" label="市场预测：">
+          <div style="display: flex">
+            <el-select @change="changemodel" v-model="modelvalue" filterable  placeholder="选择模型">
+              <el-option
+                  v-for="item in modelname"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
+            </el-select>
+            <div style="margin-left: 2%">
+              <el-button @click="makedata" >确定</el-button>
+            </div>
+          </div>
         </el-form-item>
+
       </div>
       <el-form-item label="时间选择：">
         <div class="block">
@@ -66,19 +79,7 @@
         close-on-press-escape="true"
     >
       <div style="padding: 2%;width: 100%">
-        <div style="display: flex">
-          <el-select @change="changemodel" v-model="modelvalue" filterable  placeholder="选择模型">
-            <el-option
-                v-for="item in modelname"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-            </el-option>
-          </el-select>
-          <div style="margin-left: 2%">
-            <el-button @click="marketPredict" >确定</el-button>
-          </div>
-        </div>
+
       </div>
     </el-dialog>
   </div>
@@ -116,12 +117,15 @@ export default {
       etime:'',
       btime:'',
       dateRange:this.limitDate(),
+      testdata:[],
+      triandata:[],
     }
   },
   created() {
     // 从后台获取数据
     this.getmarketname()
     this.getmarketDateTime(0)
+
 
   },
   mounted(){//图形绘制
@@ -134,9 +138,29 @@ export default {
         this.workbie2(this.seriesmarketone2)
       })
     },
-    marketPredict(){//市场预测
+    makedata(){//制作训练集与测试集
+      var reg1 = new RegExp("-","g")
+      let btime=Number(this.btime.replace(reg1,""))
+      let etime=Number(this.etime.replace(reg1,""))
+      this.testdata=[]
+      request.post("/market/getMarketDatebyId",{
+        mid:this.mid,
+        startTime:btime,
+        endtiem:etime
+      }).then(res => {
+        if(res.code==='200'){
+          let length=res.data.length
+          this.triandata=res.data.slice(0,(length*0.7).toFixed(0))
+          this.testdata=res.data.slice((length*0.7).toFixed(0),length)
+          this.marketPredict(this.testdata,this.triandata)
+        }
+      })
+    },
+    marketPredict(test,train){//市场预测
       pyrequest.post("/train",{
         type:this.modelvalue,
+        train:train,
+        test:test
       }).then(res => {
         if(res.data.code=="200"){
           this.$message({
@@ -211,6 +235,7 @@ export default {
           console.log(this.value1)
           if(val!=0){
             this.getmarketDate()
+
           }
         }
 
@@ -226,6 +251,7 @@ export default {
       }).then(res => {
         if(res.code==='200'){
           this.marketDate=res.data
+          console.log(res.data)
           this.workbie(this.getmarketdataone(1,1),this.getmarketdataone(6,1))
           this.addmarketdata()
         }

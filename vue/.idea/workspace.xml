@@ -2,30 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/files/341f63ff893b4f9989c26e09a2dd8e97.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/files/abcef6bdd2984aadb7e3d0f29bddc159.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/RiskController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserCredit.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/UserCreditMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/views/Audit.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/views/RiskAnalysis.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/files/92ea1586ae594729aa601bed1a901148.png" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/files/50a9b8e9bd6b49d7ad60b82ad1e7de75.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserLoansCotroller.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserLoansCotroller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserLoans.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserLoans.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/1_预测.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/1_预测.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/神经网络的预测结果.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python/pythonProject/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/bankcards.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/bankcards.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/src/utils/pyrequest.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/utils/pyrequest.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vue/src/views/Market.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Market.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/src/views/User.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/User.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,17 +36,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/课程作业（所有）/毕设/git/springboot/vue&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "D:/课程作业（所有）/毕设/git/springboot/python/pythonProject",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\课程作业（所有）\毕设\git\springboot\vue\vue\public" />
@@ -136,7 +115,7 @@
       <workItem from="1715222769763" duration="2875000" />
       <workItem from="1715252193717" duration="8458000" />
       <workItem from="1715305583117" duration="2780000" />
-      <workItem from="1715329003115" duration="13400000" />
+      <workItem from="1715329003115" duration="15819000" />
     </task>
     <servers />
   </component>
