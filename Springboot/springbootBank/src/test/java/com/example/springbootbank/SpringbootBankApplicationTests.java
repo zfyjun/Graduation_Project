@@ -1,37 +1,30 @@
 package com.example.springbootbank;
 
 
-import cn.hutool.core.date.LocalDateTimeUtil;
-
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.example.springbootbank.common.CreateBankCards;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
-import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.*;
 
 import com.example.springbootbank.mapper.*;
-import com.example.springbootbank.service.CodeService;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.annotation.MapperScan;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+
 
 @SpringBootTest
 @MapperScan("com.example.springbootbank.mapper")
@@ -59,8 +52,18 @@ class SpringbootBankApplicationTests {
     MarketMapper marketMapper;
     @Test
     void contextLoads() {
-        LocalDate now=LocalDate.now();
-        System.out.println(now);
+
+    }
+    public void deletFile(String path) {
+        File file=new File(path);
+        if(file.isFile()&&file.exists()){
+            file.delete();
+            System.out.println("删除成功");
+        }
+        else {
+            System.out.println("删除失败");
+        }
+
     }
 
     //创建月初账单

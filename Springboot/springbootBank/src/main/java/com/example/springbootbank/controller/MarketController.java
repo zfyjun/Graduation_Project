@@ -34,7 +34,25 @@ public class MarketController {
     MarketNameMapper marketNameMapper;
     @Autowired
     MarketMapper marketMapper;
-
+    @PostMapping("/getMarketTimebyId")//根据id获取市场最早时间与最晚时间
+    public Result getMarketTimebyId(@RequestBody Map map){
+        Integer mid=(Integer) map.get("mid");
+        QueryWrapper<Market> queryWrapper=new QueryWrapper<Market>();
+        List<Market>list=marketMapper.selectList(queryWrapper.eq("marketid",mid).orderByAsc("date"));
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("btime",list.get(0).getDate());
+        jsonObject.put("etime",list.get(list.size()-1).getDate());
+        if(list.size()>45){
+            jsonObject.put("stime",list.get(list.size()-45).getDate());
+        }
+        else {
+            jsonObject.put("stime",list.get(0).getDate());
+        }
+        if(list.size()>0){
+            return Result.success(jsonObject);
+        }
+        return Result.error("500","暂无该时间段内市场的市场数据");
+    }
     @PostMapping("/getMarketDatebyId")//根据id获取市场数据
     public Result getMarketDatebyId(@RequestBody Map map){
         Integer mid=(Integer) map.get("mid");

@@ -22,6 +22,6 @@ server:
 
 files:
   upload:
-    path: E:/Desktop/毕设项目/Springboot/springbootBank/files/
+    path: D:\课程作业（所有）\毕设\git\springboot\Springboot\springbootBank\files
 
 spring.mvc.pathmatch.matching-strategy: ANT_PATH_MATCHER
