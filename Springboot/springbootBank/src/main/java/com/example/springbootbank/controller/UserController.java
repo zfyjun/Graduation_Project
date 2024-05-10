@@ -1,11 +1,15 @@
 package com.example.springbootbank.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.User;
+import com.example.springbootbank.entity.UserCredit;
+import com.example.springbootbank.entity.UserLoans;
+import com.example.springbootbank.mapper.UserCreditMapper;
 import com.example.springbootbank.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +30,8 @@ public class UserController {
     @Autowired
     private UserMapper userMapper;
 
-
+    @Autowired
+    private UserCreditMapper userCreditMapper;
     @PostMapping ("/login")
     public Result login(@RequestBody Map map){
         String account=(String)map.get("account") ;
@@ -95,5 +100,22 @@ public class UserController {
         return Result.success(userMapper.updateById(user));
     }
 
+    @PostMapping("/getUserRisk")//获取用户表和用户风险等级表
+    public Result getLoans(@RequestBody Map map){
+        Integer pageNum=(Integer) map.get("pageNum");
+        Integer pageSize=(Integer) map.get("pageSize");
+        String name=(String) map.get("name");
+        Page<User> page= Page.of(pageNum,pageSize);
+        LambdaQueryWrapper<User> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.like(User::getName,name);
+        userMapper.selectPage(page,queryWrapper);
+        for(int i=0;i<page.getRecords().size();i++){
+            UserCredit userCredit=userCreditMapper.selectById(page.getRecords().get(i).getId());
+            if(userCredit!=null){
+                page.getRecords().get(i).setRisk(userCredit.getRisk());
+            }
+        }
+        return Result.success(page);
+    }
 
 }

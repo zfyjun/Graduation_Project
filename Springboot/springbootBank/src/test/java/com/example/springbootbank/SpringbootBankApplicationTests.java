@@ -2,8 +2,10 @@ package com.example.springbootbank;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.entity.*;
 
@@ -50,9 +52,15 @@ class SpringbootBankApplicationTests {
     CreditCardMapper creditCardMapper;
     @Autowired
     MarketMapper marketMapper;
+    @Autowired
+    UserLoansMapper userLoansMapper;
     @Test
     void contextLoads() {
-
+        Page<UserLoans> page= Page.of(1,10);
+        LambdaQueryWrapper<UserLoans> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserLoans::getIspass,1);
+        userLoansMapper.selectPage(page,queryWrapper);
+        page.getRecords().forEach(System.out::println);
     }
     public void deletFile(String path) {
         File file=new File(path);

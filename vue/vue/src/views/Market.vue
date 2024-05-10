@@ -4,16 +4,21 @@
       市场分析
     </div>
     <el-form ref="form"  label-width="100px">
-      <el-form-item label="选择市场：">
-        <el-select @change="changemarket" v-model="value" filterable  placeholder="请选择">
-          <el-option
-              v-for="item in marketname"
-              :key="item.id"
-              :label="item.marketname"
-              :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
+      <div style="display: flex">
+        <el-form-item label="选择市场：">
+          <el-select @change="changemarket" v-model="value" filterable  placeholder="请选择">
+            <el-option
+                v-for="item in marketname"
+                :key="item.id"
+                :label="item.marketname"
+                :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="">
+          <el-button @click="predictflag=true">市场预测</el-button>
+        </el-form-item>
+      </div>
       <el-form-item label="时间选择：">
         <div class="block">
           <el-date-picker
@@ -43,6 +48,7 @@
 
 <!--==========================================================================================-->
     <el-dialog
+
         :visible.sync="showdetailflag"
         width="80%"
         :before-close="handleClose"
@@ -52,20 +58,44 @@
         <div id="market2" style="width: 100%;height: 400px" ></div>
       </div>
     </el-dialog>
+
+    <el-dialog
+        title="市场预测"
+        :visible.sync="predictflag"
+        width="60%"
+        close-on-press-escape="true"
+    >
+      <div style="padding: 2%;width: 100%">
+        <div style="display: flex">
+          <el-select @change="changemodel" v-model="modelvalue" filterable  placeholder="选择模型">
+            <el-option
+                v-for="item in modelname"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
+          <div style="margin-left: 2%">
+            <el-button @click="marketPredict" >确定</el-button>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import request from "@/utils/request";
+import pyrequest from "@/utils/pyrequest";
 import * as echarts from 'echarts';
 export default {
   name: "Market",
   data(){
     return{
-      dateRange:this.limitDate(),
       startdate:20230101,
       endate:20230313,
-      value1:['2023-01-01','2023-03-13'],
+      value1:['2023-01-01','2023-3-13'],
+      modelname:[{id:0,name:"逻辑回归"},{id:1,name:"线性判别"},{id:2,name:"K近邻"},{id:3,name:"决策树"},{id:4,name:"随机森林"},{id:5,name:"梯度提升"},{id:6,name:"支持向量机"},{id:7,name:"神经网络"}],
       marketDate:[],
       marketname:[],
       showdetailflag:false,
@@ -80,15 +110,22 @@ export default {
       seriesmarketone:[],
       seriesmarketone2:[],
       mid:1,
+      modelvalue:7,
+      predictflag:false,
+      predictData:[],
+      etime:'',
+      btime:'',
+      dateRange:this.limitDate(),
     }
   },
   created() {
     // 从后台获取数据
     this.getmarketname()
+    this.getmarketDateTime(0)
 
   },
   mounted(){//图形绘制
-    this.getmarketDate()
+    this.getmarketDateTime(1)
   },
   methods: {
     opendig(){
@@ -97,10 +134,26 @@ export default {
         this.workbie2(this.seriesmarketone2)
       })
     },
+    marketPredict(){//市场预测
+      pyrequest.post("/train",{
+        type:this.modelvalue,
+      }).then(res => {
+        if(res.data.code=="200"){
+          this.$message({
+            showClose: true,
+            message: '模型训练成功！',
+            type: 'success'
+          })
+        }
+        this.predictData=res.data.data.data
+        console.log(this.predictData)
+      })
+    },
     limitDate(){//时间限制器
+      let self =this;
       return{
         disabledDate(time){
-          return new Date(time).getTime()<new Date('2018-1-1')||new Date(time).getTime()>new Date('2023-3-13').getTime()
+          return new Date(time).getTime()<new Date(self.btime).getTime()||new Date(time).getTime()>new Date(self.etime).getTime()
         }
       }
     },
@@ -128,11 +181,40 @@ export default {
       ended=Number(ended.replace(/-/g,''))
       this.startdate=start
       this.endate=ended
-      this.getmarketDate()
+      this.getmarketDateTime()
     },
     changemarket(val){//变换市场
       this.mid=val
-      this.getmarketDate()
+      this.getmarketDateTime()
+    },
+    changemolde(val){//变换市场
+      this.modelvalue=val
+    },
+    insertStr(source,start,newStr){//字符串指定位置插入
+       return source.slice(0,start) + newStr+source.slice(start)
+    },
+    getmarketDateTime(val){//获取市场数据时间范围
+      request.post("/market/getMarketTimebyId",{
+        mid:this.mid
+      }).then(res => {
+        if(res.code==='200'){
+          console.log(res.data)
+          this.btime=String(res.data.btime)
+          this.etime=String(res.data.etime)
+          this.btime=this.insertStr(this.btime,4,'-')
+          this.btime=this.insertStr(this.btime,7,'-')
+          this.etime=this.insertStr(this.etime,4,'-')
+          this.etime=this.insertStr(this.etime,7,'-')
+          this.value1[0]=String(this.btime)
+          this.value1[1]=String(this.etime)
+          console.log(this.btime+"  "+this.etime)
+          console.log(this.value1)
+          if(val!=0){
+            this.getmarketDate()
+          }
+        }
+
+      })
     },
     getmarketDate(){//获取市场数据并绘制图片
       this.seriesmarketone=[]
@@ -255,9 +337,6 @@ export default {
         series: seriesmarketone
       };
       option2 && myChart.setOption(option2);
-    },
-    handerVideo(val) {
-      window.location.href = `../static/indexx.html`; // 这里替换成你想要跳转的外部HTML页面的URL
     },
     workbie2(seriesmarketone){//绘制折线图（市场数据的平均加权值）
       let myChart = echarts.getInstanceByDom(document.getElementById("market2"))

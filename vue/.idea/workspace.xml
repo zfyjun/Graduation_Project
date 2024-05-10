@@ -2,44 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/vue/src/static/css/swiper.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/css/visual.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/fonts/yjsz.TTF" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/data08.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/jcdsj_logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/jzxz1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/jzxz2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh31.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh32.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh33.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh34.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh35.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh36.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh37.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh38.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh39.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh40.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh41.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh42.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh43.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh44.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/images/ksh45.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/indexx.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/bootstrap.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/chartMap.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/china.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/echarts.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/jquery.leoweather.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/jquery.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/mapcodes.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/npm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/swiper.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/src/static/js/visual.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python/pythonProject/.idea/pythonProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/.idea/pythonProject.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/files/341f63ff893b4f9989c26e09a2dd8e97.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/files/abcef6bdd2984aadb7e3d0f29bddc159.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/RiskController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserCredit.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/UserCreditMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vue/src/views/Audit.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vue/src/views/RiskAnalysis.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/files/92ea1586ae594729aa601bed1a901148.png" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/files/50a9b8e9bd6b49d7ad60b82ad1e7de75.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserLoansCotroller.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserLoansCotroller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserLoans.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserLoans.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/1_预测.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/1_预测.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/code.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/神经网络的预测结果.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/bankcards.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/bankcards.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/router/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/src/views/DataClean.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/DataClean.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/utils/pyrequest.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/utils/pyrequest.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vue/src/views/Market.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Market.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/User.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/User.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,6 +133,10 @@
       <workItem from="1715122799620" duration="1961000" />
       <workItem from="1715124824711" duration="536000" />
       <workItem from="1715135046311" duration="1797000" />
+      <workItem from="1715222769763" duration="2875000" />
+      <workItem from="1715252193717" duration="8458000" />
+      <workItem from="1715305583117" duration="2780000" />
+      <workItem from="1715329003115" duration="13400000" />
     </task>
     <servers />
   </component>

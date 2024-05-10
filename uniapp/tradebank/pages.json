@@ -94,6 +94,22 @@
 				"navigationBarTitleText" : "还款",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/bankcards/loans/loans",
+			"style" : 
+			{
+				"navigationBarTitleText" : "贷款",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/person/LoansManagement/LoansManagement",
+			"style" : 
+			{
+				"navigationBarTitleText" : "我的贷款",
+				"enablePullDownRefresh" : false
+			}
 		}
 		
 	],

@@ -3,6 +3,7 @@
 package com.example.springbootbank.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -21,5 +22,8 @@ public class User {
     private String idcard;
     private String bankcards;
     private LocalDateTime lasttime;
+
+    @TableField(exist = false)
+    private Integer risk;
 
 }

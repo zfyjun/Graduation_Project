@@ -523,7 +523,22 @@
 			    	})
 			    });
 			},
-			
+			toloans(val){//转移到贷款页面
+			    this.getCards().then(e=>{
+			    	for(let i=0;i<this.mycards.length;i++){
+			    		if(this.mycards[i].type===val){
+			    			console.log(this.mycards[i])
+			    			uni.setStorageSync('bankdetail',this.mycards[i])
+			    			break
+			    	    }
+			    	}
+			    }).then(e=>{
+			    	uni.navigateTo({
+			    		url:"/pages/bankcards/loans/loans"
+			    	})
+			    });
+				
+			}
 			
 		}
 	        
