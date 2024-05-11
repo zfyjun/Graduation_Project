@@ -52,10 +52,10 @@ export default {
 
               //动态设置路由
               setRoutes()
-              if(res.data.role==='ROLE_ROOT'){
-                this.$router.push("/")
-              }else{
+              if(res.data.role==='ROLE_TEST'){
                 this.$router.push("/front/home")
+              }else{
+                this.$router.push("/")
               }
               this.$message.success("登录成功")
             }else{

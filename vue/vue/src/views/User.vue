@@ -15,10 +15,10 @@
         <el-table-column prop="id" label="id"></el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column prop="account" label="账号"></el-table-column>
-        <el-table-column prop="age" label="年龄"></el-table-column>
-        <el-table-column prop="job" label="工作"></el-table-column>
-        <el-table-column prop="marital" label="婚姻状态"></el-table-column>
-        <el-table-column prop="education" label="学历"></el-table-column>
+<!--        <el-table-column prop="age" label="年龄"></el-table-column>-->
+<!--        <el-table-column prop="job" label="工作"></el-table-column>-->
+<!--        <el-table-column prop="marital" label="婚姻状态"></el-table-column>-->
+<!--        <el-table-column prop="education" label="学历"></el-table-column>-->
         <el-table-column prop="phone" label="联系电话"></el-table-column>
 
         <el-table-column label="操作" width="200" align="center">

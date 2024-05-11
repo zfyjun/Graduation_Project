@@ -53,6 +53,10 @@ public class AdminController {
 
     @PostMapping("/register")
     public Result register(@RequestBody AdminDto adminDto){
+        System.out.println(adminDto);
+        adminDto.setName(adminDto.getUsername());
+        adminDto.setRole("ROLE_USER");
+
         String username=adminDto.getUsername();
         String password=adminDto.getPassword();
         if(StrUtil.isBlank(username)||StrUtil.isBlank(password)){
