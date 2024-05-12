@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.*;
-import com.example.springbootbank.mapper.BankCardMapper;
-import com.example.springbootbank.mapper.CreditCardMapper;
-import com.example.springbootbank.mapper.ProductMapper;
-import com.example.springbootbank.mapper.UserMapper;
+import com.example.springbootbank.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +37,8 @@ public class PayCostController {
 
     @Autowired
     CreditCardMapper creditCardMapper;
+    @Autowired
+    UserCreditMapper userCreditMapper;
 
     @PostMapping("/out")//取钱
     public Result out(@RequestBody Map map){
@@ -164,6 +163,13 @@ public class PayCostController {
                         debts.get(i).setInterest(0);//先还利息
                         if((debts.get(i).getNeedreturn()-cost)<=0.01){//后还本金
                             debts.get(i).setNeedreturn(0);
+                            if(debts.get(i).getTimelast().isAfter(LocalDate.now())){
+                            //查看是否是逾期账单，若不是就加分
+                                UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,pbankCard.getUid()));
+                                userCredit.setCredit(userCredit.getCredit()+1);//加一分
+                                userCredit.setKeeps(userCredit.getKeeps()+1);//加一次守信得分
+                                userCreditMapper.updateById(userCredit);
+                            }
                         }
                         else {
                             debts.get(i).setNeedreturn((debts.get(i).getNeedreturn()-cost));

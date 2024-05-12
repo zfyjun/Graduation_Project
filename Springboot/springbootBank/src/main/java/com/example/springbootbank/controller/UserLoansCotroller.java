@@ -3,8 +3,10 @@ package com.example.springbootbank.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.Files;
+import com.example.springbootbank.entity.User;
 import com.example.springbootbank.entity.UserLoans;
 import com.example.springbootbank.entity.otherEntity.PassMsg;
 import com.example.springbootbank.mapper.*;
@@ -46,7 +48,8 @@ public class UserLoansCotroller {
     @Autowired
     LenderMapper lenderMapper;
 
-
+    @Autowired
+    UserMapper userMapper;
 
 
     @PostMapping("/sentLoans")//提交贷款申请
@@ -64,6 +67,7 @@ public class UserLoansCotroller {
         ArrayList<Integer> fileList=(ArrayList<Integer>) map.get("fileList");//证明材料的文件id
         //创建审核信息
         PassMsg passMsg=new PassMsg();
+        passMsg.setId(IdGeneratorSnowlake.getInstance().snowflakeId());
         LocalDateTime now=LocalDateTime.now();
         passMsg.setSenttime(now);
         passMsg.setState(0);//审核中
@@ -85,6 +89,10 @@ public class UserLoansCotroller {
         LambdaQueryWrapper<UserLoans> queryWrapper=new LambdaQueryWrapper<>();
         queryWrapper.eq(UserLoans::getIspass,Ispass);
         userLoansMapper.selectPage(page,queryWrapper);
+        for(int i=0;i<page.getRecords().size();i++){
+            User user=userMapper.selectById(page.getRecords().get(i).getUid());
+            page.getRecords().get(i).setUsername(user.getName());
+        }
         return Result.success(page);
     }
 }

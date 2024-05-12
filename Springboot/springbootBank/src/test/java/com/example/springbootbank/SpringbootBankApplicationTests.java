@@ -54,13 +54,17 @@ class SpringbootBankApplicationTests {
     MarketMapper marketMapper;
     @Autowired
     UserLoansMapper userLoansMapper;
+
+    @Autowired
+    UserCreditMapper userCreditMapper;
+
+    @Autowired
+    EnterpriseMapper enterpriseMapper;
+    @Autowired
+    UserInfoMapper userInfoMapper;
     @Test
     void contextLoads() {
-        Page<UserLoans> page= Page.of(1,10);
-        LambdaQueryWrapper<UserLoans> queryWrapper=new LambdaQueryWrapper<>();
-        queryWrapper.eq(UserLoans::getIspass,1);
-        userLoansMapper.selectPage(page,queryWrapper);
-        page.getRecords().forEach(System.out::println);
+        this.setoverdue();
     }
     public void deletFile(String path) {
         File file=new File(path);
@@ -72,6 +76,19 @@ class SpringbootBankApplicationTests {
             System.out.println("删除失败");
         }
 
+    }
+    public void bulid(){
+        List<User > users=userMapper.selectList(null);
+        for(int i=0;i<users.size();i++){
+            UserCredit userCredit=new UserCredit();
+            Integer uid=users.get(i).getId();
+            userCredit.setUid(uid);
+            Enterprise enterprise=enterpriseMapper.selectOne(Wrappers.<Enterprise>lambdaQuery().eq(Enterprise::getUid,uid));
+            if(enterprise!=null){
+                userCredit.setEnterprise(1);
+            }
+            userCreditMapper.insert(userCredit);
+        }
     }
 
     //创建月初账单
@@ -156,6 +173,11 @@ class SpringbootBankApplicationTests {
                             BigDecimal bigDecimal=new BigDecimal(rates+overdue);
                             float balance2=bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue();
                             Debts.get(j).setInterest(balance2);
+                            BankCard bankCard=bankCardMapper.selectById(creditCards.get(i).getCid());
+                            UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,bankCard.getUid()));
+                            userCredit.setDefaults(userCredit.getDefaults()+1);
+                            userCredit.setCredit(userCredit.getCredit()-10);
+                            userCreditMapper.updateById(userCredit);
                         }
                     }
                 }

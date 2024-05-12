@@ -13,6 +13,12 @@
             stripe
             style="width: 80%">
           <el-table-column
+              fixed
+              prop="username"
+              label="贷款人"
+              width="100">
+          </el-table-column>
+          <el-table-column
               prop="typename"
               label="贷款类型"
               width="180">
@@ -42,7 +48,7 @@
               label="详情操作"
               width="100">
             <template slot-scope="scope">
-              <el-button @click="LoansAudit(scope.row)" type="text" size="small">审核<i class="el-icon-edit"></i></el-button>
+              <el-button @click="getOnemsg(scope.row)" type="text" size="small">审核<i class="el-icon-edit"></i></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -63,35 +69,62 @@
         :visible.sync="show"
         width="30%"
     >
-      <div>
-        <span>{{'申请人：'+lookone.name}}</span>
+      <div style="display: flex;justify-content: space-between">
+        <span>{{'申请人：'}}</span>
+        <span>{{lookone.tablemsg.username}}</span>
+      </div >
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'申请时间：'}}</span>
+        <span>{{lookone.senttime}}</span>
       </div>
-      <div>
-        <span>{{'申请人年龄：'+lookone.age}}</span>
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'申请人年龄：'}}</span>
+        <span>{{lookone.age}}</span>
       </div>
-      <div>
-        <span>{{'婚姻状况：'+lookone.marital}}</span>
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'婚姻状况：'}}</span>
+        <span>{{lookone.marital}}</span>
       </div>
-      <div>
-        <span>{{'是否存在违约记录：'+lookone.default}}</span>
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'是否存在违约记录：'}}</span>
+        <span>{{lookone.defaults+'次'}}</span>
       </div>
-      <div>
-        <span>{{'贷款类型：'+lookone.tablemsg.typename}}</span>
+      <el-divider></el-divider>
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'贷款类型：'}}</span>
+        <span>{{lookone.tablemsg.typename}}</span>
       </div>
-      <div>
-        <span>{{'贷款金额：'+lookone.tablemsg.cost+' 万元'}}</span>
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'贷款金额：'}}</span>
+        <span>{{lookone.tablemsg.cost+' 万元'}}</span>
       </div>
-      <div>
-        <span>{{'分期期限：'+lookone.tablemsg.timelimit+' 月'}}</span>
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'分期期限：'}}</span>
+        <span>{{lookone.tablemsg.timelimit+' 月'}}</span>
       </div>
-      <div>
-        <span>{{'还款类型：'+lookone.tablemsg.returntypename}}</span>
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'还款类型：'}}</span>
+        <span>{{lookone.tablemsg.returntypename}}</span>
       </div>
-      <div>
-        <span>{{'月收入（税后）：'+lookone.tablemsg.salary+' 元'}}</span>
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'月收入（税后）：'}}</span>
+        <span>{{lookone.tablemsg.salary+' 元'}}</span>
       </div>
-      <div>
-        <span>{{'首月需归还金额：'+lookone.returntmoney+' 元'}}</span>
+      <div style="display: flex;justify-content: space-between" >
+        <span>{{'首月需归还金额：'}}</span>
+        <span>{{lookone.returntmoney+' 元'}}</span>
+      </div>
+      <el-divider></el-divider>
+      <div  >
+        <span>{{'证明材料：'}}</span>
+        <div class="demo-image__preview">
+          <el-image
+              v-for="(item,index) in lookone.urls"
+              style="width: 100px; height: 100px"
+              :src="item"
+              :preview-src-list="lookone.urls">
+          </el-image>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
          <el-button @click="show = false">不通过</el-button>
@@ -114,7 +147,7 @@ export default {
       total:0,
       ispass:0,
       lenders:[],
-      lookone:{name:'',sentTime:'',age:'',default:'',tablemsg:{},marital:'',returntmoney:''},
+      lookone:{senttime:'',age:'',defaults:'',tablemsg:{},marital:'',returntmoney:'',urls:[]},
       show:false,
     }
   },
@@ -130,6 +163,18 @@ export default {
           if(res.code=='200'){
             this.lenders=res.data
             this.selectLoans()
+          }
+        }
+      })
+    },
+    getOnemsg(e){//获取单人详情信息
+      request.post("/Lender/getonemsg",{
+        id:e.uid
+      }).then(res=>{
+        if(res.code=='200'){
+          if(res.code=='200'){
+            this.lookone=res.data
+            this.LoansAudit(e)
           }
         }
       })
@@ -163,7 +208,7 @@ export default {
         }
       })
     },
-    LoansAudit(e){//贷款审核
+    LoansAudit(e){//单人贷款审核
       this.lookone.tablemsg=e
       if(this.lookone.tablemsg.returntype==2){//等额本金
         this.lookone.returntmoney=(((Number(this.lookone.tablemsg.cost)*10000)/Number(this.lookone.tablemsg.timelimit))+((Number(this.lookone.tablemsg.cost)*10000)*Number(this.lookone.tablemsg.rate)/1200)).toFixed(2)

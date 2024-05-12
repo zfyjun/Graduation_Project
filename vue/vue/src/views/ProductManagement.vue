@@ -286,7 +286,7 @@ export default {
   },
   methods:{
     getproduct(){
-      request.post("/Product/getProduct",{}).then(res => {
+        request.post("/Product/getProduct",{}).then(res => {
         if(res.code==='200'){
           this.products=res.data
           this.searchProducts=res.data
@@ -296,11 +296,6 @@ export default {
           this.products=[]
           this.showproducts=[]
           this.searchProducts=[]
-          this.$message({
-            showClose: true,
-            message: res.msg,
-            type: 'warning'
-          })
         }
       })
     },
@@ -315,11 +310,6 @@ export default {
           this.products=[]
           this.showproducts=[]
           this.searchProducts=[]
-          this.$message({
-            showClose: true,
-            message: res.msg,
-            type: 'warning'
-          })
         }
       })
     },
@@ -327,6 +317,7 @@ export default {
       this.activeIndex=key
     },
     addproduct(){//新增产品
+      this.targetmarket=[]
       this.producteditOne={id:null,name:'',type:'',rate:0,minday:1,createtime:'',risk:1,description:'',amount:1,price:1,sum:0,targetmarket:[],historicalrate:"[]"};
       this.dialogVisible2=true
       this.dialogVisible3=true

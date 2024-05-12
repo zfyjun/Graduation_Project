@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from flask_cors import CORS
+from pandas.core.common import random_state
 from sklearn.linear_model import LogisticRegression
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neighbors import KNeighborsClassifier
@@ -34,66 +35,24 @@ def trianXY(type,train,test):
     data.drop('adjustedclose', axis=1, inplace=True)
 
     ID=data2['date']
-    dist_cols = 1
-    dist_rows = len(data2.columns)
-    plt.figure(figsize=(6 * dist_cols, 6 * dist_rows))
-    i = 1
-
-    ax = plt.subplot(dist_rows, dist_cols, 1)
-    ax = sns.kdeplot(data["date"], color="Red", fill=True)
-    ax = sns.kdeplot(data2["date"], color="Blue", fill=True)
-    ax.set_xlabel("date")
-    ax.set_ylabel("Frequency")
-    ax = ax.legend(["train", "test"])
-# plt.show()
-    ax = plt.subplot(dist_rows, dist_cols, 2)
-    ax = sns.kdeplot(data["open"], color="Red", fill=True)
-    ax = sns.kdeplot(data2["open"], color="Blue", fill=True)
-    ax.set_xlabel("open")
-    ax.set_ylabel("Frequency")
-    ax = ax.legend(["train", "test"])
-# plt.show()
-    ax = plt.subplot(dist_rows, dist_cols,3)
-    ax = sns.kdeplot(data["high"], color="Red", fill=True)
-    ax = sns.kdeplot(data2["high"], color="Blue", fill=True)
-    ax.set_xlabel("high")
-    ax.set_ylabel("Frequency")
-    ax = ax.legend(["train", "test"])
-# plt.show()
-    ax = plt.subplot(dist_rows, dist_cols,4)
-    ax = sns.kdeplot(data["low"], color="Red", fill=True)
-    ax = sns.kdeplot(data2["low"], color="Blue", fill=True)
-    ax.set_xlabel("low")
-    ax.set_ylabel("Frequency")
-    ax = ax.legend(["train", "test"])
-# plt.show()
-    ax = plt.subplot(dist_rows, dist_cols,4)
-    ax = sns.kdeplot(data["close"], color="Red", fill=True)
-    ax = sns.kdeplot(data2["close"], color="Blue", fill=True)
-    ax.set_xlabel("close")
-    ax.set_ylabel("Frequency")
-    ax = ax.legend(["train", "test"])
-# plt.show()
-    ax = plt.subplot(dist_rows, dist_cols,4)
-    ax = sns.kdeplot(data["volume"], color="Red", fill=True)
-    ax = sns.kdeplot(data2["volume"], color="Blue", fill=True)
-    ax.set_xlabel("volume")
-    ax.set_ylabel("Frequency")
-    ax = ax.legend(["train", "test"])
-# plt.show()
-    corr = plt.subplots(figsize = (8,6))
-    corr= sns.heatmap(data.corr(method='spearman'),annot=True,square=True)
 
     from sklearn.model_selection import train_test_split
 
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, stratify=None, random_state=0)
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2,random_state=35)
 
     from sklearn.preprocessing import StandardScaler
-    scaler = StandardScaler()
-    scaler.fit(X_train)
-    X_train_s = scaler.transform(X_train)
-    X_val_s = scaler.transform(X_val)
-    test_s = scaler.transform(test)
+    scaler_x = StandardScaler()
+    scaler_x.fit(X_train)
+    scaler_y=StandardScaler()
+    # scaler_y.fit(y_train.values.reshape(-1,1))
+    # Y_train = scaler_y.transform(y_train.values.reshape(-1,1))
+    # Y_test= scaler_y.transform(y_val.values.reshape(-1,1))
+    x_train = scaler_x.transform(X_train)
+    scaler_test =StandardScaler()
+    test_s = scaler_x.transform(test)
+
+    #
+    # test_s = scaler.transform(x_val)
     df = pd.DataFrame(columns=['date','adjustedclose'])
     df['date']=ID
 # 逻辑回归
@@ -111,20 +70,27 @@ def trianXY(type,train,test):
 # 支持向量机
     model7 = SVC(kernel="rbf", random_state=77)
 # 神经网络
-    model8 = MLPClassifier(hidden_layer_sizes=(16, 8), random_state=77, max_iter=10000)
-    model_list = [model1, model2, model3, model4, model5, model6,model7, model8]
-    model_name = ['逻辑回归', '线性判别', 'K近邻', '决策树', '随机森林', '梯度提升', '支持向量机', '神经网络']
+    model8 = MLPClassifier(hidden_layer_sizes=(16, 8),alpha=1e-5,solver='sgd', random_state=77, max_iter=10000)
+#bp神经网络
+    model9 = MLPRegressor(hidden_layer_sizes=(10,), random_state=10, learning_rate_init=0.1)
+    model_list = [model1, model2, model3, model4, model5, model6,model7, model8,model9]
     model_C=model_list[type]
-    name=model_name[type]
-    model_C.fit(X_train, y_train.astype('str'))
-    pred = model_C.predict(test_s)
+    # model_C.fit(x_train.astype('int'), y_train.astype('float32'))
+    model_C.fit(data.astype('int'),data.astype('int'))
+    # pred = model_C.predict(test_s)
+    pred=model_C.predict(data2)
     print(pred)
     df['adjustedclose']=pred
     # csv_name=name+'的预测结果.csv'
     # df.to_csv(csv_name,index=False)
     return df
 
+def DNN(train,test):
+    import keras
+    import numpy as np
+    import matplotlib.pyplot as plt
 
+    return ''
 
 app = Flask(__name__)
 CORS(app) # 允许跨域请求

@@ -1,6 +1,7 @@
 package com.example.springbootbank.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -23,4 +24,6 @@ public class UserLoans {
     private Integer ispass;
     private String passmsg;
     private LocalDate worktime;
+    @TableField(exist = false)
+    private String username;
 }

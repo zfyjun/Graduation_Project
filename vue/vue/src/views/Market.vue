@@ -96,7 +96,7 @@ export default {
       startdate:20230101,
       endate:20230313,
       value1:['2023-01-01','2023-3-13'],
-      modelname:[{id:0,name:"逻辑回归"},{id:1,name:"线性判别"},{id:2,name:"K近邻"},{id:3,name:"决策树"},{id:4,name:"随机森林"},{id:5,name:"梯度提升"},{id:6,name:"支持向量机"},{id:7,name:"神经网络"}],
+      modelname:[{id:0,name:"逻辑回归"},{id:1,name:"线性判别"},{id:2,name:"K近邻"},{id:3,name:"决策树"},{id:4,name:"随机森林"},{id:5,name:"梯度提升"},{id:6,name:"支持向量机"},{id:7,name:"人工神经网络"},{id:8,name:"bp神经网络"}],
       marketDate:[],
       marketname:[],
       showdetailflag:false,

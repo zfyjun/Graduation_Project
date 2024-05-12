@@ -12,8 +12,8 @@ public class UserCredit {
     private Integer id;
     private Integer uid;
     private Integer enterprise;
-    private String defaults;
-    private String keeps;
+    private Integer defaults;
+    private Integer keeps;
     private Integer credit;
     private Integer risk;
 }
