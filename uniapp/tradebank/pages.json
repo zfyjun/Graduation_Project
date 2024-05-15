@@ -110,6 +110,14 @@
 				"navigationBarTitleText" : "我的贷款",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/bankcards/updateCreditCard/updateCreditCard",
+			"style" : 
+			{
+				"navigationBarTitleText" : "银行卡升级",
+				"enablePullDownRefresh" : false
+			}
 		}
 		
 	],

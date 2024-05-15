@@ -2,6 +2,7 @@
 	<view>
 		<view class="box" >
 			<view >
+				<u--image :showLoading="true" :src="src" width="80px" height="80px" @click="click"></u--image>
 				<u--text style="padding-left:  5%;padding-top: 3%;" bold text="贷款选择"></u--text>
 				<u--form  style="padding-left: 5%;;width: 85%;"	labelPosition="left" :model="model1" :rules="rules" ref="uForm">
 							<u-form-item
@@ -9,7 +10,7 @@
 									label="贷款类型: "
 									prop="lender.name"
 									borderBottom
-									@click="showType = true; hideKeyboard()"
+									@click="showTypechange(); hideKeyboard()"
 									ref="item1"
 							>
 								<u--input
@@ -160,6 +161,7 @@
 									name="1"
 									multiple
 									:maxCount="10"
+									:previewFullImage="true"
 							></u-upload>		
 				</u--form>		
 				
@@ -169,6 +171,7 @@
 			<u-button style="width: 95%;" type="success" text="贷款申请" @click="opensure"></u-button>
 		</view>
 		<u-toast ref="uToast"></u-toast>
+		
 		<view >
 			<u-modal 
 			  showCancelButton="true" 
@@ -182,6 +185,7 @@
 			  >
 			</u-modal>
 		</view>
+		
 		<view >
 			<u-modal 
 			  showCancelButton="true" 
@@ -252,19 +256,57 @@
 				returnWays:[{type:1,name:'等额本息'},{type:2,name:'等额本金'}],
 				carddetil:uni.getStorageSync('bankdetail'),
 				fileList1:[],
+				myloans:{},
+				type:0,//0是新增申请，1是编辑申请
+				src:""
 			};
 		},
 		onLoad() {
 			this.getLenders()
+			this.check()
 		},
 		methods:{
-			confirm(){
+			confirm(){//关闭面板
 				this.show=false
 				this.show2=true
 			},
 			TypeSelect(e){//选择贷款类型
 				this.model1.lender=e
 				
+			},
+			showTypechange(){
+				if(this.type==0){
+					this.showType=true
+				}
+				else{
+					this.$refs.uToast.show({
+										type:'warning',
+										duration:'1500',
+										message:"贷款申请已经提交过，无法更改贷款类型！",
+									})
+				}
+			},
+			check(){//检查是编辑还是新增
+				let flag=0
+				uni.getStorageInfo({
+					success: function(res){
+						if(res.keys.includes('myloans')){
+							flag=1
+						}
+						else{
+							console.log('没有')
+						}
+					}
+				})
+				if(flag==1){
+					this.myloans=uni.getStorageSync('myloans')
+					this.type=1
+					this.model1.lender=this.myloans.type
+					this.model1.userInfo.cost=this.myloans.cost
+					this.model1.userInfo.salary=this.myloans.salary
+					this.model1.userInfo.returnType=this.myloans.returnType
+					this.model1.userInfo.timelimit=this.myloans.timelimit
+				}
 			},
 			sendLoans(){//提交贷款申请
 				let user=uni.getStorageSync('user')
@@ -329,7 +371,7 @@
 					url:"/file/filesDeletById",
 					method:"POST",
 					data:{
-						id:Number(event.file.url)
+						id:Number(event.file.id)
 					}
 				}).then(res=>{
 					if(res.code=='200'){
@@ -351,12 +393,14 @@
 					})
 				})
 				for (let i = 0; i < lists.length; i++) {
-					const result = await this.uploadFilePromise(lists[i].url)
+					const result = JSON.parse(await this.uploadFilePromise(lists[i].url))
+					console.log(result)
 					let item = this[`fileList${event.name}`][fileListLen]
 					this[`fileList${event.name}`].splice(fileListLen, 1, Object.assign(item, {
 						status: 'success',
 						message: '',
-						url: result
+						url: 'http://localhost:9090//files//dd92b8ce53a546e3b46ca9eeb598663e.jpg',
+						id:result.data.id
 					}))
 					fileListLen++
 				}
@@ -379,7 +423,7 @@
 					});
 				})			
 			},
-			getLenders(){
+			getLenders(){//获取贷款类型
 				this.request({
 					url:"/Lender/getLenders",
 					method:"POST",
@@ -388,11 +432,10 @@
 				}).then(res=>{
 					if(res.code=='200'){
 						this.Lenders=res.data
-						
 					}
 				})
 			},
-			opensure(){
+			opensure(){//确认贷款
 				if(this.model1.lender.id==''){
 					this.$refs.uToast.show({
 										type:'warning',

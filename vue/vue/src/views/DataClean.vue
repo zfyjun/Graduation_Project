@@ -76,6 +76,7 @@
             width="200">
         </el-table-column>
       </el-table>
+      <div style="margin-top: 5% " v-if="handworkflag==false">暂无需要手动清洗的数据</div>
     </div>
 
     <div style="margin-top: 5%" v-if="handworkflag==true">
@@ -152,6 +153,7 @@
           </template>
         </el-table-column>
       </el-table>
+
     </div>
 <!--对话框==================================================================================-->
     <div>
@@ -653,7 +655,8 @@ export default {
     },
     AutoclearData(){//自动清洗数据
       this.autodeleteDate()
-      this.autoinputnull()
+      this.autodeleteDate()
+
     },
     autodeleteDate(){//自动数据删除重复
       for(let i=0;i<this.clearDateWork.length;i++){
@@ -678,6 +681,7 @@ export default {
           }
         }
       }
+      this.autoinputnull()
     },
     autoinputnull(){//自动填空
       for(let i=0;i<this.clearDateWork.length;i++){
@@ -703,11 +707,11 @@ export default {
           i--
         }
       }
+      this.clearData()
     },
     clearData(){//数据清洗手动点开
       this.clearDateWork=[]
       this.repetition()
-      console.log(this.clearDateWork)
     },
     repetition(){//重复数据
       for(let i=0;i<this.tableData.length;i++){
@@ -740,11 +744,7 @@ export default {
         this.handworkflag=true
       }
       else {
-        this.$message({
-          showClose: true,
-          message: '暂无需要清洗的数据',
-          type: 'success'
-        })
+        this.handworkflag=false
       }
     },
     DataFormat(tableDatanow){//错误格式

@@ -63,6 +63,15 @@ public class CreditCardController {
         }
         return Result.success(maps);
     }
+    @PostMapping("/getCreditCard")//获取当前信用卡的信息
+    public Result getCreditCard(@RequestBody Map map){
+        Integer cid=(Integer) map.get("cid");
+        CreditCard creditCard=creditCardMapper.selectOne(Wrappers.<CreditCard>lambdaQuery().eq(CreditCard::getCid,cid));
+        if(creditCard!=null){
+            return Result.success(creditCard);
+        }
+        return Result.error("500","该信用卡不存在");
+    }
     @PostMapping("/getBill")//获取当前信用卡的每月账单
     public Result getBill(@RequestBody Map map){
         Integer cid=(Integer) map.get("cid");

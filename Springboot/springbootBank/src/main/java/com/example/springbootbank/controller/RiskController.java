@@ -62,6 +62,12 @@ public class RiskController {
         }
         return Result.success(map);
     }
+    @PostMapping("/getriskOne")//获取单个用户风险得分
+    public Result getriskOne(@RequestBody Map map){
+        Integer uid=(Integer) map.get("uid");
+        UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,uid));
+        return Result.success(userCredit.getRisk());
+    }
     @PostMapping("/riskanalysis")//风险分析
     public Result getLoans(@RequestBody Map map){
         Integer type=(Integer) map.get("type"); //分析类型，1为全部用户进行风险分析，2为只对使用系统的用户分析，3为指定某个用户进行分析

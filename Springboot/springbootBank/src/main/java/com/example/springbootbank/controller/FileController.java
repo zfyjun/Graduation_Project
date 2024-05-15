@@ -7,6 +7,7 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.Files;
@@ -15,6 +16,7 @@ import com.example.springbootbank.mapper.FilesMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +47,7 @@ public class FileController {
 //    private String ip;
 
     @PostMapping("/upload")
-    public String upload(@RequestParam MultipartFile file) throws IOException {
+    public Result upload(@RequestParam MultipartFile file) throws IOException {
         String originalFilename= file.getOriginalFilename();
         String type = FileUtil.extName(originalFilename);
         long size = file.getSize();
@@ -57,8 +60,6 @@ public class FileController {
         if(!parentFile.exists()){
             parentFile.mkdirs();
         }
-
-
         String md5;
         String url;
         file.transferTo(uploadFile);
@@ -77,7 +78,10 @@ public class FileController {
         saveFile.setUrl(url);
         saveFile.setMd5(md5);
         filesMapper.insert(saveFile);
-        return String.valueOf(saveFile.getId());
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("url",url);
+        jsonObject.put("id",saveFile.getId());
+        return Result.success(jsonObject);
     }
 
 

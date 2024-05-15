@@ -72,7 +72,7 @@
 					</view>
 				    
 					<view v-if="cards3">
-						<u--text style="padding-top: 5%;padding-left: 20%;" align="left" type="info" :text="'信用卡（'+cardsText[2]+'）'"></u--text>
+						<u--text style="padding-top: 5%;padding-left: 20%;" align="left" type="info" :text="'信用卡（'+cardsText[2]+'）'+'等级'"></u--text>
 						<view class="u-demo-block__content" style="padding-top: 5%;padding-bottom: 1%;">
 						    <u-row>
 						        <u-col span="3">
@@ -85,7 +85,7 @@
 								    <u-button plain style="width: 80%;" type="" text="存取" @click="opneoutandsave(3)" ></u-button>
 								</u-col>
 								<u-col span="3">
-								    <u-button plain style="width: 80%;" type="" text="升级" ></u-button>
+								    <u-button plain style="width: 80%;" type=""  @click="update(3)"  text="升级" ></u-button>
 								</u-col>
 						    </u-row>
 						</view>
@@ -238,6 +238,22 @@
 			this.getCards()
 		},
 		methods:{
+			update(val){//信用卡升级
+				console.log("val"+val)
+				this.getCards().then(e=>{
+					for(let i=0;i<this.mycards.length;i++){
+						if(this.mycards[i].type===val){
+							console.log(this.mycards[i])
+							uni.setStorageSync('bankdetail',this.mycards[i])
+							break
+					    }
+					}
+				}).then(e=>{
+					uni.navigateTo({
+						url:"/pages/bankcards/updateCreditCard/updateCreditCard"
+					})
+				});
+			},
 			sectionChange(index) {//选择储蓄或信用卡
 							this.current = index;
 						},
@@ -496,6 +512,13 @@
 												message:"操作成功！",
 											})
 						}
+						else{
+							this.$refs.uToastout.show({
+												type:'error',
+												duration:'3000',
+												message:res.msg,
+											})
+						}
 						this.getCards()
 					})	
 				}
@@ -533,6 +556,7 @@
 			    	    }
 			    	}
 			    }).then(e=>{
+					uni.removeStorageSync("myloans")
 			    	uni.navigateTo({
 			    		url:"/pages/bankcards/loans/loans"
 			    	})

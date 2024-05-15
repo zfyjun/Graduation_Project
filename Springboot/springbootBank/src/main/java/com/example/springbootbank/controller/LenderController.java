@@ -72,7 +72,7 @@ public class LenderController {
         UserLoans userLoans=userLoansMapper.selectOne(Wrappers.<UserLoans>lambdaQuery().eq(UserLoans::getUid,id));
         Returnmsg returnmsg=new Returnmsg();
         returnmsg.setAge(userInfo.getAge());
-        returnmsg.setId(id);
+        returnmsg.setId(userLoans.getId());
         returnmsg.setDefaults(userCredit.getDefaults());
         returnmsg.setMarital(userInfo.getMarital());
         List<PassMsg> passMsgList= JSONArray.parseArray(userLoans.getPassmsg(),PassMsg.class);
@@ -84,6 +84,7 @@ public class LenderController {
             urls.add(files.getUrl());
         }
         returnmsg.setUrls(urls);
+        returnmsg.setRisk(userCredit.getRisk());
         return Result.success(returnmsg);
     }
 }
@@ -94,5 +95,6 @@ class Returnmsg{
     Integer age;
     Integer defaults;
     String marital;
+    Integer risk;
     List <String> urls;
 }
