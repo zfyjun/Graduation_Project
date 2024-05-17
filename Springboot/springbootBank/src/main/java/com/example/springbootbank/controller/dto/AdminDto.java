@@ -8,9 +8,11 @@ import java.util.List;
 @Data
 public class AdminDto {
     private String id;
+    private String name;
     private String username;
     private String password;
     private String role;
+    private String phone;
     private String token;
     private List<Menu> menus;
 }

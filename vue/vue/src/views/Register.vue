@@ -31,15 +31,15 @@ export default {
       rules:{
         username:[
           {required:true,message:"请输入用户名",trigger:'blur'},
-          {min:1,max:10,message: "长度在1到10个字符",trigger: 'blur'}
+          {min:1,max:10,message: "长度在5到10个字符",trigger: 'blur'}
         ],
         password: [
           {required:true,message:"请输入密码",trigger:'blur'},
-          {min:1,max:15,message: "长度在1到15个字符",trigger: 'blur'}
+          {min:1,max:15,message: "长度在7到15个字符",trigger: 'blur'}
         ],
         confirmPassword: [
           {required:true,message:"请确认密码",trigger:'blur'},
-          {min:1,max:15,message: "长度在1到15个字符",trigger: 'blur'}
+          {min:1,max:15,message: "长度在7到15个字符",trigger: 'blur'}
         ],
       }
     }
@@ -52,10 +52,16 @@ export default {
             this.$message.error("两次输入密码不一致")
             return false
           }
-          this.request.post("/user/register",this.user).then(res=>{
+          this.request.post("/Admin/register",this.user).then(res=>{
+            // console.log(this.user)
+            // console.log("返回")
+            // console.log(res)
             if(res.code=='200'){
               this.$message.success("注册成功")
-            }else{
+            }else if(res.code=='600'){
+              this.$message.error(res.msg)
+            }
+            else{
               this.$message.error("注册失败")
             }
           })

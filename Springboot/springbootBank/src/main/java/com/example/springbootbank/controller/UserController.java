@@ -7,25 +7,29 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.User;
+<<<<<<< HEAD
 import com.example.springbootbank.entity.UserCredit;
 import com.example.springbootbank.entity.UserLoans;
 import com.example.springbootbank.mapper.UserCreditMapper;
+=======
+import com.example.springbootbank.entity.UserInfo;
+import com.example.springbootbank.mapper.UserInfoMapper;
+>>>>>>> d0ef94d8cb60438e47835a18a1a4585eac0c2dfd
 import com.example.springbootbank.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/User")
 public class UserController {
     @Resource
+    private UserInfoMapper userInfoMapper;
+
 
     @Autowired
     private UserMapper userMapper;
@@ -92,7 +96,15 @@ public class UserController {
 
     @PostMapping
     public Result save(@RequestBody User user){
-        return Result.success(userMapper.insert(user));
+        System.out.println(user);
+        userMapper.insert(user);
+        String account=user.getAccount();
+        User one=userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getAccount,account));
+        UserInfo userInfo=new UserInfo();
+        userInfo.setUid(one.getId());
+        System.out.println(userInfo);
+        userInfoMapper.insert(userInfo);
+        return Result.success();
     }
 
     @PostMapping("/update")
