@@ -1,6 +1,7 @@
 package com.example.springbootbank.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -24,4 +25,8 @@ public class MarketCopy {
     private float close;
     private float volume;
     private float adjustedclose;
+    private Integer mid;
+    private Integer isdelete;
+    @TableField(exist = false)
+    private String changename;
 }

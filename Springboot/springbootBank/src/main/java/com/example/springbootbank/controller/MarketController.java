@@ -2,13 +2,12 @@ package com.example.springbootbank.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.Result;
-import com.example.springbootbank.entity.Market;
-import com.example.springbootbank.entity.MarketCopy;
-import com.example.springbootbank.entity.MarketName;
-import com.example.springbootbank.entity.User;
+import com.example.springbootbank.entity.*;
 import com.example.springbootbank.mapper.BankCardMapper;
 import com.example.springbootbank.mapper.MarketCopyMapper;
 import com.example.springbootbank.mapper.MarketMapper;
@@ -80,7 +79,6 @@ public class MarketController {
             Market market= marketMapper.selectOne(Wrappers.<Market>lambdaQuery().eq(Market::getMarketid,markets.get(i).getMarketid()).eq(Market::getDate,markets.get(i).getDate()));
             if(market!=null){//有时间上的重复的
                 Integer id=market.getId();
-                System.out.println(id);
                 markets.get(i).setId(id);//设置对应的id
                 cmarketList.add(markets.get(i));
             }
@@ -98,35 +96,45 @@ public class MarketController {
         if(cmarketList.size()>0){
             return Result.success(cmarketList);
         }
-        return Result.error("500","暂无该时间段内市场的市场数据");
+        return Result.success();
     }
 
     @PostMapping("/recost")//撤销操作
-    public Result recost(@RequestBody List<Integer> ids){
+    public Result recost(@RequestBody List<MarketCopy> marketCopyList){
         //排序
-        Collections.sort(ids);//正序
-        for(int i=ids.size()-1;i>=0;i--){//倒叙访问
-            MarketCopy marketCopy=marketCopyMapper.selectById(ids.get(i));//获取当前需要撤回的操作
+        List<List<MarketCopy>> listList=new ArrayList<>();//记录所有
+        for(int i=marketCopyList.size()-1;i>=0;i--){//倒叙访问
+            MarketCopy marketCopy=marketCopyMapper.selectById(marketCopyList.get(i).getId());//获取当前需要撤回的操作数据
             Integer yuanid=marketCopy.getQuondamid();
-            //先进行时间验证，看有没有在这条操作后面又对该数据进行了操作
-            QueryWrapper<MarketCopy> queryWrapper=new QueryWrapper<>();
-            List<MarketCopy> marketCopies=marketCopyMapper.selectList(queryWrapper.eq("quondamid",yuanid));
-            for(int j=marketCopies.size()-1;j>=0;j--){
-                if(marketCopies.get(j).getChangedate().isAfter(marketCopy.getChangedate())&&marketCopies.get(j).getId()!=marketCopy.getId()){
-                    return Result.error("500","该数据在本次操作后又被更改，若要撤回本次操作,请找到该数据在此次更改后所有的记录进行撤回操作");
-                }
-            }
+            List<MarketCopy> insertmarkets=new ArrayList<>();//记录被更新的插入数据的列表(每个)
             //验证通过
             if(marketCopy.getChangeway()==2){//插入撤回，操作
-                if(marketMapper.deleteById(marketCopy.getQuondamid())==1){//删除插入的数据
-                    if(marketCopyMapper.deleteById(marketCopy.getId())==1){//删除操作记录
+                //删除插入操作前先进行时间验证，看有没有在这条操作后面又对该数据进行了操作
+                QueryWrapper<MarketCopy> queryWrapper=new QueryWrapper<>();
+                List<MarketCopy> marketCopies=marketCopyMapper.selectList(queryWrapper.eq("isdelete",0).eq("quondamid",yuanid));
+                int flag=0;
+                for(int j=marketCopies.size()-1;j>=0;j--){
+                    if(marketCopies.get(j).getChangedate().isAfter(marketCopy.getChangedate())&&marketCopies.get(j).getId()!=marketCopy.getId()){
+                       flag=1;
+                       insertmarkets.add(marketCopies.get(j));
+                    }
+                }
+                if(flag==0){
+                    if(marketMapper.deleteById(marketCopy.getQuondamid())==1){//删除插入的数据
+                        marketCopy.setIsdelete(1);
+                        if(marketCopyMapper.updateById(marketCopy)==1){//删除操作记录
+                        }
+                        else {
+                            return Result.error("500","操作记录删除失败");
+                        }
                     }
                     else {
-                        return Result.error("500","操作记录删除失败");
+                        return Result.error("500","数据删除失败");
                     }
                 }
                 else {
-                    return Result.error("500","数据删除失败");
+                    insertmarkets.add(0,marketCopy);
+                    listList.add(insertmarkets);
                 }
             }
             else if(marketCopy.getChangeway()==1){//覆盖操作，还原
@@ -139,7 +147,8 @@ public class MarketController {
                 market.setAdjustedclose(marketCopy.getAdjustedclose());
                 market.setVolume(marketCopy.getVolume());
                 if(marketMapper.updateById(market)==1){//还原数据
-                    if(marketCopyMapper.deleteById(marketCopy)==1){//删除记录
+                    marketCopy.setIsdelete(1);
+                    if(marketCopyMapper.updateById(marketCopy)==1){//删除记录(删除位标记为1)
                     }
                     else {
                         return Result.error("500","删除记录失败");
@@ -150,33 +159,48 @@ public class MarketController {
                 }
             }
         }
-        return Result.error("500","操作失败");
+        return Result.success(listList);
     }
     @PostMapping("/updatedate")//更新时间重复的数据为最新数据
     public Result updatedate(@RequestBody List<Market> markets){
-        Integer flag=0;
         LocalDateTime now=LocalDateTime.now();
         Integer sum=howmenytimes();
         for(int i=0;i<markets.size();i++){
             Market market=marketMapper.selectById(markets.get(i).getId());//原数据
-            if(marketMapper.updateById(markets.get(i))!=1){//覆盖失败
-                flag=1;
-                return Result.error("500","错误！存在数据更新失败");
-            }
-            else {//覆盖成功，更新对应的数据备份
-                if(!setcopy(1,market,now,sum)){//传入原数据
+            if(marketMapper.updateById(markets.get(i))==1){//覆盖成功，更新对应的数据备份
+                if(setcopy(1,market,now,sum)){//传入原数据
+                }
+                else{
                     return Result.error("500","数据备份时出现错误！");
                 }
             }
+            else {//覆盖失败
+                return Result.error("500","错误！存在数据更新失败");
+            }
         }
-        if(flag==0){//无意外产生
-            return Result.success();
+        System.out.println("结束");
+        return Result.success();
+    }
+    @PostMapping("/getcopys")//获取备份信息(分页查询)
+    public Result getcopys(@RequestBody Map map){
+        Integer pageNum=(Integer) map.get("pageNum");
+        Integer pageSize=(Integer) map.get("pageSize");
+        Integer types=(Integer) map.get("types");
+        Integer mid=(Integer) map.get("mid");
+        System.out.println(types);
+        Page<MarketCopy> page= Page.of(pageNum,pageSize);
+        QueryWrapper<MarketCopy> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("mid",mid).eq("isdelete",0);
+        if(types!=0){
+            queryWrapper.eq("changeway",types);
         }
-        return Result.error("500","系统错误");
+        marketCopyMapper.selectPage(page,queryWrapper);
+        return Result.success(page);
     }
     public boolean setcopy(Integer type, Market market, LocalDateTime now,Integer sum){//数据备份信息
         MarketCopy marketCopy=new MarketCopy();
         //记录数据
+        marketCopy.setMid(market.getMarketid());
         marketCopy.setAdjustedclose(market.getAdjustedclose());
         marketCopy.setHigh(market.getHigh());
         marketCopy.setDate(market.getDate());

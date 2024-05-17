@@ -2,7 +2,6 @@
 	<view>
 		<view class="box" >
 			<view >
-				<u--image :showLoading="true" :src="src" width="80px" height="80px" @click="click"></u--image>
 				<u--text style="padding-left:  5%;padding-top: 3%;" bold text="贷款选择"></u--text>
 				<u--form  style="padding-left: 5%;;width: 85%;"	labelPosition="left" :model="model1" :rules="rules" ref="uForm">
 							<u-form-item
@@ -168,7 +167,7 @@
 			</view>
 		</view>
 		<view>
-			<u-button style="width: 95%;" type="success" text="贷款申请" @click="opensure"></u-button>
+			<u-button style="width: 95%;" type="success" :text="loanstext" @click="opensure"></u-button>
 		</view>
 		<u-toast ref="uToast"></u-toast>
 		
@@ -236,6 +235,7 @@
 				show:false,
 				show2:false,
 				Lenders:[],
+				loanstext:'贷款申请',
 				model1: {
 					lender: {
 						name: '',
@@ -298,7 +298,7 @@
 						}
 					}
 				})
-				if(flag==1){
+				if(flag==1){//是编辑
 					this.myloans=uni.getStorageSync('myloans')
 					this.type=1
 					this.model1.lender=this.myloans.type
@@ -306,6 +306,7 @@
 					this.model1.userInfo.salary=this.myloans.salary
 					this.model1.userInfo.returnType=this.myloans.returnType
 					this.model1.userInfo.timelimit=this.myloans.timelimit
+					this.loanstext='申请修改'
 				}
 			},
 			sendLoans(){//提交贷款申请

@@ -19,7 +19,7 @@
 						<u-cell icon="lock-opened-fill" title="登录密码" @click="openchangePassword"></u-cell>
 						<u-cell icon="rmb-circle-fill" title="我的理财" @click="tofinance"></u-cell>
 						<u-cell icon="hourglass-half-fill" title="我的贷款" @click="toloans()"></u-cell>
-						<u-cell icon="integral-fill" title="会员等级" value="新版本"></u-cell>
+						<u-cell icon="integral-fill" title="信用卡审核" @click="toCreditCard()" ></u-cell>
 				</u-cell-group>
 			</view>
 			<view style="width: 50%; margin: 5% auto" >
@@ -288,6 +288,11 @@
 			toloans(){//转移到贷款记录与审核页面
 				uni.navigateTo({
 						url:"/pages/person/LoansManagement/LoansManagement"
+				})
+			},
+			toCreditCard(){//转移到信用卡审核界面
+				uni.navigateTo({
+						url:"/pages/person/CreditCardAudit/CreditCardAudit"
 				})
 			}
 			

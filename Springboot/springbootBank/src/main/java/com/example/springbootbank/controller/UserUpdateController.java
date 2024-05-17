@@ -81,6 +81,18 @@ public class UserUpdateController {
             }
             userUpdate.setPassmsg(JSONArray.toJSONString(passMsgList));
             if(userUpdateMapper.updateById(userUpdate)==1){
+                if(type==2){//通过了
+                    CreditCard creditCard=creditCardMapper.selectOne(Wrappers.<CreditCard>lambdaQuery().eq(CreditCard::getCid,userUpdate.getCid()));
+                    float chae=userUpdate.getCost()-creditCard.getLimits();//差额
+                    //更新信用卡信息
+                    creditCard.setLimits(userUpdate.getCost());
+                    creditCard.setRank(userUpdate.getRank());
+                    BankCard bankCard=bankCardMapper.selectById(userUpdate.getCid());
+                    bankCard.setBalance(bankCard.getBalance()+chae);//设置银行卡余额
+                    //更新信息
+                    creditCardMapper.updateById(creditCard);
+                    bankCardMapper.updateById(bankCard);
+                }
                 return Result.success();
             }
         }
@@ -90,6 +102,9 @@ public class UserUpdateController {
     public Result resent(@RequestBody Map map){
         Integer id=(Integer) map.get("id");
         UserUpdate userUpdate=userUpdateMapper.selectById(id);
+        if(userUpdate.getState()==0){
+            return Result.error("500","当前该卡已经提交申请，正在审核中");
+        }
         if(userUpdate!=null){
             float cost=Float.valueOf(String.valueOf(map.get("cost")));//额度
             Integer rank=(Integer) map.get("rank");//等级
@@ -97,12 +112,13 @@ public class UserUpdateController {
             passMsg.setId(IdGeneratorSnowlake.getInstance().snowflakeId());
             passMsg.setState(0);
             passMsg.setSenttime(LocalDateTime.now());
-            List<PassMsg> passMsgList=new ArrayList<>();
+            List<PassMsg> passMsgList=JSONArray.parseArray(userUpdate.getPassmsg(),PassMsg.class);
             passMsgList.add(passMsg);
             userUpdate.setPassmsg(JSONArray.toJSONString(passMsgList));
             userUpdate.setRank(rank);
             userUpdate.setCost(cost);
-            if(userUpdateMapper.insert(userUpdate)==1){
+            userUpdate.setState(0);
+            if(userUpdateMapper.updateById(userUpdate)==1){
                 return Result.success();
             }
         }
@@ -142,8 +158,41 @@ public class UserUpdateController {
         }
         return Result.error("404","操作失败");
     }
-
-    @PostMapping("/getUpdatebyType")//申请信用卡升级提额
+    @PostMapping("/getUpdatebyUID")//获取单人的信用卡申请信息列表
+    public Result getUpdatebyUID(@RequestBody Map map){
+        Integer uid=(Integer) map.get("uid");
+        Integer state=(Integer) map.get("state");
+        QueryWrapper<UserUpdate> queryWrapper=new QueryWrapper<>();
+        List<UserUpdate> userUpdates=userUpdateMapper.selectList(queryWrapper.eq("uid",uid).eq("state",state));
+        if(userUpdates.size()>0){
+            JSONArray jsonArray=new JSONArray();
+            for(int i=0;i<userUpdates.size();i++){
+                BankCard bankCard=bankCardMapper.selectById(userUpdates.get(i).getCid());
+                JSONObject jsonObject=new JSONObject();
+                jsonObject.put("cardnumber",bankCard.getCardnumber());
+                jsonObject.put("passmsg",userUpdates.get(i).getPassmsg());
+                userUpdates.get(i).setPassmsg(null);
+                jsonObject.put("updatemsg",userUpdates.get(i));
+                String statename="";
+                if(userUpdates.get(i).getState()==0){
+                    statename="审核中";
+                }
+                else if(userUpdates.get(i).getState()==1){
+                    statename="未通过";
+                }
+                else if(userUpdates.get(i).getState()==2){
+                    statename="已通过";
+                }
+                jsonObject.put("state",statename);
+                jsonArray.add(jsonObject);
+            }
+            if(jsonArray.size()>0){
+                return Result.success(jsonArray);
+            }
+        }
+        return Result.error("404","无数据");
+    }
+    @PostMapping("/getUpdatebyType")//根据类型获取申请信用卡升级提额的申请信息
     public Result getUpdatebyType(@RequestBody Map map){
         Integer type=(Integer) map.get("type");
         QueryWrapper<UserUpdate> queryWrapper=new QueryWrapper<>();

@@ -302,6 +302,15 @@
           <span>{{'提升后额度：'}}</span>
           <span>{{cardmsg.tolimits+'元'}}</span>
         </div>
+        <span>{{'理由描述：'}}</span>
+        <el-input
+            type="textarea"
+            autosize
+            placeholder="请输入内容"
+            v-model="updatemsg"
+            style="margin-top: 1%"
+        >
+        </el-input>
       </div>
       <span slot="footer" class="dialog-footer">
           <el-button @click="seecardmsg=false">返回</el-button>
@@ -339,7 +348,8 @@ export default {
       times:[],
       cardmsg:{},
       seecardmsg:false,
-      loadingflag:false
+      loadingflag:false,
+      updatemsg:''
     }
   },
   created() {
@@ -441,7 +451,7 @@ export default {
       this.pageNum=pageNum
       this.selectLoans()
     },
-    notpass(){//不通过
+    notpass(){//贷款不通过
       if(this.textarea1==''){
         this.$message({
           showClose: true,
@@ -453,7 +463,7 @@ export default {
         this.setmsg(1)
       }
     },
-    pass(){//通过
+    pass(){//贷款通过
       let flag=0
       this.text=''
       if(this.lookone.risk<58){
@@ -494,7 +504,7 @@ export default {
         this.selectLoans()
       })
     },
-    getcardrable(type){
+    getcardrable(type){//获取信用卡相关申请数据
       this.ranktable=[]
       this.loadingflag=true
       request.post("/UserUpdate/getUpdatebyType",{
@@ -526,6 +536,7 @@ export default {
         if(res.code=='200'){
           this.cardmsg.risk=res.data
           this.seecardmsg=true
+
         }
       })
     },
@@ -538,8 +549,36 @@ export default {
       this.getrisk(e.update.uid)
 
     },
-    cardpass(type){//银行卡申请审核
-
+    cardpass(type){//银行卡申请审核（通过或者不通过）
+      if(type==1&&this.updatemsg==''){
+        this.$message({
+          showClose: true,
+          message: '不通过时需要填入相应的理由！',
+          type: 'error'
+        });
+      }
+      else {
+        request.post("/UserUpdate/requestCard",{
+          id:this.cardmsg.update.id,
+          type:type,
+          msg:this.updatemsg
+        }).then(res=>{
+          if(res.code=='200'){
+            this.seecardmsg=false
+            if(this.activeNamebankcard==1){
+              this.getcardrable(2)//等级提升
+            }
+            else if(this.activeNamebankcard==2){
+              this.getcardrable(1)//额度提升
+            }
+          }
+          this.$message({
+            showClose: true,
+            message: '操作成功！',
+            type: 'success'
+          });
+        })
+      }
     }
   }
 }

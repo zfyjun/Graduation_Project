@@ -2,26 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserUpdateController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/MarketCopy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserUpdate.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/MarketCopyMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/UserUpdateMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/CreditCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/CreditCardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/FileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/FileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/LenderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/LenderController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pytorch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/PayCostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/PayCostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/RiskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/RiskController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserLoansCotroller.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserLoansCotroller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserUpdateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserUpdateController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/MarketCopy.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/MarketCopy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/bankcards.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/bankcards.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/loans/loans.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/loans/loans.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/updateCreditCard/updateCreditCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/updateCreditCard/updateCreditCard.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/index/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/index/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/LoansManagement/LoansManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/LoansManagement/LoansManagement.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/utils/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/utils/request.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vue/src/views/Audit.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Audit.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vue/src/views/DataClean.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/DataClean.vue" afterDir="false" />
     </list>
@@ -61,7 +52,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/课程作业（所有）/毕设/git/springboot/Springboot/springbootBank&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/课程作业（所有）/毕设/git/springboot/vue&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -184,6 +175,40 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration default="true" type="tests" factoryName="Autodetect">
+      <module name="vue" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <module name="vue" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="JavaScript Debug.indexx.html" />
@@ -223,7 +248,12 @@
       <workItem from="1715654184951" duration="2578000" />
       <workItem from="1715680886783" duration="6074000" />
       <workItem from="1715737225799" duration="2229000" />
-      <workItem from="1715743755271" duration="813000" />
+      <workItem from="1715743755271" duration="1536000" />
+      <workItem from="1715762076938" duration="612000" />
+      <workItem from="1715771645783" duration="3287000" />
+      <workItem from="1715784887488" duration="4679000" />
+      <workItem from="1715818321234" duration="10954000" />
+      <workItem from="1715910922304" duration="1343000" />
     </task>
     <servers />
   </component>

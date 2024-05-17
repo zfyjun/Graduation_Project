@@ -62,9 +62,12 @@ class SpringbootBankApplicationTests {
     EnterpriseMapper enterpriseMapper;
     @Autowired
     UserInfoMapper userInfoMapper;
+    @Autowired
+    MarketCopyMapper marketCopyMapper;
     @Test
     void contextLoads() {
-        this.setoverdue();
+        List<MarketCopy> marketCopies=marketCopyMapper.selectList(null);
+        System.out.println(marketCopies);
     }
     public void deletFile(String path) {
         File file=new File(path);
