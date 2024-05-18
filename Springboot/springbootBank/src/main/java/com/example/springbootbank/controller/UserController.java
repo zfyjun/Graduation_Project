@@ -1,20 +1,17 @@
 package com.example.springbootbank.controller;
 
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.User;
-<<<<<<< HEAD
 import com.example.springbootbank.entity.UserCredit;
+import com.example.springbootbank.entity.UserInfo;
 import com.example.springbootbank.entity.UserLoans;
 import com.example.springbootbank.mapper.UserCreditMapper;
-=======
-import com.example.springbootbank.entity.UserInfo;
+
 import com.example.springbootbank.mapper.UserInfoMapper;
->>>>>>> d0ef94d8cb60438e47835a18a1a4585eac0c2dfd
 import com.example.springbootbank.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

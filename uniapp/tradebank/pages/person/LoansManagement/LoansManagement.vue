@@ -3,11 +3,20 @@
 		<view>
 			<u-subsection :list="list" :current="current" @change="sectionChange"></u-subsection>
 		</view>
-	
-	
-	
+		
+		<view v-if="current==0">
+			<u-empty v-if="workloans.length==0" style="padding-top: 20%;" mode="search" text="暂无生效贷款" >
+			</u-empty>
+		</view>
+	    
+	    <view v-if="current==1">
+			<u-empty v-if="historyloans.length==0" style="padding-top: 20%;" mode="search" text="暂无历史贷款" >
+			</u-empty>
+		</view>
 		<!-- 贷款审核历史 -->
 		<view v-if="current==2">
+			<u-empty v-if="loanstable.length==0" style="padding-top: 20%;" mode="search" text="暂无贷款申请记录" >
+			</u-empty>
 			<u-loading-icon :show="showloading" style="padding-top: 30%;"></u-loading-icon>
 			<view class="box" v-for="(item,index) in loanstable">
 				<view style="padding: 2%;">
@@ -36,6 +45,8 @@
 				current: 0,
 				user:uni.getStorageSync('user'),
 				loanstable:[],//用户贷款申请列表
+				workloans:[],//生效中贷款
+				historyloans:[],//历史贷款
 				loanstype:[],
 				showloading:false,
 			}

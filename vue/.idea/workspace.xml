@@ -2,19 +2,27 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pytorch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserUpdateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserUpdateController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/MarketCopy.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/MarketCopy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/PredictController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/Predict.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/PredictMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/c1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/dnn6.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pymodel.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/yb.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/UserInfoMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/UserInfoMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/resources/application.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/loans/loans.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/loans/loans.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/updateCreditCard/updateCreditCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/updateCreditCard/updateCreditCard.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pytorch.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pytorch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/src/utils/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/utils/request.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/src/views/Audit.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Audit.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/src/views/DataClean.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/DataClean.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/utils/pyrequest.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/utils/pyrequest.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/Market.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Market.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -254,6 +262,8 @@
       <workItem from="1715784887488" duration="4679000" />
       <workItem from="1715818321234" duration="10954000" />
       <workItem from="1715910922304" duration="1343000" />
+      <workItem from="1715960883424" duration="5419000" />
+      <workItem from="1715995850303" duration="9501000" />
     </task>
     <servers />
   </component>

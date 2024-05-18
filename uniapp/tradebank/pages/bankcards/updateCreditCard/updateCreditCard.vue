@@ -158,6 +158,7 @@
 				}
 			},
 			confirm(type){//提交验证
+			    console.log('提交'+type)
 			    if(type==1){//额度
 					if(this.cost<=this.CreditCard.limits){
 						this.$refs.uToast2.show({
@@ -174,7 +175,7 @@
 										})
 					}
 					else{
-						if(this.CreditCardupdate!=null){
+						if(this.CreditCardupdate!=''){
 							this.resentmsg()
 						}
 						else{
@@ -199,7 +200,7 @@
 											})
 						}
 						else{
-							if(this.CreditCardupdate!=null){
+							if(this.CreditCardupdate!=''){
 								this.resentmsg()
 							}
 							else{

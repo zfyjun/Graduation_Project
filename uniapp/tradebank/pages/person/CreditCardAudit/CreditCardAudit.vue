@@ -1,7 +1,9 @@
 <template>
 	<view>
 		<u-subsection :list="list" :current="curNow" @change="sectionChange" activeColor="rgba(250,193,106)"></u-subsection>
-		<view>
+		<view  >
+			<u-empty v-if="tabledate.length==0" style="padding-top: 20%;" mode="search" text="暂无数据" >
+			</u-empty>
 			<view class="box" v-for="(item,index) in tabledate" @click="toDetail(item)" >
 				<view style="padding: 2%;">
 					<view style="display: flex;">

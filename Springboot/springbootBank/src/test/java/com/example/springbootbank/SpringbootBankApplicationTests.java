@@ -54,7 +54,8 @@ class SpringbootBankApplicationTests {
     MarketMapper marketMapper;
     @Autowired
     UserLoansMapper userLoansMapper;
-
+    @Autowired
+    MarketNameMapper marketNameMapper;
     @Autowired
     UserCreditMapper userCreditMapper;
 
@@ -66,8 +67,34 @@ class SpringbootBankApplicationTests {
     MarketCopyMapper marketCopyMapper;
     @Test
     void contextLoads() {
-        List<MarketCopy> marketCopies=marketCopyMapper.selectList(null);
-        System.out.println(marketCopies);
+        setlastmarketv();
+    }
+    public void setlastmarketv(){//给市场设置最新值marketname
+        List<MarketName> marketNames=marketNameMapper.selectList(null);
+        for(int i=0;i<marketNames.size();i++){
+            QueryWrapper<Market> queryWrapper=new QueryWrapper<>();
+            queryWrapper.orderByDesc("date").eq("marketid",marketNames.get(i).getId());
+            List<Market> marketCopies=marketMapper.selectList(queryWrapper);
+            marketNames.get(i).setNowdata(marketCopies.get(0).getAdjustedclose());//设置最新数据
+            marketNames.get(i).setPredicttime(LocalDateTime.now());//设置预测时间
+            float rates=(marketNames.get(i).getPredictdata()/marketNames.get(i).getNowdata());
+            if(rates>=1.1&&rates<1.3){//上升
+                marketNames.get(i).setEvaluation(1);
+            }
+            else if(rates>=1.3){//大幅度上升
+                marketNames.get(i).setEvaluation(2);
+            }
+            else if(rates<1.1&&rates>0.9){//保持
+                marketNames.get(i).setEvaluation(3);
+            }
+            else if(rates<=0.9&&rates>0.7){
+                marketNames.get(i).setEvaluation(4);
+            }
+            else if(rates<=0.7){
+                marketNames.get(i).setEvaluation(5);
+            }
+            marketNameMapper.updateById(marketNames.get(i));
+        }
     }
     public void deletFile(String path) {
         File file=new File(path);

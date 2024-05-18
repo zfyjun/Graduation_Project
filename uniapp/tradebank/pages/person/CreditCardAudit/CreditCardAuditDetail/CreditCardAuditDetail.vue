@@ -69,6 +69,9 @@
 		onLoad() {
 			this.setType()
 		},
+		onBackPress() {
+			uni.removeStorageSync('CreditCardupdate')
+		},
 		methods:{
 			setType(){//设置状态颜色
 				if(this.CreditCardupdate.updatemsg.state==0){

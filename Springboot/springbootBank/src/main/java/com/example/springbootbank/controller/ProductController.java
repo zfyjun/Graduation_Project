@@ -3,8 +3,10 @@
 package com.example.springbootbank.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.*;
@@ -123,6 +125,21 @@ public class ProductController {
             return Result.success();
         }
         return Result.error("500","更新商品失败！");
+    }
+    @PostMapping("/selectpages")//搜索产品，分页
+    public Result selectpages(@RequestBody Map map){
+        Integer type=(Integer) map.get("type");
+        String name=(String) map.get("name");
+        Integer pageNum=(Integer) map.get("pageNum");
+        Integer pageSize=(Integer) map.get("pageSize") ;
+        Page<Product> page= Page.of(pageNum,pageSize);
+        LambdaQueryWrapper<Product> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.like(Product::getName,name).eq(Product::getIsdeleted,1);
+        if(type!=0){
+            queryWrapper.eq(Product::getType,type);
+        }
+        productMapper.selectPage(page,queryWrapper);
+        return Result.success(page);
     }
     @PostMapping("/RateChange")//修改利率
     public Result RateChange(@RequestBody Product product){

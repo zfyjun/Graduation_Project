@@ -1,6 +1,6 @@
 <template>
-  <div style="padding: 2%" >
-    <div @click="handerVideo(1)">
+  <div style="padding: 2%" v-loading="trianloading" >
+    <div @click="handerVideo(1)" >
       市场分析
     </div>
     <el-form ref="form"  label-width="100px">
@@ -61,7 +61,6 @@
 
 <!--==========================================================================================-->
     <el-dialog
-
         :visible.sync="showdetailflag"
         width="80%"
         :before-close="handleClose"
@@ -73,15 +72,40 @@
     </el-dialog>
 
     <el-dialog
-        title="市场预测"
+        :title="'市场预测('+modelnameone+')'"
         :visible.sync="predictflag"
         width="60%"
         close-on-press-escape="true"
     >
-      <div style="padding: 2%;width: 100%">
-
+      <div style="padding: 2%;width: 100%" v-loading="repredictloading">
+        <div style="margin-bottom: 2%">
+          <span>{{'模型准确率（预测数据与原数据相差5%以内为准确预测）：'+workquit+'%'}}
+             <el-popover
+                 placement="top-start"
+                 title="提示"
+                 width="200"
+                 trigger="hover"
+                 content="暂时保存这一结果，如果需要变动请重新预测">
+                  <el-button  slot="reference" type="text" size="medium" @click="save" >保存<i class="el-icon-edit-outline"></i></el-button>
+              </el-popover>
+              <el-button style="margin-left: 2%" v-if="marketsave[mid-1][modelvalue].pnum!=''" slot="reference" type="text" size="medium" @click="reperdict" >重新预测<i class="el-icon-edit-outline"></i></el-button>
+          </span>
+        </div>
+        <div id="market3" style="width: 100%;height: 300px" ></div>
+        <div style="padding-top: 2%">
+          <div style="display: flex">
+            <span>{{'预测平均值: '+this.pingjun}}</span>
+            <span style="margin-left: 2%" >{{'预测最小值: '+this.min}}</span>
+            <span style="margin-left: 2%" >{{'预测最大值: '+this.max}}</span>
+          </div>
+          <div>
+            <span>{{'与市场最新数据差距: '+caju+'%'}}</span>
+          </div>
+        </div>
       </div>
     </el-dialog>
+
+
   </div>
 </template>
 
@@ -96,7 +120,7 @@ export default {
       startdate:20230101,
       endate:20230313,
       value1:['2023-01-01','2023-3-13'],
-      modelname:[{id:0,name:"逻辑回归"},{id:1,name:"线性判别"},{id:2,name:"K近邻"},{id:3,name:"决策树"},{id:4,name:"随机森林"},{id:5,name:"梯度提升"},{id:6,name:"支持向量机"},{id:7,name:"人工神经网络"},{id:8,name:"bp神经网络"}],
+      modelname:[{id:0,name:"bp神经网络"},{id:1,name:"卷积神经网络"}],
       marketDate:[],
       marketname:[],
       showdetailflag:false,
@@ -111,21 +135,30 @@ export default {
       seriesmarketone:[],
       seriesmarketone2:[],
       mid:1,
-      modelvalue:7,
+      modelvalue:0,
       predictflag:false,
       predictData:[],
       etime:'',
       btime:'',
       dateRange:this.limitDate(),
       testdata:[],
-      triandata:[],
+      trianloading:false,
+      workquit:0,
+      pingjun:0,
+      max:0,
+      min:0,
+      workbie3number:[],
+      caju:0,
+      modelnameone:'bp神经网络',
+      marketsave:[],
+      repredictloading:false,
+      savemodel:[{id:0,name:"bp神经网络",pnum:0,maxnum:0,minnum:0,caju:0},{id:1,name:"卷积神经网络",pnum:0,maxnum:0,minnum:0,caju:0}],
     }
   },
   created() {
     // 从后台获取数据
     this.getmarketname()
     this.getmarketDateTime(0)
-
 
   },
   mounted(){//图形绘制
@@ -139,38 +172,94 @@ export default {
       })
     },
     makedata(){//制作训练集与测试集
+      this.trianloading=true
       var reg1 = new RegExp("-","g")
       let btime=Number(this.btime.replace(reg1,""))
       let etime=Number(this.etime.replace(reg1,""))
       this.testdata=[]
       request.post("/market/getMarketDatebyId",{
-        mid:this.mid,
-        startTime:btime,
-        endtiem:etime
+          mid:this.mid,
+          startTime:btime,
+          endtiem:etime
+        }).then(res => {
+          if(res.code==='200'){
+            let length=res.data.length
+            this.testdata=res.data.slice((length*0.9).toFixed(0),length)
+            if(this.marketsave[this.mid-1][this.modelvalue].pnum==''){//没有预测的数据保存
+              this.marketPredict(res.data)
+            }
+            else {//有预测的数据保存
+              this.workbie3number=[]
+              this.workbie3number=this.testdata.slice((this.testdata.length-27).toFixed(0),this.testdata.length)
+              this.pingjun=this.marketsave[this.mid-1][this.modelvalue].pnum
+              this.max=this.marketsave[this.mid-1][this.modelvalue].maxnum
+              this.min=this.marketsave[this.mid-1][this.modelvalue].minnum
+              this.workbie3number.push({'date':'预测数据（平均）','adjustedclose':this.pingjun})
+              this.workbie3number.push({'date':'预测数据（最低）','adjustedclose':this.min})
+              this.workbie3number.push({'date':'预测数据（最大）','adjustedclose':this.max})
+              let datetime=[],date=[]
+              for(let i=0;i<this.workbie3number.length;i++){
+                datetime.push(this.workbie3number[i].date)
+                date.push(this.workbie3number[i].adjustedclose)
+              }
+              this.trianloading=false
+              this.predictflag=true
+              this.$nextTick(()=>{
+                this.workbie3(datetime,date)
+              })
+            }
+          }
+        })
+    },
+    marketPredict(data){//市场预测
+      pyrequest.post("/train",{
+        type:this.modelvalue,
+        data:data,
       }).then(res => {
-        if(res.code==='200'){
-          let length=res.data.length
-          this.triandata=res.data.slice(0,(length*0.7).toFixed(0))
-          this.testdata=res.data.slice((length*0.7).toFixed(0),length)
-          this.marketPredict(this.testdata,this.triandata)
+        if(res.data.code=="200"){
+          this.predictData=res.data.data
+          this.workquits()
+        }
+        else {
+          this.trianloading=false
         }
       })
     },
-    marketPredict(test,train){//市场预测
-      pyrequest.post("/train",{
-        type:this.modelvalue,
-        train:train,
-        test:test
-      }).then(res => {
-        if(res.data.code=="200"){
-          this.$message({
-            showClose: true,
-            message: '模型训练成功！',
-            type: 'success'
-          })
+    workquits(){//计算准确率,最低、最高、平均值
+      let sum=0,sumss=0;
+      this.workquit=0
+      this.max=this.predictData[0]
+      this.min=this.predictData[0]
+      for(let i=0;i<this.testdata.length;i++){
+        sumss=sumss+this.predictData[i]
+        if(this.testdata[i].adjustedclose*0.6<=this.predictData[i]&&this.predictData[i]<=this.testdata[i].adjustedclose*1.4){
+          sum++;
         }
-        this.predictData=res.data.data.data
-        console.log(this.predictData)
+        if(this.min>this.predictData[i]){
+          this.min=this.predictData[i]
+        }
+        if(this.max<this.predictData[i]){
+          this.max=this.predictData[i]
+        }
+      }
+      this.pingjun=(sumss/this.testdata.length).toFixed(0)
+      this.workquit=((sum/this.predictData.length)*100).toFixed(2)
+      this.workbie3number=[]
+      this.workbie3number=this.testdata.slice((this.testdata.length-27).toFixed(0),this.testdata.length)
+      this.caju=(((this.pingjun-this.workbie3number[this.workbie3number.length-1].adjustedclose)/this.workbie3number[this.workbie3number.length-1].adjustedclose)*100).toFixed(2)
+      this.workbie3number.push({'date':'预测数据（平均）','adjustedclose':this.pingjun})
+      this.workbie3number.push({'date':'预测数据（最低）','adjustedclose':this.min})
+      this.workbie3number.push({'date':'预测数据（最大）','adjustedclose':this.max})
+      let datetime=[],date=[]
+      for(let i=0;i<this.workbie3number.length;i++){
+        datetime.push(this.workbie3number[i].date)
+        date.push(this.workbie3number[i].adjustedclose)
+      }
+      this.trianloading=false
+      this.repredictloading=false
+      this.predictflag=true
+      this.$nextTick(()=>{
+        this.workbie3(datetime,date)
       })
     },
     limitDate(){//时间限制器
@@ -182,7 +271,7 @@ export default {
       }
     },
     /*字符串转时间的函数*/
-     stringToDate(dateStr,separator){
+    stringToDate(dateStr,separator){
       if(!separator){
         separator="-";
       }
@@ -222,7 +311,7 @@ export default {
         mid:this.mid
       }).then(res => {
         if(res.code==='200'){
-          console.log(res.data)
+          // console.log(res.data)
           this.btime=String(res.data.btime)
           this.etime=String(res.data.etime)
           this.btime=this.insertStr(this.btime,4,'-')
@@ -251,7 +340,7 @@ export default {
       }).then(res => {
         if(res.code==='200'){
           this.marketDate=res.data
-          console.log(res.data)
+          // console.log(res.data)
           this.workbie(this.getmarketdataone(1,1),this.getmarketdataone(6,1))
           this.addmarketdata()
         }
@@ -331,6 +420,10 @@ export default {
           this.marketname=res.data
           this.value=res.data[0].marketname
           this.mid=res.data[0].id
+          this.marketsave=[]
+          for(let i=0;i<this.marketname.length;i++){
+            this.marketsave.push(this.savemodel)
+          }
         }
       })
     },
@@ -402,7 +495,127 @@ export default {
         series: seriesmarketone
       };
       option && myChart.setOption(option);
-      console.log(this.legend)
+      // console.log(this.legend)
+    },
+    workbie3(datatime,data){
+      let myChart = echarts.getInstanceByDom(document.getElementById("market3"))
+      // 如果不存在，就进行初始化
+      if (myChart == null) {
+        myChart = echarts.init(document.getElementById("market3"));
+      }
+      let option;
+      option = {
+        title: {
+          text: '市场走向预测折线图',
+          subtext: '市值'
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          }
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          // prettier-ignore
+          data: datatime
+        },
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: '{value} '
+          },
+          axisPointer: {
+            snap: true
+          }
+        },
+        visualMap: {
+          show: false,
+          dimension: 0,
+          pieces: [
+            {
+              gt: 0,
+              lte: 26,
+              color: 'green'
+            },
+            {
+              gt: 26,
+              color: 'red'
+            },
+          ]
+        },
+        series: [
+          {
+            name: '市场带权平均值',
+            type: 'line',
+            smooth: true,
+            data: data,
+            markArea: {
+              itemStyle: {
+                color: 'rgba(255, 173, 177, 0.4)'
+              },
+              data: [
+                [
+                  {
+                    name: '预测数据',
+                    xAxis:'预测数据（平均）'
+                  },
+                  {
+                    xAxis: '预测数据（最大）'
+                  }
+                ],
+              ]
+            }
+          }
+        ]
+      };
+
+      option && myChart.setOption(option);
+    },
+    changemodel(e){
+      for(let i=0;i<this.modelname.length;i++){
+        if(this.modelname[i].id==e){
+          this.modelnameone=this.modelname[i].name
+          break
+        }
+      }
+    },
+    save(){//保存预测结果
+      this.marketsave[this.mid-1][this.modelvalue].pnum=Number(this.pingjun)
+      this.marketsave[this.mid-1][this.modelvalue].maxnum=this.max
+      this.marketsave[this.mid-1][this.modelvalue].minnum=this.min
+      this.marketsave[this.mid-1][this.modelvalue].caju=this.caju
+      this.$message({
+        showClose: true,
+        message: '保存成功！',
+        type: 'success'
+      })
+      console.log(this.marketsave)
+    },
+    reperdict(){//重新预测
+      this.repredictloading=true
+      let reg1 = new RegExp("-","g")
+      let btime=Number(this.btime.replace(reg1,""))
+      let etime=Number(this.etime.replace(reg1,""))
+      this.testdata=[]
+      request.post("/market/getMarketDatebyId",{
+        mid:this.mid,
+        startTime:btime,
+        endtiem:etime
+      }).then(res => {
+        if(res.code==='200'){
+          let length=res.data.length
+          this.testdata=res.data.slice((length*0.9).toFixed(0),length)
+          this.marketPredict(res.data)
+        }
+      })
     }
   },
 }
