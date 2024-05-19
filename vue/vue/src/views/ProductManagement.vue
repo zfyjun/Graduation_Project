@@ -319,7 +319,10 @@
                    <div style="margin-top: 2%">
                      <span >得出利率(%)：</span>
                      <el-input-number v-model="truerate" :precision="2" :step="0.01" step-strictly="true" ></el-input-number>
-                     <el-button style="margin-left: 2%" @click="rework()" >重新计算</el-button>
+                     <el-button style="margin-left: 2%" type="primary" @click="rework()" >重新计算</el-button>
+                     <el-button style="margin-left: 2%" @click="changerate()" >修改利率</el-button>
+                     <el-button style="margin-left: 2%" size="medium" @click="reclear" type="text"><i style="font-size: 15px" class="el-icon-refresh-right"></i></el-button>
+
                    </div>
                    <el-tabs v-model="editableTabsValue" >
                      <el-tab-pane
@@ -419,6 +422,7 @@ export default {
       editableTabsValue:'',
       mmarketrates:[],
       truerate:0,
+      yunaweisiwa:{vuale:'',markeyrates:[]},
     }
   },
   created() {
@@ -452,6 +456,23 @@ export default {
           this.products=[]
           this.showproducts=[]
           this.searchProducts=[]
+        }
+      })
+    },
+    changerate(){//更改利率
+      request.post("/Product/RateChange",{
+        pid:this.analysisproductone.id,
+        rate:(this.truerate).toFixed(2)
+      }).then(res => {
+        if(res.code==='200'){
+          this.$message({
+            showClose: true,
+            message: '今日利率修改成功',
+            type: 'success'
+          })
+        }
+        else{
+
         }
       })
     },
@@ -853,6 +874,8 @@ export default {
       this.analysisproductone=JSON.parse(JSON.stringify(val))
       this.truerate=this.analysisproductone.rate
       this.mmarketrates=JSON.parse(this.analysisproductone.marketrate)
+      this.yunaweisiwa.vuale=this.truerate
+      this.yunaweisiwa.markeyrates=JSON.parse(JSON.stringify(this.mmarketrates))
       this.marketids=[]
       this.analysisproductone.targetmarket=JSON.parse(this.analysisproductone.targetmarket)
       for(let i=0;i<this.analysisproductone.targetmarket.length;i++){
@@ -869,7 +892,23 @@ export default {
         }
       })
     },
+    reclear(){//刷新还原
+      this.truerate=this.yunaweisiwa.vuale
+      this.mmarketrates=JSON.parse(JSON.stringify(this.yunaweisiwa.markeyrates))
+    },
     rework(){//重新计算
+      let sum=0;//先重新规划占比
+      if(this.mmarketrates.length>1){
+        for(let i=0;i<this.mmarketrates.length;i++){
+          sum=sum+this.mmarketrates[i]
+        }
+        for(let i=0;i<this.mmarketrates.length;i++){
+          this.mmarketrates[i]=this.mmarketrates[i]/sum
+        }
+      }
+      else {
+        this.mmarketrates[0]=1
+      }
       for(let i=0;i<this.marketsmsg.length;i++){
         let chaju=this.mmarketrates[i]*((this.marketsmsg[i].predictdata-this.marketsmsg[i].nowdata)/this.marketsmsg[i].nowdata)*5
         this.truerate=this.truerate+chaju
