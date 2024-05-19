@@ -18,8 +18,8 @@
               prefix-icon="el-icon-search"
               v-model=nameinput>
           </el-input>
-          <span slot="label" style="font-size: 12px;margin: auto 0;margin-left: 2%;margin-right: 1%">目标市场</span>
-          <el-select  style="width: 15%" @change="changemarket" v-model="value" filterable  placeholder="请选择">
+          <span v-if="activeIndex==1||activeIndex==2" slot="label" style="font-size: 12px;margin: auto 0;margin-left: 2%;margin-right: 1%">目标市场</span>
+          <el-select v-if="activeIndex==1||activeIndex==2"  style="width: 15%" @change="changemarket" v-model="value" filterable  placeholder="请选择">
             <el-option
                 v-for="item in marketname"
                 :key="item.id"
@@ -170,7 +170,69 @@
         </template>
       </div>
 
-      <div v-if="activeIndex==3"></div>
+      <div v-if="activeIndex==3">
+        <el-table
+            :data="choosenproducts"
+            stripe
+            border
+            style="width: 100%">
+          <el-table-column
+              fixed
+              prop="name"
+              label="产品名称"
+              width="180">
+          </el-table-column>
+          <el-table-column
+              fixed
+              prop="createtime"
+              label="创建时间"
+              width="180">
+          </el-table-column>
+          <el-table-column
+              prop="typename"
+              label="产品类型"
+              width="80">
+          </el-table-column>
+          <el-table-column
+              prop="risk"
+              label="产品风险"
+              width="80">
+          </el-table-column>
+          <el-table-column
+              prop="rate"
+              label="当前利率（%）"
+              width="120">
+          </el-table-column>
+          <el-table-column
+              prop="minday"
+              label="持有期限（天）"
+              width="100">
+          </el-table-column>
+          <el-table-column
+              prop="amount"
+              label="总投资（￥）"
+              width="100">
+          </el-table-column>
+          <el-table-column
+              prop="price"
+              label="起购价(￥)"
+              width="100">
+          </el-table-column>
+          <el-table-column
+              prop="description"
+              label="产品描述"
+              width="400">
+          </el-table-column>
+          <el-table-column
+              fixed="right"
+              label="操作"
+              width="100">
+            <template slot-scope="scope">
+              <el-button style="margin-left: 10%" @click="analysisone(scope.row)" type="text" size="small">分析</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
     <div>
       <el-dialog
@@ -234,6 +296,63 @@
           <el-button type="primary" @click="editSure">确 定</el-button>
         </span>
       </el-dialog>
+
+      <el-dialog
+          :title="analysisproductone.name"
+          :visible.sync="analysoneflag"
+          width="60%"
+          :before-close="handleClose"
+          >
+           <div style="padding: 2%">
+             <el-tabs v-model="activeName" @tab-click="handleClickactive" type="border-card"  >
+               <el-tab-pane label="市场数据" name="first" >
+                 <div v-if="activeName=='first'">
+                   <div style="display: flex">
+                     <span>投资占比：</span>
+                     <div v-for="(item ,index) in marketsmsg" style="margin-left: 2%">
+                       <div>
+                         <span>{{item.marketname+': '}}</span>
+                       </div>
+                       <el-input-number v-model="mmarketrates[index]" :precision="2" :step="0.01" step-strictly="true" :min="0.00" :max="1"></el-input-number>
+                     </div>
+                   </div>
+                   <div style="margin-top: 2%">
+                     <span >得出利率(%)：</span>
+                     <el-input-number v-model="truerate" :precision="2" :step="0.01" step-strictly="true" ></el-input-number>
+                     <el-button style="margin-left: 2%" @click="rework()" >重新计算</el-button>
+                   </div>
+                   <el-tabs v-model="editableTabsValue" >
+                     <el-tab-pane
+                         v-for="(item, index) in marketsmsg"
+                         :key="item.id"
+                         :label="item.marketname"
+                         :name="item.id"
+                     >
+                       <div>
+                         <div >
+                           <span>该市场前景为：</span>
+                           <span v-if="item.evaluation==1||item.evaluation==2" style="color: limegreen">上升</span>
+                           <span v-if="item.evaluation==3" style="color: deepskyblue">平稳</span>
+                           <span v-if="item.evaluation==4||item.evaluation==5" style="color: orange">下降</span>
+                         </div>
+                       </div>
+                     </el-tab-pane>
+                   </el-tabs>
+                 </div>
+               </el-tab-pane>
+               <el-tab-pane label="用户数据" name="second" ></el-tab-pane>
+             </el-tabs>
+             <div style="padding-top: 1%">
+
+               <div v-if="activeName=='second'">
+
+               </div>
+             </div>
+           </div>
+           <span slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="analysoneflag = false">确 定</el-button>
+          </span>
+      </el-dialog>
     </div>
     <div v-if="activeIndex==1||activeIndex==2" class="block" style="margin-top: 2%">
       <el-pagination
@@ -244,6 +363,17 @@
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
           :total="searchProducts.length">
+      </el-pagination>
+    </div>
+    <div v-if="activeIndex==3" class="block" style="margin-top: 2%">
+      <el-pagination
+          @size-change="handleSizeChange2"
+          @current-change="handleCurrentChange2"
+          :current-page="pageNum"
+          :page-sizes="[5, 10, 15, 20]"
+          :page-size="pageSizes"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total2">
       </el-pagination>
     </div>
   </div>
@@ -257,17 +387,21 @@ export default {
   data(){
     return {
       activeIndex:'1',
+      activeName:'first',
       products:[],
       searchProducts:[],
       showproducts:[],
       currentPageIndex:1,
       pageSize:2,
+      pageNum:1,
+      pageSizes:5,
       nameinput:'',
       marketname:[],
       value:'',
       mid:0,
       typeid:0,
       total:0,
+      total2:0,
       marketmsg:'',
       ProductValue:'全部类型',
       productType:[{typename:'全部类型',id:0},{typename:'固期产品',id:1},{typename:'限期产品',id:2}],
@@ -276,7 +410,15 @@ export default {
       dialogVisible3:false,
       producteditOne:{id:null,name:'',type:'',rate:'',minday:'',createtime:'',risk:'',description:'',amount:'',price:'',sum:'',targetmarket:[],historicalrate:[]},
       rates:[],
-      targetmarket:[]
+      targetmarket:[],
+      choosenproducts:[],
+      analysisproductone:{},
+      analysoneflag:false,
+      marketids:[],
+      marketsmsg:[],
+      editableTabsValue:'',
+      mmarketrates:[],
+      truerate:0,
     }
   },
   created() {
@@ -285,8 +427,8 @@ export default {
     this.getproduct()
   },
   methods:{
-    getproduct(){
-      request.post("/Product/getProduct",{}).then(res => {
+    getproduct(){//获取商品信息
+        request.post("/Product/getProduct",{}).then(res => {
         if(res.code==='200'){
           this.products=res.data
           this.searchProducts=res.data
@@ -296,11 +438,6 @@ export default {
           this.products=[]
           this.showproducts=[]
           this.searchProducts=[]
-          this.$message({
-            showClose: true,
-            message: res.msg,
-            type: 'warning'
-          })
         }
       })
     },
@@ -315,18 +452,11 @@ export default {
           this.products=[]
           this.showproducts=[]
           this.searchProducts=[]
-          this.$message({
-            showClose: true,
-            message: res.msg,
-            type: 'warning'
-          })
         }
       })
     },
-    handleSelect(key, keyPath) {
-      this.activeIndex=key
-    },
     addproduct(){//新增产品
+      this.targetmarket=[]
       this.producteditOne={id:null,name:'',type:'',rate:0,minday:1,createtime:'',risk:1,description:'',amount:1,price:1,sum:0,targetmarket:[],historicalrate:"[]"};
       this.dialogVisible2=true
       this.dialogVisible3=true
@@ -636,22 +766,51 @@ export default {
         this.showproducts.push(page)
         size++
       }
+      for(let j=0;j<this.showproducts.length;j++){
+        for(let i=0;i<this.showproducts[j].length;i++){
+          if(this.showproducts[j][i].type==1){
+            this.showproducts[j][i].typename='固期产品'
+          }
+          else {
+            this.showproducts[j][i].typename='限期产品'
+          }
+        }
+      }
+      console.log(this.showproducts)
     },
     handleSizeChange(val) {//转换每页条数
       this.pageSize=val
       this.makeSizepage()
     },
+    handleSizeChange2(val){//切换
+      this.pageSizes=val
+      this.selcetpages()
+    },
     handleCurrentChange(val) {//转换到第几页
       this.currentPageIndex=val
     },
+    handleCurrentChange2(val){
+      this.pageNum=val
+      this.selcetpages()
+    },
     productTypechange(val){//改变产品类型
       this.typeid=val
-      this.searchChange(2)
+      if(this.activeIndex==1||this.activeIndex==2){
+        this.searchChange(2)
+      }
+      else {
+        this.selcetpages()
+      }
     },
     nameChange(val){//名字改变时
-      this.searchChange(0)
+      if(this.activeIndex==1||this.activeIndex==2){
+        this.searchChange(0)
+      }
+      else {
+        this.selcetpages()
+      }
     },
-    handleSelect(key, keyPath) {
+    handleSelect(key, keyPath) {//界面变换
       this.activeIndex=key
       if(key==1){
         this.targetmarket=[]
@@ -660,6 +819,68 @@ export default {
       else if(key==2){
         this.getproductremove()
       }
+      else if(key==3){
+        this.selcetpages()
+      }
+    },
+    selcetpages(){//分页操作（产品分析）
+      request.post("/Product/selectpages",{
+        name:this.nameinput,
+        type:this.typeid,
+        pageNum:this.pageNum,
+        pageSize:this.pageSizes
+      }).then(res => {
+        if(res.code==='200'){
+          this.choosenproducts=res.data.records
+          this.total2=res.data.total
+          for(let i=0;i<this.choosenproducts.length;i++){
+            if(this.choosenproducts[i].type==1){
+              this.choosenproducts[i].typename='固期产品'
+            }
+            else{
+              this.choosenproducts[i].typename='限期产品'
+            }
+          }
+        }
+        else{
+
+        }
+      })
+    },
+    analysisone(val){//单产品分析
+      this.mmarketrates=[]
+      this.marketsmsg=[]
+      this.analysisproductone=JSON.parse(JSON.stringify(val))
+      this.truerate=this.analysisproductone.rate
+      this.mmarketrates=JSON.parse(this.analysisproductone.marketrate)
+      this.marketids=[]
+      this.analysisproductone.targetmarket=JSON.parse(this.analysisproductone.targetmarket)
+      for(let i=0;i<this.analysisproductone.targetmarket.length;i++){
+        this.marketids.push(this.analysisproductone.targetmarket[i].id)
+      }
+      request.post("/Predict/getProductMarketRate",
+        this.marketids
+      ).then(res => {
+        if(res.code==='200'){
+          this.marketsmsg=res.data
+          this.editableTabsValue=this.marketsmsg[0].id
+          console.log(this.marketsmsg)
+          this.analysoneflag=true
+        }
+      })
+    },
+    rework(){//重新计算
+      for(let i=0;i<this.marketsmsg.length;i++){
+        let chaju=this.mmarketrates[i]*((this.marketsmsg[i].predictdata-this.marketsmsg[i].nowdata)/this.marketsmsg[i].nowdata)*5
+        this.truerate=this.truerate+chaju
+      }
+    },
+    handleClickactive(tab,event){
+
+    },
+    handleClose(){//关闭
+      this.analysoneflag=false
+      this.analysisproductone={}
     }
   }
 }

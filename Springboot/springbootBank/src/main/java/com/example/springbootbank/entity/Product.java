@@ -25,6 +25,7 @@ public class Product {
     private float price;
     private float sum;
     private String targetmarket;
+    private String marketrate;
     private String historicalrate;
     private Integer isdeleted;
 }

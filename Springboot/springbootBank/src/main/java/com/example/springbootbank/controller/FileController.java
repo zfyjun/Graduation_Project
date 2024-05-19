@@ -7,13 +7,16 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.Files;
+import com.example.springbootbank.entity.Market;
 import com.example.springbootbank.mapper.FilesMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -21,10 +24,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/files")
+@RequestMapping("/file")
 public class FileController {
     @Value("${files.upload.path}")
     private String fileUpLoadPath;
@@ -42,22 +47,7 @@ public class FileController {
 //    private String ip;
 
     @PostMapping("/upload")
-    public String upload(@RequestParam MultipartFile file) throws IOException {
-//        String originalFilename=file.getOriginalFilename();
-//        String mainName=FileUtil.mainName(originalFilename);
-//        String extName=FileUtil.extName(originalFilename);
-//        if(!FileUtil.exist(ROOT_PATH)){
-//            FileUtil.mkdir(ROOT_PATH);
-//        }
-//        if(FileUtil.exist(ROOT_PATH+File.separator+originalFilename)){
-//            originalFilename=System.currentTimeMillis()+"_"+mainName+"."+extName;
-//        }
-//        File saveFile=new File(ROOT_PATH+File.separator+originalFilename);
-//        file.transferTo(saveFile);
-//        String url="http://localhost:9090/files/download/"+originalFilename;
-//        return Result.success(url);
-
-
+    public Result upload(@RequestParam MultipartFile file) throws IOException {
         String originalFilename= file.getOriginalFilename();
         String type = FileUtil.extName(originalFilename);
         long size = file.getSize();
@@ -70,8 +60,6 @@ public class FileController {
         if(!parentFile.exists()){
             parentFile.mkdirs();
         }
-
-
         String md5;
         String url;
         file.transferTo(uploadFile);
@@ -90,14 +78,15 @@ public class FileController {
         saveFile.setUrl(url);
         saveFile.setMd5(md5);
         filesMapper.insert(saveFile);
-        return url;
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("url",url);
+        jsonObject.put("id",saveFile.getId());
+        return Result.success(jsonObject);
     }
 
 
     @GetMapping("/download/{fileName}")
     public void download(@PathVariable String fileName, HttpServletResponse response) throws IOException {
-
-        System.out.println("预览接口开始运行");
         response.addHeader("Content-Disposition","attachment;filename="+ URLEncoder.encode(fileName,"UTF-8"));
         String filePath=ROOT_PATH+File.separator+fileName;
         if(!FileUtil.exist(filePath)){
@@ -109,6 +98,16 @@ public class FileController {
         outputStream.flush();
         outputStream.close();
         System.out.println("预览接口结束运行");
+    }
+    @PostMapping("/filesDeletById")//根据id删除文件
+    public Result getMarketDatebyId(@RequestBody Map map){
+        Integer id=(Integer) map.get("id");
+        Files files=filesMapper.selectById(id);
+        files.setIsDelete(true);
+        if(filesMapper.updateById(files)==1){
+            return Result.success();
+        }
+        return Result.error("500","文件删除失败");
     }
 
     public Files getFileByMd5(String md5){
@@ -138,27 +137,7 @@ public class FileController {
         }else if("video".equals(type)){
             return Dict.create().set("errno",0).set("data",Dict.create().set("url",url));
         }
-        return Dict.create().set("errno",0);
+        return Dict.create().set("errno",0);}
 
-//        System.out.println("接口开始运行");
-//        String flag;
-//        synchronized (FileController.class){
-//            flag=System.currentTimeMillis()+"";
-//            ThreadUtil.sleep(1L);
-//        }
-//        String fileName=file.getOriginalFilename();
-//        try{
-//            if(!FileUtil.isDirectory(filePath)){
-//                FileUtil.mkdir(filePath);
-//            }
-//            FileUtil.writeBytes(file.getBytes(),filePath+flag+"-"+fileName);
-//            System.out.println(fileName+"--上传成功");
-//        } catch (IOException e) {
-//            System.err.println(fileName+"--文件上传失败");;
-//        }
-//        String http="http://"+ip+":"+port+"/files/";
-//        System.out.println("接口结束运行");
-//        return Dict.create().set("errno",0).set("data", CollUtil.newArrayList(Dict.create().set("url",http+flag+"-"+fileName)));
-    }
 
 }

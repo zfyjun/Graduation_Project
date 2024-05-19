@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/PredictController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/Predict.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/PredictMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/c1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/dnn6.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pymodel.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/yb.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/UserInfoMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/UserInfoMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pytorch.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pytorch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/utils/pyrequest.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/utils/pyrequest.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/Market.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Market.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Vue Single File Component" />
+        <option value="package.json" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectId" id="2fxp7JMbGkSKdZ2RyeKAZ5dVMlC" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/课程作业（所有）/毕设/git/springboot/vue&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\课程作业（所有）\毕设\git\springboot\vue\vue\src\views" />
+      <recent name="D:\课程作业（所有）\毕设\git\springboot\vue\vue\public" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\课程作业（所有）\毕设\git\springboot\vue\vue\src\static" />
+      <recent name="D:\课程作业（所有）\毕设\git\springboot\vue\vue\src\views" />
+      <recent name="D:\课程作业（所有）\毕设\git\springboot\vue\vue\public" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.serve">
+    <configuration default="true" type="DjangoTestsConfigurationType">
+      <module name="vue" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="TARGET" value="" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="indexx.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/vue/vue/vue/src/static/indexx.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="vue" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="vue" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="PyBehaveRunConfigurationType" factoryName="Behave">
+      <module name="vue" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="ADDITIONAL_ARGS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="vue" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Python.FlaskServer">
+      <module name="vue" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <module name="vue" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <method v="2" />
+    </configuration>
+    <configuration name="serve" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/vue/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="serve" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Autodetect">
+      <module name="vue" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <module name="vue" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.indexx.html" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="" />
+      <created>1714752414565</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1714752414565</updated>
+      <workItem from="1714752415897" duration="2956000" />
+      <workItem from="1714791492165" duration="30617000" />
+      <workItem from="1714833300104" duration="1159000" />
+      <workItem from="1714876560134" duration="2471000" />
+      <workItem from="1714909221256" duration="2105000" />
+      <workItem from="1714956299238" duration="42171000" />
+      <workItem from="1715009938548" duration="1211000" />
+      <workItem from="1715044016649" duration="13309000" />
+      <workItem from="1715060306373" duration="21400000" />
+      <workItem from="1715097246888" duration="493000" />
+      <workItem from="1715122799620" duration="1961000" />
+      <workItem from="1715124824711" duration="536000" />
+      <workItem from="1715135046311" duration="1797000" />
+      <workItem from="1715222769763" duration="2875000" />
+      <workItem from="1715252193717" duration="8458000" />
+      <workItem from="1715305583117" duration="2780000" />
+      <workItem from="1715329003115" duration="15819000" />
+      <workItem from="1715391235535" duration="20887000" />
+      <workItem from="1715476613359" duration="4624000" />
+      <workItem from="1715492226695" duration="7281000" />
+      <workItem from="1715504586385" duration="1589000" />
+      <workItem from="1715563342384" duration="1985000" />
+      <workItem from="1715654184951" duration="2578000" />
+      <workItem from="1715680886783" duration="6074000" />
+      <workItem from="1715737225799" duration="2229000" />
+      <workItem from="1715743755271" duration="1536000" />
+      <workItem from="1715762076938" duration="612000" />
+      <workItem from="1715771645783" duration="3287000" />
+      <workItem from="1715784887488" duration="4679000" />
+      <workItem from="1715818321234" duration="10954000" />
+      <workItem from="1715910922304" duration="1343000" />
+      <workItem from="1715960883424" duration="5419000" />
+      <workItem from="1715995850303" duration="9501000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>

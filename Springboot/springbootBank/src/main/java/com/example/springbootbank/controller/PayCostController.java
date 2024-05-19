@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.*;
-import com.example.springbootbank.mapper.BankCardMapper;
-import com.example.springbootbank.mapper.CreditCardMapper;
-import com.example.springbootbank.mapper.ProductMapper;
-import com.example.springbootbank.mapper.UserMapper;
+import com.example.springbootbank.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +37,8 @@ public class PayCostController {
 
     @Autowired
     CreditCardMapper creditCardMapper;
+    @Autowired
+    UserCreditMapper userCreditMapper;
 
     @PostMapping("/out")//取钱
     public Result out(@RequestBody Map map){
@@ -47,6 +46,9 @@ public class PayCostController {
         float cost=Float.valueOf((String)map.get("cost"));
         BankCard bankCard=bankCardMapper.selectById(id);
         if(bankCard!=null){
+            if(bankCard.getType()==3&&!Creditcardsure(id)){//信用卡
+                return Result.error("500","该信用卡存在未还清的逾期账单，请还清逾期账单后继续使用该信用卡！");
+            }
             Detail detail=new Detail();
             //
             detail.setId(IdGeneratorSnowlake.getInstance().snowflakeId());
@@ -135,14 +137,25 @@ public class PayCostController {
                 return Result.error("500","余额不足！支付失败");
             }
             else{
-                if(Consume(bankCard,cost,describe)==1){
-                    return Result.success();
+                if(bankCard.getType()==3&&Creditcardsure(cid)){//信用卡（先检查有没有逾期账单）
+                    if(Consume(bankCard,cost,describe)==1){
+                        return Result.success();
+                    }
+                }
+                else if(bankCard.getType()==3&&!(Creditcardsure(cid))){
+                    return Result.error("500","该信用卡存在未还清的逾期账单，请将逾期账单还清，否则该信用卡无法正常使用！");
+                }
+                else {
+                    if(Consume(bankCard,cost,describe)==1){
+                        return Result.success();
+                    }
                 }
                 return Result.error("500","操作失败！");
             }
         }
         return Result.error("404","错误！账户不存在，请重新选择");
     }
+
 
     @PostMapping("/returnCredit")//还款银行卡
     public Result returnCredit(@RequestBody Map map){
@@ -164,6 +177,13 @@ public class PayCostController {
                         debts.get(i).setInterest(0);//先还利息
                         if((debts.get(i).getNeedreturn()-cost)<=0.01){//后还本金
                             debts.get(i).setNeedreturn(0);
+                            if(debts.get(i).getTimelast().isAfter(LocalDate.now())){
+                            //查看是否是逾期账单，若不是就加分
+                                UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,pbankCard.getUid()));
+                                userCredit.setCredit(userCredit.getCredit()+1);//加一分
+                                userCredit.setKeeps(userCredit.getKeeps()+1);//加一次守信得分
+                                userCreditMapper.updateById(userCredit);
+                            }
                         }
                         else {
                             debts.get(i).setNeedreturn((debts.get(i).getNeedreturn()-cost));
@@ -295,5 +315,22 @@ public class PayCostController {
         }
         return 0;
     }
-
+    public boolean Creditcardsure(Integer cid){//查看信用卡是否能正常使用
+        CreditCard creditCard=creditCardMapper.selectOne(Wrappers.<CreditCard>lambdaQuery().eq(CreditCard::getCid,cid));
+        List<Debt> debts= JSONArray.parseArray(creditCard.getDebt(),Debt.class);
+        Integer flag=0;
+        for(int i=0;i<debts.size();i++){
+            if(debts.get(i).getDays()>0&&debts.get(i).getNeedreturn()>=0.01){//存在还未还款的逾期账单
+                flag=1;
+                break;
+            }
+            if(flag==1){//不可以正常使用
+                return false;
+            }
+            else if(flag==0){//可以正常使用
+                return true;
+            }
+        }
+        return false;
+    }
 }

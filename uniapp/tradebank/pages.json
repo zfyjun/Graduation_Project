@@ -94,6 +94,46 @@
 				"navigationBarTitleText" : "还款",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/bankcards/loans/loans",
+			"style" : 
+			{
+				"navigationBarTitleText" : "贷款",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/person/LoansManagement/LoansManagement",
+			"style" : 
+			{
+				"navigationBarTitleText" : "我的贷款",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/bankcards/updateCreditCard/updateCreditCard",
+			"style" : 
+			{
+				"navigationBarTitleText" : "银行卡升级",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/person/CreditCardAudit/CreditCardAudit",
+			"style" : 
+			{
+				"navigationBarTitleText" : "信用卡审核历史",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/person/CreditCardAudit/CreditCardAuditDetail/CreditCardAuditDetail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "申请详情",
+				"enablePullDownRefresh" : false
+			}
 		}
 		
 	],

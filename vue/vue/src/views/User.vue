@@ -15,12 +15,16 @@
         <el-table-column prop="id" label="id"></el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column prop="account" label="账号"></el-table-column>
+<<<<<<< HEAD
+        <el-table-column prop="idcard" label="身份证号"></el-table-column>
+=======
 <!--        <el-table-column prop="age" label="年龄"></el-table-column>-->
 <!--        <el-table-column prop="job" label="工作"></el-table-column>-->
 <!--        <el-table-column prop="marital" label="婚姻状态"></el-table-column>-->
 <!--        <el-table-column prop="education" label="学历"></el-table-column>-->
+>>>>>>> d0ef94d8cb60438e47835a18a1a4585eac0c2dfd
         <el-table-column prop="phone" label="联系电话"></el-table-column>
-
+        <el-table-column prop="lasttime" label="上次登录时间"></el-table-column>
         <el-table-column label="操作" width="200" align="center">
 
           <template slot-scope="scope">

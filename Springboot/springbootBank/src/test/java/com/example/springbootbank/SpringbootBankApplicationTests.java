@@ -1,37 +1,32 @@
 package com.example.springbootbank;
 
 
-import cn.hutool.core.date.LocalDateTimeUtil;
-
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.example.springbootbank.common.CreateBankCards;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
-import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.*;
 
 import com.example.springbootbank.mapper.*;
-import com.example.springbootbank.service.CodeService;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.annotation.MapperScan;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+
 
 @SpringBootTest
 @MapperScan("com.example.springbootbank.mapper")
@@ -57,10 +52,73 @@ class SpringbootBankApplicationTests {
     CreditCardMapper creditCardMapper;
     @Autowired
     MarketMapper marketMapper;
+    @Autowired
+    UserLoansMapper userLoansMapper;
+    @Autowired
+    MarketNameMapper marketNameMapper;
+    @Autowired
+    UserCreditMapper userCreditMapper;
+
+    @Autowired
+    EnterpriseMapper enterpriseMapper;
+    @Autowired
+    UserInfoMapper userInfoMapper;
+    @Autowired
+    MarketCopyMapper marketCopyMapper;
     @Test
     void contextLoads() {
-        LocalDate now=LocalDate.now();
-        System.out.println(now);
+        setlastmarketv();
+    }
+    public void setlastmarketv(){//给市场设置最新值marketname
+        List<MarketName> marketNames=marketNameMapper.selectList(null);
+        for(int i=0;i<marketNames.size();i++){
+            QueryWrapper<Market> queryWrapper=new QueryWrapper<>();
+            queryWrapper.orderByDesc("date").eq("marketid",marketNames.get(i).getId());
+            List<Market> marketCopies=marketMapper.selectList(queryWrapper);
+            marketNames.get(i).setNowdata(marketCopies.get(0).getAdjustedclose());//设置最新数据
+            marketNames.get(i).setPredicttime(LocalDateTime.now());//设置预测时间
+            float rates=(marketNames.get(i).getPredictdata()/marketNames.get(i).getNowdata());
+            if(rates>=1.1&&rates<1.3){//上升
+                marketNames.get(i).setEvaluation(1);
+            }
+            else if(rates>=1.3){//大幅度上升
+                marketNames.get(i).setEvaluation(2);
+            }
+            else if(rates<1.1&&rates>0.9){//保持
+                marketNames.get(i).setEvaluation(3);
+            }
+            else if(rates<=0.9&&rates>0.7){
+                marketNames.get(i).setEvaluation(4);
+            }
+            else if(rates<=0.7){
+                marketNames.get(i).setEvaluation(5);
+            }
+            marketNameMapper.updateById(marketNames.get(i));
+        }
+    }
+    public void deletFile(String path) {
+        File file=new File(path);
+        if(file.isFile()&&file.exists()){
+            file.delete();
+            System.out.println("删除成功");
+        }
+        else {
+            System.out.println("删除失败");
+        }
+
+    }
+    public void bulid(){
+        List<User > users=userMapper.selectList(null);
+        for(int i=0;i<users.size();i++){
+            UserCredit userCredit=new UserCredit();
+            Integer uid=users.get(i).getId();
+            userCredit.setUid(uid);
+            Enterprise enterprise=enterpriseMapper.selectOne(Wrappers.<Enterprise>lambdaQuery().eq(Enterprise::getUid,uid));
+            if(enterprise!=null){
+                userCredit.setEnterprise(1);
+            }
+            userCreditMapper.insert(userCredit);
+        }
     }
 
     //创建月初账单
@@ -145,6 +203,11 @@ class SpringbootBankApplicationTests {
                             BigDecimal bigDecimal=new BigDecimal(rates+overdue);
                             float balance2=bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue();
                             Debts.get(j).setInterest(balance2);
+                            BankCard bankCard=bankCardMapper.selectById(creditCards.get(i).getCid());
+                            UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,bankCard.getUid()));
+                            userCredit.setDefaults(userCredit.getDefaults()+1);
+                            userCredit.setCredit(userCredit.getCredit()-10);
+                            userCreditMapper.updateById(userCredit);
                         }
                     }
                 }

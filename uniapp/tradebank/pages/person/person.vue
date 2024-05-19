@@ -7,8 +7,8 @@
 					<u-avatar  size="60" class="avatar" ></u-avatar>
 					<u--text color="#fff" class="text1" mode="name"  format="encrypt" bold :text="user.name"></u--text>
 					<view style="flex: 1;">
-						<u--text v-if="enterprise==null" color="#fff" prefixIcon="integral"  iconStyle="font-size: 15px;color:#fff"  align="right"  bold size="12" text="个人账户"></u--text>
-						<u--text v-if="enterprise!=null" color="#fff" prefixIcon="integral"  iconStyle="font-size: 15px;color:#fff"  align="right"  bold size="12" :text="'企业账户:'+enterprise.name"></u--text>
+						<u--text v-if="enterprise.name==null" color="#fff" prefixIcon="integral"  iconStyle="font-size: 15px;color:#fff"  align="right"  bold size="12" text="个人账户"></u--text>
+						<u--text v-if="enterprise.name!=null" color="#fff" prefixIcon="integral"  iconStyle="font-size: 15px;color:#fff"  align="right"  bold size="12" :text="'企业账户:'+enterprise.name"></u--text>
 						<u--text  color="#fff"  align="right" size="13" text="上次登录"></u--text>
 						<u--text  style="margin-bottom: 12%;" align="right"  size="12" :text="user.lasttime"></u--text>
 					</view>
@@ -18,7 +18,8 @@
 				<u-cell-group>
 						<u-cell icon="lock-opened-fill" title="登录密码" @click="openchangePassword"></u-cell>
 						<u-cell icon="rmb-circle-fill" title="我的理财" @click="tofinance"></u-cell>
-						<u-cell icon="integral-fill" title="会员等级" value="新版本"></u-cell>
+						<u-cell icon="hourglass-half-fill" title="我的贷款" @click="toloans()"></u-cell>
+						<u-cell icon="integral-fill" title="信用卡审核" @click="toCreditCard()" ></u-cell>
 				</u-cell-group>
 			</view>
 			<view style="width: 50%; margin: 5% auto" >
@@ -138,9 +139,8 @@
 		},
 		methods:{
 			outlogin(){//安全退出
-				uni.removeStorageSync('user')
-				uni.removeStorageSync('userId')
-				uni.removeStorageSync('bankdetail')
+				uni.clearStorage()
+
 				uni.reLaunch({
 					url:"/pages/login/login"
 				})
@@ -283,6 +283,16 @@
 			tofinance(){//转移到理财页面
 			    uni.navigateTo({
 						url:"/pages/bankcards/finance/finance"
+				})
+			},
+			toloans(){//转移到贷款记录与审核页面
+				uni.navigateTo({
+						url:"/pages/person/LoansManagement/LoansManagement"
+				})
+			},
+			toCreditCard(){//转移到信用卡审核界面
+				uni.navigateTo({
+						url:"/pages/person/CreditCardAudit/CreditCardAudit"
 				})
 			}
 			
