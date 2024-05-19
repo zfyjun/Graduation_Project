@@ -187,7 +187,6 @@ public class MarketController {
         Integer pageSize=(Integer) map.get("pageSize");
         Integer types=(Integer) map.get("types");
         Integer mid=(Integer) map.get("mid");
-        System.out.println(types);
         Page<MarketCopy> page= Page.of(pageNum,pageSize);
         QueryWrapper<MarketCopy> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("mid",mid).eq("isdelete",0);
@@ -196,6 +195,40 @@ public class MarketController {
         }
         marketCopyMapper.selectPage(page,queryWrapper);
         return Result.success(page);
+    }
+
+    @PostMapping("/updatepredict")//上传最新预测数据更新数据库
+    public Result updatepredict(@RequestBody Map map){
+        Integer mid=(Integer) map.get("mid");
+        float predict=Float.valueOf((Integer) map.get("predict")) ;
+        MarketName marketName=marketNameMapper.selectById(mid);
+        //获取当前市场的最新数据
+        QueryWrapper<Market> marketQueryWrapper=new QueryWrapper<>();
+        marketQueryWrapper.orderByDesc("date");
+        List<Market> marketList=marketMapper.selectList(marketQueryWrapper);
+        marketName.setNowdata(marketList.get(0).getAdjustedclose());
+        marketName.setPredictdata(predict);
+        marketName.setPredicttime(LocalDateTime.now());
+        float rates=(marketName.getPredictdata()/marketName.getNowdata());
+        if(rates>=1.1&&rates<1.3){//上升
+            marketName.setEvaluation(1);
+        }
+        else if(rates>=1.3){//大幅度上升
+            marketName.setEvaluation(2);
+        }
+        else if(rates<1.1&&rates>0.9){//保持
+            marketName.setEvaluation(3);
+        }
+        else if(rates<=0.9&&rates>0.7){//下降
+            marketName.setEvaluation(4);
+        }
+        else if(rates<=0.7){//大幅下降
+            marketName.setEvaluation(5);
+        }
+        if(marketNameMapper.updateById(marketName)==1){
+            return Result.success(marketName);
+        }
+        return Result.error("500","更新失败！");
     }
     public boolean setcopy(Integer type, Market market, LocalDateTime now,Integer sum){//数据备份信息
         MarketCopy marketCopy=new MarketCopy();
