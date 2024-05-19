@@ -55,35 +55,18 @@ def trianXY(type,train,test):
     # test_s = scaler.transform(x_val)
     df = pd.DataFrame(columns=['date','adjustedclose'])
     df['date']=ID
-# 逻辑回归
-    model1 = LogisticRegression(C=1e10)
-# 线性判别分析
-    model2 = LinearDiscriminantAnalysis()
-# K近邻
-    model3 = KNeighborsClassifier(n_neighbors=10)
-# 决策树
-    model4 = DecisionTreeClassifier(random_state=77)
-# 随机森林
-    model5 = RandomForestClassifier(n_estimators=1000, max_features='sqrt', random_state=10)
-# 梯度提升
-    model6 = GradientBoostingClassifier(random_state=123)
-# 支持向量机
-    model7 = SVC(kernel="rbf", random_state=77)
-# 神经网络
-    model8 = MLPClassifier(hidden_layer_sizes=(16, 8),alpha=1e-5,solver='sgd', random_state=77, max_iter=10000)
+# 循环神经网络
+    model = MLPClassifier(hidden_layer_sizes=(16, 8),alpha=1e-5,solver='sgd', random_state=77, max_iter=10000)
 #bp神经网络
-    model9 = MLPRegressor(hidden_layer_sizes=(10,), random_state=10, learning_rate_init=0.1)
-    model_list = [model1, model2, model3, model4, model5, model6,model7, model8,model9]
-    model_C=model_list[type]
     # model_C.fit(x_train.astype('int'), y_train.astype('float32'))
-    model_C.fit(data.astype('int'),data.astype('int'))
+    model.fit(data.astype('int'),data.astype('int'))
     # pred = model_C.predict(test_s)
-    pred=model_C.predict(data2)
+    pred=model.predict(data2)
     print(pred)
     df['adjustedclose']=pred
     # csv_name=name+'的预测结果.csv'
     # df.to_csv(csv_name,index=False)
-    return df
+    return df.to_json(orient='split',force_ascii=False)
 
 def DNN(train,test):
     import keras

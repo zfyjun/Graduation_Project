@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -142,21 +143,27 @@ public class ProductController {
         return Result.success(page);
     }
     @PostMapping("/RateChange")//修改利率
-    public Result RateChange(@RequestBody Product product){
+    public Result RateChange(@RequestBody Map map){
+        Integer pid=(Integer) map.get("pid");
+        String rate1=(String) map.get("rate");
+        double rate=Double.valueOf(rate1);
+        System.out.println(rate);
+        Product product=productMapper.selectById(pid);
+        product.setRate(rate);
         List<Rates> rates= JSONArray.parseArray(product.getHistoricalrate(),Rates.class);
         LocalDate now=LocalDate.now();
         int flag=0;
         for(int i=0;i<rates.size();i++){
             if(now.isEqual(rates.get(i).getTime())){//修改今日利率
                 flag=1;
-                rates.get(i).setRate(product.getRate());
+                rates.get(i).setRate(rate);
                 break;
             }
         }
         if(flag==0){//新添加的今日利率
             Rates rateOne=new Rates();
             rateOne.setTime(now);
-            rateOne.setRate(product.getRate());
+            rateOne.setRate(rate);
             rates.add(rateOne);
         }
         product.setHistoricalrate(JSONArray.toJSONString(rates));
