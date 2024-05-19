@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/MarketController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/c1.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/c1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/code.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pymodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/pythonProject/TestDemo/TestDemo/pymodel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vue/src/views/Market.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Market.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -251,7 +251,7 @@
       <workItem from="1716021289635" duration="691000" />
       <workItem from="1716028129167" duration="3000000" />
       <workItem from="1716039882052" duration="6347000" />
-      <workItem from="1716082815877" duration="1806000" />
+      <workItem from="1716082815877" duration="6700000" />
     </task>
     <servers />
   </component>

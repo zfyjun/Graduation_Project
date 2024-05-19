@@ -98,7 +98,7 @@
                  content="暂时保存这一结果，如果需要变动请重新预测">
                   <el-button  slot="reference" type="text" size="medium" @click="save" >保存<i class="el-icon-edit-outline"></i></el-button>
               </el-popover>
-              <el-button style="margin-left: 2%" v-if="marketsave[mid-1][modelvalue].pnum!=0" slot="reference" type="text" size="medium" @click="reperdict" >重新预测<i class="el-icon-edit-outline"></i></el-button>
+              <el-button style="margin-left: 2%"  slot="reference" type="text" size="medium" @click="reperdict" >重新预测<i class="el-icon-edit-outline"></i></el-button>
           </span>
         </div>
         <div id="market3" style="width: 100%;height: 300px" ></div>
@@ -120,7 +120,7 @@
         :visible.sync="dialogVisible"
         width="30%"
     >
-      <div style="padding: 2%" >
+      <div style="padding: 2%" v-loading="addloading" >
           <el-select @change="changemarketpredict" v-model="predictmarketvalue" filterable  placeholder="请选择">
             <el-option
                 v-for="item in looksavemarktpredict"
@@ -176,7 +176,7 @@ export default {
       startdate:20230101,
       endate:20230313,
       value1:['2023-01-01','2023-3-13'],
-      modelname:[{id:0,name:"bp神经网络"},{id:1,name:"卷积神经网络"}],
+      modelname:[{id:0,name:"bp神经网络"},{id:1,name:"卷积神经网络"},{id:2,name:"循环神经网络"}],
       marketDate:[],
       marketname:[],
       showdetailflag:false,
@@ -212,7 +212,8 @@ export default {
       looksavemarktpredict:[],
       predictmarketvalue:'',
       predictmoldevalue:0,
-      nowdata:{"market":[],"save":[],"disable":[],"mdisable":''}
+      nowdata:{"market":[],"save":[],"disable":[],"mdisable":''},
+      addloading:false
     }
   },
   created() {
@@ -280,7 +281,18 @@ export default {
         data:data,
       }).then(res => {
         if(res.data.code=="200"){
-          this.predictData=res.data.data
+          if(this.modelvalue==0||this.modelvalue==1){
+            this.predictData=res.data.data
+            console.log(this.predictData)
+          }
+          else {
+            this.predictData=[]
+            let pp=res.data.data.data
+            for(let i=0;i<pp.length;i++){
+              this.predictData.push(Number(pp[i][1]))
+            }
+            console.log(this.predictData)
+          }
           this.workquits()
         }
         else {
@@ -486,7 +498,7 @@ export default {
           this.mid=res.data[0].id
           this.marketsave=[]
           for(let i=0;i<this.marketname.length;i++){
-            this.marketsave.push([{id:0,name:"bp神经网络",pnum:0,maxnum:0,minnum:0,caju:0},{id:1,name:"卷积神经网络",pnum:0,maxnum:0,minnum:0,caju:0}])
+            this.marketsave.push([{id:0,name:"bp神经网络",pnum:0,maxnum:0,minnum:0,caju:0},{id:1,name:"卷积神经网络",pnum:0,maxnum:0,minnum:0,caju:0},{id:2,name:"循环神经网络",pnum:0,maxnum:0,minnum:0,caju:0}])
           }
         }
       })
@@ -721,6 +733,7 @@ export default {
       this.dialogVisible=true
     },
     sureadd(){//确定上传到数据库
+      this.addloading=true
       console.log(this.nowdata.save[this.predictmoldevalue].pnum)
       request.post("/market/updatepredict",{
         mid:this.nowdata.market.id,
@@ -730,6 +743,13 @@ export default {
           this.nowdata.market=res.data
           this.looksavemarktpredict[this.mid-1].market=res.data
           this.marketname[this.mid-1]=JSON.parse(JSON.stringify(res.data))
+          this.addloading=false
+          this.$message({
+            showClose: true,
+            message: '导入成功！',
+            type: 'success'
+          })
+
         }
       })
     }
