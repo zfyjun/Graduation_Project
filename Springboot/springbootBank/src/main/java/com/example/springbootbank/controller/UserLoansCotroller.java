@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +52,8 @@ public class UserLoansCotroller {
     @Autowired
     UserMapper userMapper;
 
-
+    @Autowired
+    ReLoansMapper reLoansMapper;
     @PostMapping("/sentLoans")//提交贷款申请
     public Result getMarketDatebyId(@RequestBody Map map){
         System.out.println(map);
@@ -117,14 +119,19 @@ public class UserLoansCotroller {
         detailspay.get(detailspay.size()-1).setDescription(msg);
         userLoans.setIspass(type);
         userLoans.setPassmsg(JSONArray.toJSONString(detailspay));
+        userLoans.setNeedreturncost(userLoans.getCost());
+        userLoans.setLasttime(userLoans.getTimelimit());
         if(type==1){//未通过
             if(userLoansMapper.updateById(userLoans)==1){
                 return Result.success();
             }
         }
         else if(type==2){//通过
-            if(addloans(userLoans)&&userLoansMapper.updateById(userLoans)==1){
-                return Result.success();
+            userLoans.setWorktime(LocalDate.now());
+            if(newreturnpay(userLoans)){
+                if(addloans(userLoans)&&userLoansMapper.updateById(userLoans)==1){
+                    return Result.success();
+                }
             }
         }
         return Result.success();
@@ -142,7 +149,36 @@ public class UserLoansCotroller {
         detail.setPlace("网上银行");
         details.add(detail);
         bankCard.setDetail(JSONArray.toJSONString(details));
+        //设置下个月还款账单
+
         if(bankCardMapper.updateById(bankCard)==1){
+            return true;
+        }
+        return false;
+    }
+    //给通过的贷款创建一个还款账单
+    public boolean newreturnpay(UserLoans userLoans){
+        Lender lender=lenderMapper.selectById(userLoans.getLid());
+        float rate=lender.getRate()/1200;//先获取贷款利息（月）
+        ReLoans reLoans=new ReLoans();
+        reLoans.setTime(userLoans.getWorktime().plusMonths(1));//设置下个月还款时间
+        reLoans.setLid(userLoans.getId());
+        reLoans.setCid(userLoans.getCid());
+        reLoans.setUid(userLoans.getUid());
+        //设置还款花费
+        float cost=0;
+        float benjin=userLoans.getCost();//本金
+        float needreturncost=userLoans.getNeedreturncost();//还需归还本金
+        float time=userLoans.getTimelimit();//期限
+        if(userLoans.getReturntype()==1){//等额本息
+            cost=(float)( (benjin*rate*Math.pow(1+rate,time))/(Math.pow(1+rate,time)-1));
+        }
+        else if(userLoans.getReturntype()==2){//等额本金
+            cost=(benjin/time)+needreturncost*rate;
+        }
+        cost=Math.round(cost*100)/100f;
+        reLoans.setCost(cost);
+        if(reLoansMapper.insert(reLoans)==1){
             return true;
         }
         return false;

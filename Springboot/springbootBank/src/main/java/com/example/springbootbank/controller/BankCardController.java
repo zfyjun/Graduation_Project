@@ -6,14 +6,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.springbootbank.common.CreateBankCards;
+import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
-import com.example.springbootbank.entity.BankCard;
-import com.example.springbootbank.entity.CreditCard;
-import com.example.springbootbank.entity.Detail;
-import com.example.springbootbank.entity.User;
-import com.example.springbootbank.mapper.BankCardMapper;
-import com.example.springbootbank.mapper.CreditCardMapper;
-import com.example.springbootbank.mapper.UserMapper;
+import com.example.springbootbank.entity.*;
+import com.example.springbootbank.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +38,18 @@ public class BankCardController {
 
     @Autowired
     CreditCardMapper creditCardMapper;
+
+    @Autowired
+    UserLoansMapper userLoansMapper;
+
+    @Autowired
+    UserCreditMapper userCreditMapper;
+
+    @Autowired
+    ReLoansMapper reLoansMapper;
+
+    @Autowired
+    LenderMapper lenderMapper;
 
     //创建银行卡
     @PostMapping("/creatBankcards")
@@ -142,6 +151,67 @@ public class BankCardController {
         return Result.error("404","不存在银行卡");
     }
 
+    @PostMapping("/returnloans")//还款贷款
+    public Result returnloans(@RequestBody Map map){
+        Integer rid=(Integer) map.get("rid");
+        ReLoans reLoans=reLoansMapper.selectById(rid);
+        LocalDate nowtime=LocalDate.now();
+        if(nowtime.isBefore(reLoans.getTime())){
+            return Result.error("500","尚未到还款日期，请耐心等待！");
+        }
+        BankCard bankCard=bankCardMapper.selectById(reLoans.getCid());
+        if(bankCard.getBalance()<reLoans.getCost()){
+            return Result.error("300","指定还款账户余额不足！");
+        }
+        if(setreturnmoney(bankCard,reLoans.getCost())){
+            Integer lid=(Integer) map.get("lid");
+            UserLoans userLoans=userLoansMapper.selectById(lid);
+            userLoans.setNeedreturncost(userLoans.getNeedreturncost()-reLoans.getCost());//设置剩余金额
+            userLoans.setLasttime(userLoans.getLasttime()-reLoans.getReturnday());//设置剩余期限
+            reLoans.setReturntime(LocalDateTime.now());//设置还款日期
+            if(nowtime.isAfter(reLoans.getTime())){//逾期但还款
+                reLoans.setState(3);
+            }
+            else if(nowtime.isEqual(reLoans.getTime())){//按时归还
+                reLoans.setState(1);
+                //设置守信记录
+                UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,userLoans.getUid()));
+                userCredit.setKeeps(userCredit.getKeeps()+1);
+                userCreditMapper.updateById(userCredit);
+            }
+            if(reLoansMapper.updateById(reLoans)==1){//提交成功，设置下个月的账单
+                if(userLoans.getLasttime()!=0){//还有下一个月的账单
+                    ReLoans reLoan=new ReLoans();
+                    reLoan.setLid(reLoans.getLid());
+                    reLoan.setCid(reLoans.getCid());
+                    reLoan.setUid(reLoans.getUid());
+                    reLoan.setTime(reLoans.getTime().plusMonths(1));
+                    reLoan.setState(0);
+                    Lender lender=lenderMapper.selectById(userLoans.getLid());
+                    float rate=lender.getRate()/1200;//先获取贷款利息（月）
+                    float cost=0;
+                    float benjin=userLoans.getCost();//本金
+                    float needreturncost=userLoans.getNeedreturncost();//还需归还本金
+                    float time=userLoans.getTimelimit();//期限
+                    if(userLoans.getReturntype()==1){//等额本息
+                        cost=(float)( (benjin*rate*Math.pow(1+rate,time))/(Math.pow(1+rate,time)-1));
+                    }
+                    else if(userLoans.getReturntype()==2){//等额本金
+                        cost=(benjin/time)+needreturncost*rate;
+                    }
+                    reLoan.setCost(cost);
+                    reLoansMapper.insert(reLoan);
+                }
+                else if(userLoans.getLasttime()==0){//没有下一个月账单了
+                    userLoans.setIspass(3);
+                }
+                userLoansMapper.updateById(userLoans);//更新
+                return Result.success();
+            }
+        }
+        return Result.error("404","系统错误！");
+    }
+
     @PostMapping("/getCardsDetail")//获取银行卡的detail数组
     public Result getCardsDetail(@RequestBody Map map){
         Integer id=(Integer) map.get("cardsid");
@@ -176,4 +246,21 @@ public class BankCardController {
         return Result.success(bankCard);
     }
 
+    public boolean setreturnmoney(BankCard bankCard,float cost){//设置还款明细
+        List<Detail> details=JSONArray.parseArray(bankCard.getDetail(),Detail.class);
+        Detail detail=new Detail();
+        detail.setId(IdGeneratorSnowlake.getInstance().snowflakeId());
+        detail.setPaytime(LocalDateTime.now());
+        detail.setPlace("网上银行");
+        detail.setCost(cost);
+        detail.setDescribe("归还贷款");
+        detail.setType("贷款还款");
+        details.add(detail);
+        bankCard.setDetail(JSONArray.toJSONString(details));
+        bankCard.setBalance(bankCard.getBalance()-cost);
+        if(bankCardMapper.updateById(bankCard)==1){
+            return true;
+        }
+        return false;
+    }
 }

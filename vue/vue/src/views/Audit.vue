@@ -464,6 +464,7 @@ export default {
       }
     },
     pass(){//贷款通过
+      console.log("通过！")
       let flag=0
       this.text=''
       if(this.lookone.risk<58){
@@ -484,6 +485,9 @@ export default {
       }
       if(flag==1){
         this.warning1=true
+      }
+      else if(flag==0){//完全没有问题
+        this.setmsg(2)
       }
     },
     setmsg(type){//设置用户贷款申请情况

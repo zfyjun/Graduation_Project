@@ -37,6 +37,7 @@
             </el-option>
           </el-select>
           <el-button v-if="activeIndex==1" style="margin-left: 9.5%" type="primary" @click="addproduct()">新增产品</el-button>
+          <el-button v-if="activeIndex==3" style="margin-left: 4.5%" type="primary" @click="analysisproduct">产品分析</el-button>
         </div>
         <el-divider></el-divider>
       </div>
@@ -324,6 +325,14 @@
                      <el-button style="margin-left: 2%" size="medium" @click="reclear" type="text"><i style="font-size: 15px" class="el-icon-refresh-right"></i></el-button>
 
                    </div>
+                   <div style="margin-top: 2%">
+                     <span > 风险分析：</span>
+                     <el-input-number v-model="risk" :precision="0" :step="1" :max="5" :min="1" step-strictly="true" ></el-input-number>
+                     <el-button style="margin-left: 2%" type="primary" @click="rerisk()" >分析风险</el-button>
+                     <el-button style="margin-left: 2%" @click="workrisk()" >修改等级</el-button>
+                     <el-button style="margin-left: 2%" size="medium" @click="reclearrisk" type="text"><i style="font-size: 15px" class="el-icon-refresh-right"></i></el-button>
+
+                   </div>
                    <el-tabs v-model="editableTabsValue" >
                      <el-tab-pane
                          v-for="(item, index) in marketsmsg"
@@ -355,6 +364,155 @@
            <span slot="footer" class="dialog-footer">
               <el-button type="primary" @click="analysoneflag = false">确 定</el-button>
           </span>
+      </el-dialog>
+
+      <el-dialog
+          title="产品分析"
+          :visible.sync="analysproductflag"
+          width="80%"
+      >
+        <div style="padding: 2%">
+          <el-tabs v-model="activeNameanalysis" @tab-click="handleClick">
+            <el-tab-pane label="产品分类" :name="1">
+              <el-tabs v-model="coosecalss" type="border-card">
+                <el-tab-pane label="产品分类" :name="1" >
+                  <div style="padding: 2%" >
+                    <el-button @click="tocalsses" >重新分类</el-button>
+                    <div style="display: flex;flex-wrap:wrap;margin-top: 2%">
+                      <el-card v-for="(item ,index) in productcalsses" style="margin-right: 2%;margin-bottom:2%;width: 30%" >
+                        <div style="display: flex;justify-content: space-between">
+                          <h3>{{'分类:'+item.name}}</h3>
+                          <el-button size="medium" type="text" @click="includeproduct(item)"> 包含产品 </el-button>
+                        </div>
+                        <el-divider></el-divider>
+                       <div>
+                         <span>{{'分类规则:'}}</span>
+                         <div>
+                           <span>{{item.text}}</span>
+                         </div>
+                       </div>
+                      </el-card>
+                    </div>
+                  </div>
+                  <el-dialog
+                      width="30%"
+                      title="产品名称"
+                      :visible.sync="innerVisible"
+                      append-to-body>
+                    <div style="padding: 2%">
+                      <div v-for="(items , indexs) in namelists" >
+                        {{items}}
+                      </div>
+                    </div>
+                  </el-dialog>
+                </el-tab-pane>
+                <el-tab-pane label="新增分类" :name="2" >
+                  <div style="padding: 2%" >
+                    <el-card >
+                      <h4>基本信息</h4>
+                      <div style="display: flex">
+                        <div>
+                          <span>分类名称：</span>
+                          <el-input v-model="classes.name"></el-input>
+                        </div>
+                        <div style="margin-left: 5%">
+                          <span>分类描述：</span>
+                          <el-input type="textarea" v-model="classes.description"></el-input>
+                        </div>
+                      </div>
+                    </el-card>
+                    <div style="margin-top: 2%">
+                      <el-card>
+                        <h4>分类规则</h4>
+                        <div style="display: flex">
+                          <div>
+                            <span>价格规则：</span>
+                            <el-select v-model="classes.regulation.price" placeholder="请选择">
+                              <el-option
+                                  v-for="item in optionprice"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </div>
+                          <div style="margin-left: 5%" >
+                            <span>风险规则：</span>
+                            <el-select v-model="classes.regulation.risk" placeholder="请选择">
+                              <el-option
+                                  v-for="item in optionrisk"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </div>
+                          <div style="margin-left: 5%" >
+                            <span>类型规则：</span>
+                            <el-select v-model="classes.regulation.type" placeholder="请选择">
+                              <el-option
+                                  v-for="item in optiontype"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </div>
+                          <div style="margin-left: 5%" >
+                            <span>额度规则：</span>
+                            <el-select v-model="classes.regulation.sum" placeholder="请选择">
+                              <el-option
+                                  v-for="item in optionsum"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </div>
+                        </div>
+                      </el-card>
+                    </div>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="分类分析" :name="3"  >
+                  <div style="padding: 2%">
+                    <div style="display: flex">
+                      <el-card style="width: 50%">
+                        <div id="productall5" style="width: 100%;height: 300px" ></div>
+                      </el-card>
+                      <el-card style="width: 50%;margin-left: 2%">
+                        <div id="productall6" style="width: 100%;height: 300px" ></div>
+                      </el-card>
+                    </div>
+                  </div>
+                </el-tab-pane>
+              </el-tabs>
+            </el-tab-pane>
+            <el-tab-pane label="产品总汇" :name="2">
+              <div style="padding: 2%" >
+                <div style="display: flex">
+                  <el-card style="width: 50%">
+                    <div id="productall1" style="width: 100%;height: 300px" ></div>
+                  </el-card>
+                  <el-card style="width: 50%;margin-left: 2%">
+                    <div id="productall2" style="width: 100%;height: 300px" ></div>
+                  </el-card>
+                </div>
+                <div style="display: flex;margin-top: 2%">
+                  <el-card style="width: 50%">
+                    <div id="productall3" style="width: 100%;height: 300px" ></div>
+                  </el-card>
+                  <el-card style="width: 50%;margin-left: 2%">
+                    <div id="productall4" style="width: 100%;height: 300px" ></div>
+                  </el-card>
+                </div>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+        <span slot="footer" class="dialog-footer">
+           <el-button type="primary" v-if="activeNameanalysis==1&&coosecalss==2" style="margin-right: 2%" @click="addclass">确定添加</el-button>
+        </span>
       </el-dialog>
     </div>
     <div v-if="activeIndex==1||activeIndex==2" class="block" style="margin-top: 2%">
@@ -398,6 +556,8 @@ export default {
       pageSize:2,
       pageNum:1,
       pageSizes:5,
+      trurrisk:1,
+      risk:1,
       nameinput:'',
       marketname:[],
       value:'',
@@ -423,6 +583,18 @@ export default {
       mmarketrates:[],
       truerate:0,
       yunaweisiwa:{vuale:'',markeyrates:[]},
+      analysproductflag:false,
+      activeNameanalysis:2,
+      productanaylsisdata:[],
+      coosecalss:1,
+      classes:{name:'',regulation:{ price:0,risk:0,type:0,sum:2},pids:'[]',description:'',id:null},
+      optionprice:[{value:0,label:'低起购价'},{value:1,label:'中等起购价'},{value:2,label:'高起购价'}],
+      optionrisk:[{value:0,label:'低风险'},{value:1,label:'中等风险'},{value:2,label:'高风险'}],
+      optiontype:[{value:0,label:'不区分类型'},{value:1,label:'固期产品'},{value:2,label:'限期产品'}],
+      optionsum:[{value:0,label:'小额度'},{value:1,label:'大额度'},{value:2,label:'不区分'}],
+      productcalsses:[],
+      namelists:[],
+      innerVisible:false
     }
   },
   created() {
@@ -458,6 +630,40 @@ export default {
           this.searchProducts=[]
         }
       })
+    },
+    rerisk(){//风险分析
+      request.post("/productanalysis/analysisrisk",{
+        pid:this.analysisproductone.id,
+      }).then(res => {
+        if(res.code==='200'){
+          this.risk=res.data
+          this.$message({
+            showClose: true,
+            message: '风险等级已得出！',
+            type: 'success'
+          })
+        }
+      })
+    },
+    workrisk(){//风险分析
+      request.post("/productanalysis/editrisk",{
+        pid:this.analysisproductone.id,
+        risk:this.risk
+      }).then(res => {
+        if(res.code==='200'){
+          this.trurrisk=this.risk
+          this.analysisproductone.risk=this.risk
+          this.selcetpages()
+          this.$message({
+            showClose: true,
+            message: '风险等级修改成功！',
+            type: 'success'
+          })
+        }
+      })
+    },
+    reclearrisk(){//重置风险等级
+      this.risk=this.trurrisk
     },
     changerate(){//更改利率
       request.post("/Product/RateChange",{
@@ -872,6 +1078,8 @@ export default {
       this.mmarketrates=[]
       this.marketsmsg=[]
       this.analysisproductone=JSON.parse(JSON.stringify(val))
+      this.trurrisk=this.analysisproductone.risk
+      this.risk=this.trurrisk;
       this.truerate=this.analysisproductone.rate
       this.mmarketrates=JSON.parse(this.analysisproductone.marketrate)
       this.yunaweisiwa.vuale=this.truerate
@@ -920,6 +1128,332 @@ export default {
     handleClose(){//关闭
       this.analysoneflag=false
       this.analysisproductone={}
+    },
+    analysisproduct(){//总体产品分析并画图
+      request.post("/productanalysis/analysis",{
+      }).then(res => {
+        if(res.code==='200'){
+          this.productanaylsisdata=res.data
+          let names=[]
+          let sum=[]
+          let pies=[]
+          let jindu=[]
+          let pinjunnt=[]
+          for(let i=0;i<this.productanaylsisdata.length;i++){
+            names.push(this.productanaylsisdata[i].product.name)
+            //销售总额
+            sum.push(this.productanaylsisdata[i].product.sum)
+            //销售人数
+            let pie= { value: this.productanaylsisdata[i].buyp, name: this.productanaylsisdata[i].product.name}
+            pies.push(pie)
+            //购买进度
+            let jj= { value: (this.productanaylsisdata[i].product.sum/this.productanaylsisdata[i].product.amount).toFixed(2), name: this.productanaylsisdata[i].product.name}
+            jindu.push(jj)
+
+            let pinjun= {name: this.productanaylsisdata[i].product.name, type: 'bar', data: []}
+            pinjun.data.push((this.productanaylsisdata[i].product.sum/this.productanaylsisdata[i].buyp).toFixed(2))
+            pinjunnt.push(pinjun)
+          }
+          this.analysproductflag=true
+          this.$nextTick(()=>{
+            this.workbie1(names,sum)
+            this.workbie2(pies)
+            this.workbie3(jindu)
+            this.workbie4(pinjunnt)
+            this.getclasses()
+          })
+        }
+      })
+    },
+    workbie1(data1,data2){//画图销售总额
+      let myChart = echarts.getInstanceByDom(document.getElementById("productall1"))
+      // 如果不存在，就进行初始化
+      if (myChart == null) {
+        myChart = echarts.init(document.getElementById("productall1"));
+      }
+      let option;
+      option = {
+        title: {
+          text: '销售总额'
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            mark: { show: true },
+            dataView: { show: true, readOnly: false },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        xAxis: {
+          type: 'category',
+          data: data1
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: data2,
+            type: 'bar'
+          }
+        ]
+      };
+      option && myChart.setOption(option);
+    },
+    workbie2(data){//画图购买人数
+      let myChart = echarts.getInstanceByDom(document.getElementById("productall2"))
+      // 如果不存在，就进行初始化
+      if (myChart == null) {
+        myChart = echarts.init(document.getElementById("productall2"));
+      }
+      let option;
+      option = {
+        title: {
+          text: '购买人数'
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            mark: { show: true },
+            dataView: { show: true, readOnly: false },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          top: '10%',
+          left: 'center'
+        },
+
+        series: [
+          {
+            name: 'Access From',
+            type: 'pie',
+            radius: ['40%', '60%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: 40,
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: data
+          }
+        ]
+      };
+
+      option && myChart.setOption(option);
+    },
+    workbie3(data){//购买进度
+      let myChart = echarts.getInstanceByDom(document.getElementById("productall3"))
+      // 如果不存在，就进行初始化
+      if (myChart == null) {
+        myChart = echarts.init(document.getElementById("productall3"));
+      }
+      let option;
+      option = {
+        legend: {
+          top: 'bottom'
+        },
+        title: {
+          text: '购买进度（%）'
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            mark: { show: true },
+            dataView: { show: true, readOnly: false },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        series: [
+          {
+            name: 'Nightingale Chart',
+            type: 'pie',
+            radius: ['40%', '60%'],
+            center: ['50%', '50%'],
+            roseType: 'area',
+            itemStyle: {
+              borderRadius: 8
+            },
+            data: data
+          }
+        ]
+      };
+
+      option && myChart.setOption(option);
+    },
+    workbie4(data){//平均购买额度
+      let myChart = echarts.getInstanceByDom(document.getElementById("productall4"))
+      // 如果不存在，就进行初始化
+      if (myChart == null) {
+        myChart = echarts.init(document.getElementById("productall4"));
+      }
+      let option;
+      option = {
+        title: {
+          text: '平均购买额度'
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {
+          top: '8%',
+          left: 'center'
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'value',
+          boundaryGap: [0, 0.01]
+        },
+        yAxis: {
+          type: 'category',
+          data: ['平均购买额度']
+        },
+        series: data
+      };
+      option && myChart.setOption(option);
+    },
+    addclass(){//新增分类
+      if(this.classes.name!=''){
+        let classesss=JSON.parse(JSON.stringify(this.classes))
+        classesss.regulation=JSON.stringify(classesss.regulation)
+        request.post("/productanalysis/addnewclass",classesss).then(res => {
+          if(res.code==='200'){
+            this.classes={name:'',regulation:{ price:0,risk:0,type:0,sum:2},pids:'[]',description:'',id:null}
+            this.$message({
+              showClose: true,
+              message: '新增成功！',
+              type: 'success'
+            })
+          }
+        })
+      }
+      else {
+        this.$message({
+          showClose: true,
+          message: '需填写分类名字！',
+          type: 'error'
+        })
+      }
+    },
+    setregulation(e){//设置规则
+      let text='起购价格规则：'
+      for(let i=0;i<this.optionprice.length;i++){
+        if(e.price==this.optionprice[i].value){
+          text=text+this.optionprice[i].label+'; '
+          break
+        }
+      }
+      for(let i=0;i<this.optionrisk.length;i++){
+        if(e.risk==this.optionrisk[i].value){
+          text=text+'产品风险规则：'+this.optionrisk[i].label+'; '
+          break
+        }
+      }
+      for(let i=0;i<this.optiontype.length;i++){
+        if(e.type==this.optiontype[i].value){
+          text=text+'产品类型规则：'+this.optiontype[i].label+'; '
+          break
+        }
+      }
+      for(let i=0;i<this.optionsum.length;i++){
+        if(e.sum==this.optionsum[i].value){
+          text=text+'产品金额规则：'+this.optionsum[i].label+'; '
+          break
+        }
+      }
+      return text
+    },
+    getclasses(){//直接获取分类
+      request.post("/productanalysis/getclasses",{}).then(res => {
+        if(res.code==='200'){
+          this.productcalsses=res.data
+          for(let i=0;i<this.productcalsses.length;i++){
+            this.productcalsses[i].regulation=JSON.parse(this.productcalsses[i].regulation)
+            this.productcalsses[i].pids=JSON.parse(this.productcalsses[i].pids)
+            this.productcalsses[i].text=this.setregulation(this.productcalsses[i].regulation);
+          }
+        }
+      })
+    },
+    tocalsses(){//开始分类
+      request.post("/productanalysis/productclass",{}).then(res => {
+        if(res.code==='200'){
+          this.productcalsses=res.data
+          for(let i=0;i<this.productcalsses.length;i++){
+            this.productcalsses[i].regulation=JSON.parse(this.productcalsses[i].regulation)
+            this.productcalsses[i].pids=JSON.parse(this.productcalsses[i].pids)
+            this.productcalsses[i].text=this.setregulation(this.productcalsses[i].regulation);
+          }
+          this.$message({
+            showClose: true,
+            message: '分类成功！',
+            type: 'success'
+          })
+        }
+      })
+    },
+    includeproduct(item){//包含产品
+      request.post("/productanalysis/getnames",{
+        classid:item.id
+      }).then(res => {
+        if(res.code==='200'){
+          this.namelists=res.data
+          if(this.namelists.length>0){
+            this.innerVisible=true
+          }
+          else {
+            this.$message({
+              showClose: true,
+              message: '暂无属于该分类的产品！',
+              type: 'warning'
+            })
+          }
+        }
+      })
+    },
+    showclasses(){//分类展示（展示哪个类别买的最多，哪个类别人数最多）
+      request.post("/productanalysis/",{}).then(res => {
+        if(res.code==='200'){
+
+        }
+      })
     }
   }
 }

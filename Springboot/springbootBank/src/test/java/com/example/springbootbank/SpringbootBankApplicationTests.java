@@ -54,6 +54,11 @@ class SpringbootBankApplicationTests {
     MarketMapper marketMapper;
     @Autowired
     UserLoansMapper userLoansMapper;
+
+    @Autowired
+    LenderMapper lenderMapper;
+    @Autowired
+    ReLoansMapper reLoansMapper;
     @Autowired
     MarketNameMapper marketNameMapper;
     @Autowired
@@ -67,7 +72,49 @@ class SpringbootBankApplicationTests {
     MarketCopyMapper marketCopyMapper;
     @Test
     void contextLoads() {
-        setlastmarketv();
+        setoverdue();
+    }
+    public void setloanspay(){//检查每个贷款设置逾期
+        QueryWrapper<UserLoans> queryWrapper=new QueryWrapper<>();
+        List<UserLoans> userLoansList=userLoansMapper.selectList(queryWrapper.eq("ispass",2));//找到所有正在生效的贷款
+        LocalDate nowtime=LocalDate.now();
+        for(int i=0;i<userLoansList.size();i++){
+            QueryWrapper<ReLoans> reLoansQueryWrapper=new QueryWrapper<>();
+            List<ReLoans> reLoansList=reLoansMapper.selectList(reLoansQueryWrapper.eq("lid",userLoansList.get(i).getId()).orderByDesc("id"));
+            //找到所有账单
+            if(reLoansList.get(0).getState()==0&&nowtime.isAfter(reLoansList.get(0).getTime())&&nowtime.isBefore(reLoansList.get(0).getTime().plusMonths(1))){//逾期未还(一个月内)
+                reLoansList.get(0).setState(2);
+                reLoansMapper.updateById(reLoansList.get(0));//设置成功
+                //设置违规记录
+                UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,userLoansList.get(i).getUid()));
+                userCredit.setDefaults(userCredit.getDefaults()+1);
+                userCreditMapper.updateById(userCredit);
+            }
+            else if(reLoansList.get(0).getState()==2&&nowtime.isEqual(reLoansList.get(0).getTime().plusMonths(1))){//逾期超过一个月了
+                ReLoans reLoans1=new ReLoans();
+                reLoans1.setLid(reLoansList.get(0).getLid());
+                reLoans1.setCid(reLoansList.get(0).getCid());
+                reLoans1.setTime(nowtime);
+                reLoans1.setUid(reLoansList.get(0).getUid());
+                Lender lender=lenderMapper.selectById(userLoansList.get(i).getLid());
+                float rate=lender.getRate()/1200;//先获取贷款利息（月）
+                float cost=0;
+                float benjin=userLoansList.get(i).getCost();//本金
+                float needreturncost=userLoansList.get(i).getNeedreturncost();//还需归还本金
+                float time=userLoansList.get(i).getTimelimit();//期限
+                if(userLoansList.get(i).getReturntype()==1){//等额本息
+                    cost=(float)( (benjin*rate*Math.pow(1+rate,time))/(Math.pow(1+rate,time)-1));
+                }
+                else if(userLoansList.get(i).getReturntype()==2){//等额本金
+                    cost=(benjin/time)+needreturncost*rate;
+                }
+                reLoans1.setCost(reLoansList.get(0).getCost()+cost);//设置消费
+                reLoans1.setState(0);
+                reLoans1.setReturnday(reLoansList.get(0).getReturnday()+1);
+                reLoansMapper.insert(reLoans1);
+            }
+        }
+
     }
     public void setlastmarketv(){//给市场设置最新值marketname
         List<MarketName> marketNames=marketNameMapper.selectList(null);

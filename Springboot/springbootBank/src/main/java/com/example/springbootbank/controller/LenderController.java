@@ -56,6 +56,9 @@ public class LenderController {
     @Resource
     @Autowired
     FilesMapper filesMapper;
+
+    @Autowired
+    ReLoansMapper reLoansMapper;
     @PostMapping("/getLenders")//获取全部贷款类型
     public Result getLenders(@RequestBody Map map){
         List<Lender> lenders=lenderMapper.selectList(null);
@@ -63,6 +66,37 @@ public class LenderController {
             return Result.success(lenders);
         }
         return Result.error("500","暂无贷款产品信息");
+    }
+    @PostMapping("/getLenderhistory")//获取某次贷款的全部申请历史记录
+    public Result getLenderhistory(@RequestBody Map map){
+        Integer id=(Integer) map.get("id");
+        UserLoans userLoans=userLoansMapper.selectById(id);
+        List<PassMsg> passMsgList=JSONArray.parseArray(userLoans.getPassmsg(),PassMsg.class);
+        if(passMsgList.size()>0){
+            return Result.success(passMsgList);
+        }
+        return Result.error("500","暂无该贷款历史记录信息");
+    }
+
+    @PostMapping("/getworkloansbyid")//获取某人生效中的贷款
+    public Result getworkloansbyid(@RequestBody Map map){
+        Integer id=(Integer) map.get("id");
+        QueryWrapper<UserLoans> userLoansQueryWrapper=new QueryWrapper<>();
+        List<UserLoans> userLoansList=userLoansMapper.selectList(userLoansQueryWrapper.eq("uid",id));
+        if(userLoansList.size()>0){
+            return Result.success(userLoansList);
+        }
+        return Result.error("500","暂无该贷款历史记录信息");
+    }
+    @PostMapping("/gethistorypays")//获取某人生效中的贷款的历史还款以及需要还款的信息
+    public Result gethistorypays(@RequestBody Map map){
+        Integer id=(Integer) map.get("id");//贷款id
+        QueryWrapper<ReLoans> queryWrapper=new QueryWrapper<>();
+        List<ReLoans> reLoansList=reLoansMapper.selectList(queryWrapper.eq("lid",id).orderByDesc("id"));
+        if(reLoansList.size()>0){
+            return Result.success(reLoansList);
+        }
+        return Result.error("500","暂无该贷款历史记录信息");
     }
     @PostMapping("/getonemsg")//获取单人的贷款详细信息
     public Result getonemsg(@RequestBody Map map){

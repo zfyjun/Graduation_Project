@@ -17,6 +17,8 @@ public class UserLoans {
     private Integer lid;
     private Integer cid;
     private float cost;
+    private float needreturncost;
+    private Integer lasttime;
     private Integer timelimit;
     private Integer returntype;
     private float salary;
