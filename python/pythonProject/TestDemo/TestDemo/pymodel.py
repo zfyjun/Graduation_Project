@@ -99,7 +99,7 @@ def bpmodle(df):
     # df['date']=pd.to_datetime(df['date'])
     arr = df.values.astype(np.float32)  # 将数据转换为 NumPy 数组并转换为 float32 类型
     ts = torch.tensor(arr)  # 将数据转换为 PyTorch
-# print(ts)
+    print(ts)
 # 划分训练集和测试集
     train_size = int(len(ts)*0.9)  # 计算训练集的大小
 # ts = ts[torch.randperm(ts.size(0)), :]  # 随机打乱数据集
@@ -107,6 +107,10 @@ def bpmodle(df):
     test_data = ts[train_size:]  # 划分测试集
 # 初始化模型并移动到 GPU 上
     model = BPNN()
+
+    print('train_data.shape[1]')
+    print(train_data.shape[1])
+    print(train_data)
 # 定义损失函数和优化器
     criterion = nn.HuberLoss()  # 使用均方误差损失函数
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)  # 使用 Adam 优化器进行优化，学习率
@@ -116,13 +120,18 @@ def bpmodle(df):
     Y_train = train_data[:,-1]  # 训练集标签
     X_test = test_data[:,:6]  # 测试集特征
     Y_test = test_data[:,-1]  # 测试集标签
-# print(X_test)
-# print(Y_test)
-# print("==========================================================")
+    print('train_data')
+    print(train_data)
+    print('X_train')
+    print(X_train)
+    print('Y_train')
+    print(Y_train)
+    print("==========================================================")
 # 训练模型
     epochs = 1500  # 迭代次数
     train_losses, test_losses = [], []  # 用于记录训练和测试损失的列表
     for epoch in range(epochs):
+       print(epoch)
        model.train()  # 设置模型为训练模式
        optimizer.zero_grad()  # 梯度清零
        outputs = model(X_train)  # 前向传播，计算输出

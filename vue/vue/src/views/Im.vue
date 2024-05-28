@@ -1,6 +1,7 @@
 <template>
   <div style="padding: 10px; margin-bottom: 50px">
     <el-row>
+<!--      显示用户-->
       <el-col :span="8">
         <el-card style="width: 100%; min-height: 300px; color: #333">
           <div style="padding-bottom: 10px; border-bottom: 1px solid #ccc">在线用户<span style="font-size: 12px">（点击聊天气泡开始聊天）</span></div>
@@ -12,21 +13,40 @@
           </div>
         </el-card>
       </el-col>
+
+
+<!--      聊天框-->
       <el-col :span="16">
         <div style="width: 800px; margin: 0 auto; background-color: white;
                     border-radius: 5px; box-shadow: 0 0 10px #ccc">
           <div style="text-align: center; line-height: 50px;">
             Web聊天室（{{ chatUser }}）
           </div>
-          <div style="height: 350px; overflow:auto; border-top: 1px solid #ccc" v-html="content"></div>
+
+<!--          聊天内容-->
+          <div class="chat-content" style="height: 350px; overflow:auto; border-top: 1px solid #ccc" v-html="content"></div>
           <div style="height: 200px">
+
+            <!-- 语音-->
+            <button id="record" @click="yuyin">点击录音</button>
+            <button id="stop">结束录音</button>
+            <audio id="player" controls></audio>
+
             <textarea v-model="text" style="height: 160px; width: 100%; padding: 20px; border: none; border-top: 1px solid #ccc;
-             border-bottom: 1px solid #ccc; outline: none"></textarea>
+             border-bottom: 1px solid #ccc; outline: none">
+            </textarea>
+
+
             <div style="text-align: right; padding-right: 10px">
               <el-button type="primary" size="mini" @click="send">发送</el-button>
             </div>
           </div>
         </div>
+
+
+
+
+
       </el-col>
     </el-row>
   </div>
@@ -54,11 +74,57 @@ export default {
   created() {
     this.init()
   },
+  mounted() {
+
+  },
   methods: {
+    yuyin(){
+      let recordButton = document.querySelector('.record');
+      let stopButton = document.querySelector('.stop');
+      let player = document.querySelector('.player');
+
+      let mediaRecorder;
+      let chunks = []; // 用于保存音频数据
+
+// 异步获取音频权限
+      async function getMedia() {
+        let stream = null;
+
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({audio: true});
+          mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorder.ondataavailable = function(e) {
+            chunks.push(e.data);
+
+            // 录音结束，自动播放
+            if (mediaRecorder.state == 'inactive'){
+              let blob = new Blob(chunks, { type: 'audio/webm' });
+              player.src = URL.createObjectURL(blob);
+              chunks = []; // 清空音频数据
+            }
+          }
+        } catch(err) {
+          // 处理错误: 比如用户拒绝提供麦克风权限
+          console.log(err);
+        }
+      }
+
+      recordButton.onclick = function() {
+        getMedia();
+        mediaRecorder.start();
+        console.log('开始录音');
+      }
+
+      stopButton.onclick = function() {
+        mediaRecorder.stop();
+        console.log('结束录音');
+      }
+    },
     historyChat(user) {
 
       request.post('/chatHistory/findAll',{
-        fromUser:this.user.account,
+        fromUser:this.user.username,
         toUser:user.username
       }).then(res=>{
         this.historyMessage=res.data
@@ -75,7 +141,21 @@ export default {
             this.createContent(null, this.historyMessage[i].from, this.historyMessage[i].text)
           }
         }
+
+
+        //让聊天记录显示在下面一条
+        console.log('chat')
+        console.log(this.$el.querySelector(".chat-content"));
+        this.$nextTick(() => {
+          let container = this.$el.querySelector(".chat-content");
+          console.log('con')
+          console.log(container)
+          container.scrollTop = container.scrollHeight;
+        })
+
       })
+
+
     },
 
 
@@ -93,7 +173,7 @@ export default {
           console.log("您的浏览器支持WebSocket");
           // 组装待发送的消息 json
           // {"from": "zhang", "to": "admin", "text": "聊天文本"}
-          let message = {from: this.user.account, to: this.chatUser, text: this.text}
+          let message = {from: this.user.username, to: this.chatUser, text: this.text}
 
 
 
@@ -104,16 +184,27 @@ export default {
             console.log("保存成功")
           })
 
-          this.messages.push({user: this.user.account, text: this.text})
+          this.messages.push({user: this.user.username, text: this.text})
 
 
           // console.log("消息记录s")
           // console.log(this.messages)
           // 构建消息内容，本人消息
-          this.createContent(null, this.user.account, this.text)
+          this.createContent(null, this.user.username, this.text)
           this.text = '';
         }
       }
+
+      //让聊天记录显示在下面一条
+      console.log('chat')
+      console.log(this.$el.querySelector(".chat-content"));
+      this.$nextTick(() => {
+        let container = this.$el.querySelector(".chat-content");
+        console.log('con')
+        console.log(container)
+        container.scrollTop = container.scrollHeight;
+      })
+
     },
     createContent(remoteUser, nowUser, text) {  // 这个方法是用来将 json的聊天消息数据转换成 html的。
       let html
@@ -145,7 +236,7 @@ export default {
     },
     init() {
       this.user = sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")) : {}
-      let username = this.user.account;
+      let username = this.user.username;
       let _this = this;
       if (typeof (WebSocket) == "undefined") {
         console.log("您的浏览器不支持WebSocket");

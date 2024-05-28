@@ -50,6 +50,11 @@ export default {
               localStorage.setItem("admin",JSON.stringify(res.data)) //存储用户信息到浏览器
               localStorage.setItem("menus",JSON.stringify(res.data.menus)) //存储用户信息到浏览器
 
+              //客服
+              sessionStorage.setItem('user', JSON.stringify(res.data))
+              sessionStorage.setItem('account', JSON.stringify(res.data))
+              sessionStorage.setItem('admin', JSON.stringify(res.data))
+
               //动态设置路由
               setRoutes()
               if(res.data.role==='ROLE_TEST'){

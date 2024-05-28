@@ -3,41 +3,153 @@
 
     <div>
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-        <el-menu-item index="1">用户数据探索性分析</el-menu-item>
-        <el-menu-item index="2">产品上架</el-menu-item>
-        <el-menu-item index="3">产品分析中心</el-menu-item>
+        <el-menu-item index="1">人口统计信息分析</el-menu-item>
+        <el-menu-item index="2">贷款行为分析</el-menu-item>
+        <el-menu-item index="3">K-means算法</el-menu-item>
+        <el-button @click="predict">测试</el-button>
       </el-menu>
     </div>
 
 
-    <div>
-    <el-form ref="form"  label-width="100px" v-if="activeIndex==1">
-      <el-form-item label="用户基本信息展示：">
-        <el-select @change="changeValue" v-model="value" filterable  placeholder="请选择">
-          <el-option
-              v-for="item in userdataname"
-              :key="item"
-              :label="item"
-              :value="item">
-          </el-option>
-        </el-select>
-      </el-form-item>
+<!--    人口统计信息页面-->
+    <div v-if="activeIndex==1">
+<!--      <div>-->
+<!--        <el-form ref="form"  label-width="100px">-->
+<!--          <el-form-item label="类型选择:">-->
+<!--            <el-select @change="changeTypeName" v-model="typeValue" filterable  placeholder="请选择">-->
+<!--              <el-option-->
+<!--                  v-for="item in typename"-->
+<!--                  :key="item.value"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.value">-->
 
-    </el-form>
+<!--              </el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+<!--      </div>-->
 
-    <el-card class="box-card" v-if="activeIndex==1">
-      <div style="display: flex;justify-content: space-between">
-<!--        <span>用户数据散点图</span>-->
-<!--        <el-button  size="medium" @click="opendig()" type="text">详情</el-button>-->
+      <div>
+        <el-form ref="form"  label-width="100px" >
+          <el-form-item label="数据选择:">
+            <el-select @change="changeValue" v-model="rowname" filterable  placeholder="请选择">
+              <el-option
+                  v-for="item in userdataname"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
       </div>
-      <div id="chart" style="width: 100%;height: 400px" ></div>
-      <div style="display: flex;justify-content: space-between">
-        <span v-for="(value, key) in this.describe" :key="key" >{{ key }}: {{ value }}</span>
 
-      </div>
-    </el-card>
+      <el-card class="box-card" >
+        <div style="display: flex;justify-content: space-between">
+  <!--        <span>用户数据散点图</span>-->
+  <!--        <el-button  size="medium" @click="opendig()" type="text">详情</el-button>-->
+        </div>
+        <div id="chart1" style="width: 100%;height: 400px" ></div>
+        <div style="display: flex;justify-content: space-between">
+          <span v-for="(value, key) in this.describe" :key="key" >{{ key }}: {{ value }}</span>
+
+        </div>
+      </el-card>
     </div>
 
+
+    <!--    人口统计信息页面-->
+    <div v-if="activeIndex==2">
+      <div>
+<!--        <el-form ref="form"  label-width="100px">-->
+<!--          <el-form-item label="类型选择:">-->
+<!--            <el-select @change="changeTypeName" v-model="typeValue" filterable  placeholder="请选择">-->
+<!--              <el-option-->
+<!--                  v-for="item in typename"-->
+<!--                  :key="item.value"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.value">-->
+
+<!--              </el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+      </div>
+
+      <div>
+<!--        <el-form ref="form"  label-width="100px" >-->
+<!--          <el-form-item label="数据选择:">-->
+<!--            <el-select @change="changeValue" v-model="rowname" filterable  placeholder="请选择">-->
+<!--              <el-option-->
+<!--                  v-for="item in userdataname"-->
+<!--                  :key="item"-->
+<!--                  :label="item"-->
+<!--                  :value="item">-->
+<!--              </el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+      </div>
+
+      <el-card class="box-card" >
+        <div style="display: flex;justify-content: space-between">
+          <!--        <span>用户数据散点图</span>-->
+          <!--        <el-button  size="medium" @click="opendig()" type="text">详情</el-button>-->
+        </div>
+        <div id="chart" style="width: 100%;height: 400px" ></div>
+<!--        <div style="display: flex;justify-content: space-between">-->
+<!--          <span v-for="(value, key) in this.describe" :key="key" >{{ key }}: {{ value }}</span>-->
+
+<!--        </div>-->
+      </el-card>
+    </div>
+
+
+    <!--    K-means算法-->
+    <div v-if="activeIndex==3">
+      <div>
+<!--        <el-form ref="form"  label-width="100px">-->
+<!--          <el-form-item label="类型选择:">-->
+<!--            <el-select @change="changeTypeName" v-model="typeValue" filterable  placeholder="请选择">-->
+<!--              <el-option-->
+<!--                  v-for="item in typename"-->
+<!--                  :key="item.value"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.value">-->
+
+<!--              </el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+      </div>
+
+      <div>
+<!--        <el-form ref="form"  label-width="100px" >-->
+<!--          <el-form-item label="数据选择:">-->
+<!--            <el-select @change="changeValue" v-model="rowname" filterable  placeholder="请选择">-->
+<!--              <el-option-->
+<!--                  v-for="item in userdataname"-->
+<!--                  :key="item"-->
+<!--                  :label="item"-->
+<!--                  :value="item">-->
+<!--              </el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+      </div>
+
+      <el-card class="box-card" >
+        <div style="display: flex;justify-content: space-between">
+          <!--        <span>用户数据散点图</span>-->
+          <!--        <el-button  size="medium" @click="opendig()" type="text">详情</el-button>-->
+        </div>
+        <div id="chart_K" style="width: 100%;height: 400px" ></div>
+<!--        <div style="display: flex;justify-content: space-between">-->
+<!--          <span v-for="(value, key) in this.describe" :key="key" >{{ key }}: {{ value }}</span>-->
+
+<!--        </div>-->
+      </el-card>
+    </div>
 
 <!--==========================================================================================-->
 <!--    <el-dialog-->
@@ -62,7 +174,12 @@ export default {
   data(){
     return{
       data:{},
-      value:'',
+      typename:[
+        {name:'单变量分析',value:0},
+        {name:'多变量分析',value:1}
+      ],
+      typeValue:0,
+      rowname:'',
       userdataname:[],
       describe:{},
       activeIndex:'1',
@@ -70,21 +187,52 @@ export default {
   },
   created() {
     // 从后台获取数据
-    // this.getUserAnalyze();
+    // this.getUserAnalyze()
     this.getUserAge()
 
 
   },
   mounted(){//图形绘制
     // this.getUserAnalyze()
-    this.getUserJob()
+    // this.getUserJob()
   },
   methods: {
     load(){
-      this.drawChartsAge(this.data.filter(item => item.name === this.value))
+      // this.drawChartsAge(this.data.filter(item => item.name === this.value))、
+      if(this.activeIndex=='1'){
+        let domElement = document.getElementById('chart_K');
+        // let domElement1 = document.getElementById('chart1');
+
+        let instance = echarts.getInstanceByDom(domElement);
+        // let instance1 = echarts.getInstanceByDom(domElement1);
+        if (instance) {
+          // 如果有，则清除
+          echarts.dispose(instance);
+        }
+        // if (instance1) {
+        //   // 如果有，则清除
+        //   echarts.dispose(instance1);
+        // }
+        this.getUserAge()
+        this.changeValue('age')
+      } else if(this.activeIndex=='2'){
+        this.getUserJob()
+      } else if(this.activeIndex=='3'){
+        let domElement = document.getElementById('chart1');
+
+        let instance = echarts.getInstanceByDom(domElement);
+        if (instance) {
+          // 如果有，则清除
+          echarts.dispose(instance);
+        }
+        this.getUserAnalyze()
+      }
     },
+
+    //选择用户信息属性中的某一项值
     changeValue(val) {
       this.value = val;
+      // alert(val)
       this.drawChartsAge(this.data.filter(item => item.name === this.value))
 
       let describe1 = this.data.filter(item => item.name === this.value)[0].describe
@@ -98,8 +246,24 @@ export default {
       // this.describe=this.data.filter(item => item.name === this.value)[0].describe
     },
 
+    //
+    changeTypeName(){
+
+    },
+
     handleSelect(key) {
       this.activeIndex=key
+      this.load()
+    },
+
+    predict(){
+      this.pyrequest.post("/predict",{
+
+      }).then(res=>{
+        alert("提示")
+        this.data=res.data
+        console.log(res)
+      })
     },
 
     getUserAnalyze(){ //获取用户分析结果并绘制图形
@@ -160,7 +324,7 @@ export default {
       console.log("response")
       console.log(response)
 
-      let domElement = document.getElementById('chart');
+      let domElement = document.getElementById('chart1');
 
       let instance = echarts.getInstanceByDom(domElement);
       if (instance) {
@@ -316,7 +480,7 @@ export default {
   // , centers
     drawCharts(data) {
       //初始化
-      let myChart = echarts.init(document.getElementById('chart'));
+      let myChart = echarts.init(document.getElementById('chart_K'));
       //
       let seriesData = []
       for (let i = 0; i < data.length; i++) {

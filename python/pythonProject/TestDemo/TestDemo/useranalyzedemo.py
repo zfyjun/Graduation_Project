@@ -1,10 +1,16 @@
 import json
 import pandas as pd
 import pymysql
+import torch
+import torch.nn as nn
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
+from sklearn.metrics import accuracy_score, mean_squared_error
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sqlalchemy import create_engine
 import numpy as np
 
@@ -77,7 +83,6 @@ def get_age():
     describe_age = data['age'].describe().to_dict()
     print(describe_age)
 
-
     # 计算工作类型的分布频数
     job_data = data['job'].value_counts().reset_index()
     job_data.columns = ['job', 'count']
@@ -88,9 +93,9 @@ def get_age():
 
     # describe_job = jsonify(data['job'].describe().to_dict())
     # describe_job1 = jsonify(data['job'].describe().to_dict())
-    print("job")
-    print(tmp1)
-    print(describe_job)
+    # print("job")
+    # print(tmp1)
+    # print(describe_job)
 
     # 计算余额的分布频数
     balance_data = data['balance'].value_counts().sort_index().to_frame().reset_index()
@@ -123,12 +128,135 @@ def get_age():
                     {'name': 'balance', 'balance': balance_data_dict, 'describe': describe_balance},
                     {'name': 'education', 'education': education_data_dict, 'describe': describe_education},
                     {'name': 'marital', 'marital': marital_data_dict, 'describe': describe_marital}])
-    # return jsonify({'name': name,
-    #                 'age': age_data_dict,
-    #                 'job': job_data_dict,
-    #                 'balance': balance_data_dict,
-    #                 'marital': marital_data_dict,
-    #                 'education': education_data_dict})
+
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    # 载入数据
+    url = "E:/CSV/train_set.csv"
+    data = pd.read_csv(url)
+    X = data[['age', 'balance', 'day', 'duration', 'campaign', 'pdays']]
+    y = data['y']
+    scaler = StandardScaler()
+    X = scaler.fit_transform(X)
+
+    # 将“Y”中的字符串标签替换为数字标签
+    # y = y.replace(to_replace=['no', 'yes'], value=[0, 1])
+    # 分割数据为训练集和测试集
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # 使用BP神经网络模型进行训练
+    model = MLPClassifier(
+        hidden_layer_sizes=(100, 50),
+        max_iter=500, alpha=0.0001,
+        solver='sgd',
+        verbose=10,
+        random_state=21,
+        tol=0.000000001
+    )
+
+    model.fit(X_train, y_train)
+    # 模型预测
+    y_pred = model.predict(X_test)
+
+
+    # 计算预测准确度
+    accuracy = accuracy_score(y_true=y_test, y_pred=y_pred)
+    print("Accuracy of the BP neural network model: ", accuracy)
+    return jsonify({'data': y_pred.tolist()})
+
+
+class BPNN(nn.Module):
+    def __init__(self, input_size):
+        super(BPNN, self).__init__()
+        self.fc1 = nn.Linear(input_size, 16)
+        self.fc2 = nn.Linear(16, 1)
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+
+def bpmodle(df):
+    # 独热编码
+    # df = pd.get_dummies(data)
+
+    # # 创建一个LabelEncoder对象
+    # le = LabelEncoder()
+    #
+    # # 假设第一列是需要转换的列
+    # df.iloc[:, 2] = le.fit_transform(df.iloc[:, 2])
+    # df.iloc[:, 3] = le.fit_transform(df.iloc[:, 3])
+    # df.iloc[:, 4] = le.fit_transform(df.iloc[:, 4])
+    # df.iloc[:, 5] = le.fit_transform(df.iloc[:, 5])
+    # df.iloc[:, 7] = le.fit_transform(df.iloc[:, 7])
+    # df.iloc[:, 8] = le.fit_transform(df.iloc[:, 8])
+    # df.iloc[:, 9] = le.fit_transform(df.iloc[:, 9])
+    # df.iloc[:, 11] = le.fit_transform(df.iloc[:, 11])
+    # df.iloc[:, 16] = le.fit_transform(df.iloc[:, 16])
+
+    # 划分特征和目标变量
+    # Y = df.iloc[:, -1]
+    # X = df.iloc[:, :-1]
+    X = df[['age', 'balance', 'day', 'duration', 'campaign', 'pdays']]
+    Y = df['y']
+    print(df.columns)
+
+    scaler = StandardScaler()
+    X = scaler.fit_transform(X)
+
+
+    # 划分训练集和测试集
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+    X_train = torch.tensor(X_train.astype(np.float32))
+    print(1)
+    y_train = torch.tensor(y_train.values.astype(np.float32))
+    print(2)
+    X_test = torch.tensor(X_test.astype(np.float32))
+    print(3)
+    y_test = torch.tensor(y_test.values.astype(np.float32))
+    print(X_train)
+    print(y_test)
+    print("==========================================================")
+
+    model = BPNN(X_train.shape[1])
+    print(X_train.shape[1])
+    # model = BPNN(X_train.shape[1], 8, 1)
+    criterion = nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+
+    # 训练模型
+    for epoch in range(100):
+        print(epoch)
+        # model.zero_grad()
+        # 前向传播
+        outputs = model(X_train)
+        loss = criterion(outputs, y_train)
+        # 反向传播和优化
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+    # 利用测试集进行预测
+    y_pred = model(X_test)
+
+    # 评估模型性能，打印预测结果
+    criterion = nn.MSELoss()
+    loss = criterion(y_pred.squeeze(), y_test)
+    print('Loss on test set: ', loss.item())
+
+    return y_pred
+
+
+@app.route('/model', methods=['POST'])
+def model_predict():
+    print('model')
+    url = "E:/Desktop/csv/train_set.csv"
+    data = pd.read_csv(url)
+    arr2 = bpmodle(data)
+    print(arr2)
+
 
 @app.route('/user_job', methods=['POST'])
 def get_job():
