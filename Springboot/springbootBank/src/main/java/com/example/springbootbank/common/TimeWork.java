@@ -6,10 +6,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.springbootbank.entity.*;
+import com.example.springbootbank.entity.otherEntity.AbnormalMsg;
 import com.example.springbootbank.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -49,7 +51,7 @@ public class TimeWork {
     public void workstart(){
 
     }
-    //每天计算每个用户购买每个理财产品的利润或者亏损
+    //每天计算每个用户购买每个理财产品的利润或者亏损（理财产品收益）
     public void productwork(){
         List<UserProduct> userProducts=userProductMapper.selectList(null);
         for(int i=0;i<userProducts.size();i++){
@@ -171,6 +173,61 @@ public class TimeWork {
                 Debts.add(debt);
                 creditCard.setDebt(JSONArray.toJSONString(Debts));
                 creditCardMapper.updateById(creditCard);
+            }
+        }
+    }
+    //每天检查是否存在信用卡逾期账单并设置逾期天数
+    public void setoverdue(){
+        List<CreditCard> creditCards=creditCardMapper.selectList(null);//获取所有的信用卡
+        for(int i=0;i<creditCards.size();i++){
+            Integer flag=0;
+            List<Debt> Debts= JSONArray.parseArray(creditCards.get(i).getDebt(),Debt.class);
+            for(int j=0;j<Debts.size();j++){
+                if((Debts.get(j).getNeedreturn()+Debts.get(j).getInterest())>=0.01){//账单未还清
+                    if(Debts.get(j).getDays()>0){//已经逾期的
+                        flag=1;
+                        Debts.get(j).setDays(Debts.get(j).getDays()+1);
+                        float rates=Debts.get(j).getInterest()+(Debts.get(j).getNeedreturn()+Debts.get(j).getInterest())*((creditCards.get(i).getRate()));//每日利率
+                        BigDecimal bigDecimal=new BigDecimal(rates);
+                        float balance2=bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue();
+                        Debts.get(j).setInterest(balance2);
+                    }
+                    else{//尚未逾期的
+                        LocalDate now=LocalDate.now();
+                        if(Debts.get(j).getTimelast().isBefore(now)){//第一天逾期
+                            flag=1;
+                            Debts.get(j).setDays(1);
+                            float overdue=Debts.get(j).getNeedreturn()*creditCards.get(i).getOverdue();//本金滞留金
+                            float rates=Debts.get(j).getNeedreturn()*creditCards.get(i).getRate();//每日利率
+                            BigDecimal bigDecimal=new BigDecimal(rates+overdue);
+                            float balance2=bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue();
+                            Debts.get(j).setInterest(balance2);
+                            BankCard bankCard=bankCardMapper.selectById(creditCards.get(i).getCid());
+                            //
+                            bankCard.setAbnormal(1);//设置异常
+                            List<AbnormalMsg> abnormalMsgs=JSONArray.parseArray(bankCard.getAbnormalmsg(), AbnormalMsg.class);
+                            AbnormalMsg abnormalMsg=new AbnormalMsg();
+                            LocalDateTime nowtime=LocalDateTime.now();
+                            abnormalMsg.setTime(nowtime);
+                            abnormalMsg.setDescription("信用卡账单逾期未还");
+                            abnormalMsg.setState(1);
+                            abnormalMsg.setType(3);
+                            abnormalMsgs.add(abnormalMsg);
+                            bankCard.setAbnormalmsg(JSONArray.toJSONString(abnormalMsgs));
+                            bankCardMapper.updateById(bankCard);
+                            //
+                            UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,bankCard.getUid()));
+                            userCredit.setDefaults(userCredit.getDefaults()+1);
+                            userCredit.setCredit(userCredit.getCredit()-10);
+                            userCreditMapper.updateById(userCredit);
+                        }
+                    }
+                }
+            }
+            if(flag==1){//有修改的
+                creditCards.get(i).setDebt(JSONArray.toJSONString(Debts));
+                creditCardMapper.updateById(creditCards.get(i));
+                System.out.println(Debts);
             }
         }
     }

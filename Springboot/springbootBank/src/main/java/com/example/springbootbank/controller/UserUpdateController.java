@@ -62,6 +62,10 @@ public class UserUpdateController {
         Integer type=(Integer) map.get("type");//通过与否
         String msg=(String) map.get("msg");//解释
         UserUpdate userUpdate=userUpdateMapper.selectById(id);
+        BankCard bankCard1=bankCardMapper.selectById(userUpdate.getCid());
+        if(bankCard1.getState()!=0){
+            return Result.error("500","该银行卡处于封禁状态！无法进行如何操作");
+        }
         if(userUpdate!=null){
             userUpdate.setState(type);
             List<PassMsg> passMsgList= JSONArray.parseArray(userUpdate.getPassmsg(),PassMsg.class);
@@ -104,6 +108,10 @@ public class UserUpdateController {
         UserUpdate userUpdate=userUpdateMapper.selectById(id);
         if(userUpdate.getState()==0){
             return Result.error("500","当前该卡已经提交申请，正在审核中");
+        }
+        BankCard bankCard1=bankCardMapper.selectById(userUpdate.getCid());
+        if(bankCard1.getState()!=0){
+            return Result.error("500","该银行卡处于封禁状态！无法进行如何操作");
         }
         if(userUpdate!=null){
             float cost=Float.valueOf(String.valueOf(map.get("cost")));//额度

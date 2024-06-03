@@ -2,6 +2,7 @@
 package com.example.springbootbank.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -19,5 +20,13 @@ public class BankCard {
     private String cardnumber;
     private String detail;
     private LocalDateTime createtime;
+    private Integer state;
+    private String statedetail;
+    private Integer restate;
+    private Integer abnormal;
+    private String abnormalmsg;
+    private Integer loststate;
 
+    @TableField(exist = false)
+    private String name;
 }

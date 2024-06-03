@@ -23,8 +23,8 @@
 							</view>
 						    <u-divider  style="width: 100%"></u-divider>
 							<view style="display: flex;">
-								<u--text size="13" :text="'置入本金：￥'+item.cost"></u--text>
-								<u--text size="13" :text="'现存金额：￥'+item.balance"></u--text>
+								<u--text size="13" :text="'置入本金：￥'+item.cost.toFixed(2)"></u--text>
+								<u--text size="13" :text="'现存金额：￥'+item.balance.toFixed(2)"></u--text>
 							</view>
 							<u--text size="13" type="info" v-if="item.days>=0" text="当前余额可取出"></u--text>
 							<u--text size="10" type="info" v-if="item.days<0" :text="'剩余'+(-item.days)+'天可取出余额'"></u--text>
@@ -40,8 +40,8 @@
 	        		<view class="box"  >
 	        			<view style="padding: 3%;">
 							<view style="display: flex;">
-								<u--text size="20" v-if="(item.balance-item.cost)>=0" type="success" :text="'收益：￥'+(item.balance-item.cost)"></u--text>
-							    <u--text size="20" v-if="(item.balance-item.cost)<0" type="error" :text="'亏损：￥'+(item.balance-item.cost)"></u--text>
+								<u--text size="20" v-if="(item.balance-item.cost)>=0" type="success" :text="'收益：￥'+(item.balance-item.cost).toFixed(2)"></u--text>
+							    <u--text size="20" v-if="(item.balance-item.cost)<0" type="error" :text="'亏损：￥'+(item.balance-item.cost).toFixed(2)"></u--text>
 							    <u--text  align="right" style="padding-right: 5%;" @click="buy(item)" prefixIcon="shopping-cart" type="primary" text="再次购买" size="13" bold ></u--text>
 							</view>
 							<u-divider  style="width: 100%"></u-divider>
@@ -50,8 +50,8 @@
 								
 							</view>
 							<view style="display: flex;">
-								<u--text size="13" type="info" :text="'置入本金：￥'+item.cost"></u--text>
-								<u--text size="13" type="info" :text="'取出金额：￥'+item.balance"></u--text>
+								<u--text size="13" type="info" :text="'置入本金：￥'+item.cost.toFixed(2)"></u--text>
+								<u--text size="13" type="info" :text="'取出金额：￥'+item.balance.toFixed(2)"></u--text>
 							</view>		
 							<u--text style="padding-top: 1%;"  size="10" type="info" :text="'购买时间：'+item.paytime"></u--text>
 	        			</view>			  

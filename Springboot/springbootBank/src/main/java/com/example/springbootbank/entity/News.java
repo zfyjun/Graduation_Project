@@ -18,6 +18,8 @@ public class News {
     private String category;
     private String type;
     private String time;
+    private String uptime;
     private Integer adminId;
     private Integer readCount;
+    private Integer newrelease;
 }

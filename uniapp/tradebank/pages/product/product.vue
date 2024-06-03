@@ -36,7 +36,7 @@
 							<u--text style="flex: 2;" size="12" :type="risk[index].color" :text="'R'+item.risk+risk[index].text"></u--text>
 						</view>
 						<view style="display: flex;margin-top: 1%;">
-							<u-line-progress style="flex: 4;margin-right: 5%;" :percentage="(item.sum/item.amount)*100" ></u-line-progress>
+							<u-line-progress style="flex: 4;margin-right: 5%;" :percentage="((item.sum/item.amount)*100).toFixed(2)" ></u-line-progress>
 							<u--text size="11" style="flex: 1;" type="info" text="总购买进度"></u--text>
 						</view>
 					</view>

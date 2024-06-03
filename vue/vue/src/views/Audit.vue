@@ -375,6 +375,9 @@ export default {
         if(res.code=='200'){
           if(res.code=='200'){
             this.lookone=res.data
+            // for(let i=0;i<this.lookone.urls.length;i++){
+            //   this.lookone.urls[i]="'"+this.lookone.urls[i]+"'"
+            // }
             this.LoansAudit(e)
           }
         }

@@ -2,21 +2,43 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69f992f4-e6f3-428a-9586-8d3861e6e802" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductAnalysisController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/ProductClass.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/ReLoans.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/ProductClassMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/mapper/ReLoansMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/files/d69afcdd6ccb483daf3b20b9b819b3a5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/files/f6408501a25043c4abf6d0cf296c4cc8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/BankCardSaveController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/OutSideController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/otherEntity/AbnormalMsg.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/otherEntity/StateDetail.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vue/src/views/BankCardManagement.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/common/CreateBankCards.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/common/CreateBankCards.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/common/TimeWork.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/common/TimeWork.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/BankCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/BankCardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/FileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/FileController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/LenderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/LenderController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/NewsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/NewsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/PayCostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/PayCostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductAnalysisController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductAnalysisController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserLoansCotroller.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserLoansCotroller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserLoans.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/UserLoans.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserUpdateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/controller/UserUpdateController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/BankCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/BankCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/News.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/java/com/example/springbootbank/entity/News.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/main/resources/application.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Springboot/springbootBank/src/test/java/com/example/springbootbank/SpringbootBankApplicationTests.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/LoansManagement/LoansManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/LoansManagement/LoansManagement.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/bankcards.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/bankcards.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/finance/finance.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/finance/finance.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/loans/loans.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/loans/loans.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/transfer/transfer.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/bankcards/transfer/transfer.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/index/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/index/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/LoansManagement/returnloans/returnloans.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/LoansManagement/returnloans/returnloans.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/person/person.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/product/buyproduct/buyproduct.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/product/buyproduct/buyproduct.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../uniapp/tradebank/pages/product/product.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../uniapp/tradebank/pages/product/product.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vue/src/views/Audit.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Audit.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/NewsManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/NewsManagement.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/ProductManagement.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -27,8 +49,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Vue Single File Component" />
         <option value="package.json" />
+        <option value="Vue Single File Component" />
       </list>
     </option>
   </component>
@@ -267,6 +289,18 @@
       <workItem from="1716194810856" duration="5372000" />
       <workItem from="1716255226213" duration="12357000" />
       <workItem from="1716275061430" duration="5394000" />
+      <workItem from="1716429669388" duration="4024000" />
+      <workItem from="1716523977655" duration="685000" />
+      <workItem from="1716530718452" duration="1072000" />
+      <workItem from="1716613124005" duration="3253000" />
+      <workItem from="1716770064121" duration="12678000" />
+      <workItem from="1716902772126" duration="588000" />
+      <workItem from="1716947816129" duration="1385000" />
+      <workItem from="1716961561031" duration="628000" />
+      <workItem from="1717038372378" duration="4822000" />
+      <workItem from="1717043784703" duration="15553000" />
+      <workItem from="1717123200719" duration="12810000" />
+      <workItem from="1717301799806" duration="750000" />
     </task>
     <servers />
   </component>

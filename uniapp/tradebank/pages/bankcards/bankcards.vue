@@ -44,10 +44,35 @@
 				<!-- 养老金==================================================== -->		
 						<view class="box2" >		
 						    <view v-if="!cards2">
-								<u--text style="padding-top: 5%;" align="center" type="info" text="您尚未开通个人养老金"></u--text>
-								<u-button plain style="width: 80%;" type="" text="查看详情" @click=" tip(2)"></u-button>
+								<u--text style="padding-top: 5%;" align="center" type="info" text="您尚未开通副卡"></u--text>
+								<u-row>
+								    <u-col span="6">
+								        <u-button plain style="width: 80%;" type="" text="查看详情" @click=" tip(2)"></u-button>
+								    </u-col>
+								    <u-col span="6">
+								        <u-button plain style="width: 80%;" type="" text="开通" @click="openCreateCard(2)"></u-button>
+								    </u-col>
+								</u-row>
+							</view>
+							<view v-if="cards2">
+								<u--text style="padding-top: 5%;padding-left: 20%;" align="left" type="info" :text="'龙卡通副卡（'+cardsText[1]+'）'"></u--text>
+								<view class="u-demo-block__content" style="padding-top: 5%;padding-bottom: 1%;">
+								    <u-row>
+								        <u-col span="4">
+								            <u-button plain style="width: 80%;" type="" text="明细" @click="detail(2)" ></u-button>
+								        </u-col>
+								        <u-col span="4">
+								            <u-button plain style="width: 80%;" type="" text="转账" @click="toTransfer(2)"  ></u-button>
+								        </u-col>
+										<u-col span="4">
+										    <u-button plain style="width: 80%;" type="" text="存取" @click="opneoutandsave(2)" ></u-button>
+										</u-col>
+								    </u-row>
+								</view>
 							</view>
 						</view>
+						
+						
 					</view>
 		</view>
 		
@@ -192,8 +217,16 @@
 				                	</view>
 				            </view>
 				    </u-popup>	
+					<view>
+						<u-popup mode="center" :show="showflag" @close="showflag=false" closeable="true">
+					        <view style="padding: 5%;">
+								<u-toast ref="uToast33"></u-toast>
+					            <u--text type="warning" :text="message"></u--text>
+					        </view>
+							
+						</u-popup>
+					</view>
 					<u-modal @confirm="createCard(type)" @cancel="cancel" :show="show3" :title="title" content="是否确认开通？开通后注销账户需到线下柜台处持身份证及相应证件办理" showCancelButton="true" ></u-modal>
-				
 		
 	</view>
 		
@@ -231,6 +264,7 @@
 				saveorout:'',
 				cardsId:'',
 				screenHeight:'',
+				showflag:false,
 			};
 		},
 		onLoad(){
@@ -375,11 +409,11 @@
 					this.show1 = true
 				}
 				else if(val==2){
-					this.mig="个人养老金账户为电子Ⅱ类账户，是我行为个人客户提供的个人养老金专用资金账户，具有资金存入、查询资金、待遇领取等功能"
+					this.mig="储蓄卡副卡为电子Ⅱ类账户，是我行为个人客户提供的个人副卡服务，具有资金存入转出、查询资金、理财产品购买等功能"
 					this.show1=true
 				}
 				else if(val==3){
-					this.mig="信用卡为电子Ⅱ类账户，是我行为个人客户提供的个人养老金专用资金账户，具有资金存入、查询资金、待遇领取等功能"
+					this.mig="信用卡为电子Ⅱ类账户，转为用户提供超前消费服务"
 					this.show1=true
 				}
 			},
@@ -506,11 +540,16 @@
 						if(res.code==='200'){
 							this.showoutandsave=false
 							this.saveorout=''
-							this.$refs.uToast2.show({
-												type:'success',
-												duration:'1200',
-												message:"操作成功！",
-											})
+							if(val==2){
+								this.testsave()
+							}
+							else if(val==1){
+								this.$refs.uToast2.show({
+													type:'success',
+													duration:'1200',
+													message:"操作成功！",
+												})
+							}
 						}
 						else{
 							this.$refs.uToastout.show({
@@ -530,6 +569,33 @@
 									})
 				    this.saveorout=''
 				}
+			},
+			testsave(){//日流水检擦
+				this.request({
+					url:"/BankCardSave/costsave",
+					method:"POST",
+					data:{
+						cid:this.cardsId,
+					}
+				}).then(res=>{
+					if(res.code==='200'){
+						this.message="日流水达到"+(res.data).toFixed(2)+"元，已经超过安全阈值2万元，操作记录将会被计入异常操作中"
+						this.showflag=true
+						this.$refs.uToast33.show({
+											type:'success',
+											duration:'1200',
+											message:"操作成功",
+										})
+					}
+					else{
+						this.$refs.uToast2.show({
+											type:'success',
+											duration:'1200',
+											message:"操作成功！",
+										})
+					}
+					
+				})
 			},
 			toTransfer(val){//转移到转账页面
 			    this.getCards().then(e=>{
@@ -633,6 +699,10 @@
 	border: 1px solid #ddd;
 	border-radius: 5px;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	background-image: url(~@/static/image/inset/bankCard4.png);
+	background-size: 15% 45%;
+	background-position: 19rpx 12rpx;
+	background-repeat: no-repeat;
 }
 .box3{
 	margin: 5% auto;

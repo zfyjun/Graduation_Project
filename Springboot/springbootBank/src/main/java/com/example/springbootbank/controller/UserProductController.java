@@ -100,6 +100,11 @@ public class UserProductController {
     public Result addBuyUserProduct(@RequestBody Map map){
         int uid=(Integer)map.get("uid");
         int pid=(Integer)map.get("pid");
+        int cid=(Integer)map.get("cardid");
+        BankCard bankCard=bankCardMapper.selectById(cid);
+        if(bankCard.getState()!=0){
+            return Result.error("500","该银行卡处于封禁状态！无法进行如何操作");
+        }
         UserProduct userProduct=userproductMapper.selectOne(Wrappers.<UserProduct>lambdaQuery().eq(UserProduct::getUid,uid));
         if(userProduct!=null){//有数据
             float add=Float.valueOf((String)map.get("add"));//金额
@@ -108,7 +113,6 @@ public class UserProductController {
                 if(details.get(i).getProductid()==pid&&details.get(i).getState()==1){//正在进行中的该产品
                     details.get(i).setCost(details.get(i).getCost()+add);
                     details.get(i).setBalance(details.get(i).getBalance()+add);
-                    int cid=(Integer)map.get("cardid");
                     //银行卡与产品操作
                     if(addbuybankcaord(cid,add,pid)==1&&addbuyproduct(pid,add)==1){
                         userProduct.setProduct(JSONArray.toJSONString(details));

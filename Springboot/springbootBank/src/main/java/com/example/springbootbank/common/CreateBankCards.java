@@ -70,6 +70,13 @@ public class CreateBankCards {
                 id=id+number;
             }
         }
+        else if(type!=1&&type!=3){//副卡
+            id="622301";
+            for(int i=0;i<12;i++){
+                int number=random.nextInt(9);
+                id=id+number;
+            }
+        }
         id=createAcctId(id);
         return id;
     }

@@ -105,12 +105,35 @@
 			  :closeOnClickOverlay="true" 
 			  :show="show" 
 			  title="转账确认" 
-			  :content="'您正在向账号：'+model1.userInfo.cardnumber+'转账，金额为：'+model2.userInfo.cost+'元，是否确认？'"
 			  @cancel="cancel"
 			  @confirm="confirm"
 			  @close="show=false"
 			  >
+			  <view>
+				  <view>
+					  <u--text :text="'您正在向账号：'+model1.userInfo.cardnumber+'转账，金额为：'+model2.userInfo.cost+'元，是否确认？'"></u--text>
+				  </view>
+				  <view>
+					    <u--input v-model="password" placeholder="请输入银行卡密码" type="password" ></u--input>
+				  </view>
+			  </view>
 			</u-modal>
+		</view>
+		<view>
+			<u-modal :show="showflag1"  title="警告提示" @close="showflag1=false"  :closeOnClickOverlay="true"  showCancelButto="true" @confirm="tureconfirm" @cancel="showflag1=false" >
+						<view style="padding: 2%;" class="slot-content">
+							<u--text type="warning" :text="'您在24小时内已向账号：'+model1.userInfo.cardnumber+'账户转账次数达到'+tsum+'次，是否确认继续转账？'"></u--text>
+						</view>
+			</u-modal>
+		</view>
+		<view>
+			<u-popup mode="center" :show="showflag" @close="showflag=false" closeable="true">
+		        <view style="padding: 5%;">
+					<u-toast ref="uToast33"></u-toast>
+		            <u--text type="warning" :text="message"></u--text>
+		        </view>
+				
+			</u-popup>
 		</view>
 		
 	</view>
@@ -121,6 +144,7 @@
 		data() {
 			return {
 				carddetil:uni.getStorageSync('bankdetail'),
+				user:uni.getStorageSync('user'),
 				model1: {
 								userInfo: {
 									name: '',
@@ -134,7 +158,14 @@
 								},
 							},
 				show:false,
+				password:'',
+				tsum:0,
+				showflag1:false,
+				showflag:false       
 			};
+		},
+		onLoad() {//获取转账次数
+			
 		},
 		methods:{
 			opensure(){
@@ -181,7 +212,27 @@
 									})
 				}
 			},
-			confirm(){
+			confirm(){//确认转账
+			    this.gettimes()
+				if(this.password==this.user.password){//密码正确
+					if(this.gettransfertimes()>=5){//次数够了
+					    this.show=false
+						this.showflag1=true
+					}
+					else {//次数还不够
+						this.tureconfirm()
+					}
+				}
+				else{
+					this.password=''
+					this.$refs.uToast.show({
+										type:'error',
+										duration:'2000',
+										message:'密码错误',
+									})
+				}
+			},
+			tureconfirm(){//真实确认转账
 				this.request({
 					url:"/Pay/transfer",
 					method:"POST",
@@ -194,14 +245,13 @@
 					}
 				}).then(res=>{
 					this.show=false
+					this.showflag1=false
 					if(res.code==='200'){
-						this.$refs.uToast.show({
-											type:'success',
-											duration:'1500',
-											message:"转账成功！",
-										})
 						this.model2.userInfo.cost=''
+						this.password=''
 						this.getbankcardone()
+						//日流水安全
+						this.testsave()
 					}
 					else{
 						this.$refs.uToast.show({
@@ -212,8 +262,67 @@
 					}
 				})
 			},
+			gettimes(){//获取转账次数
+				this.request({
+					url:"/BankCardSave/getttime",
+					method:"POST",
+					data:{
+						payname:this.model1.userInfo.name,
+						paycard:this.model1.userInfo.cardnumber,
+						cardid:this.carddetil.id,
+					}
+				}).then(res=>{
+					if(res.code==='200'){
+						this.tsum=res.data
+					}
+				})
+			},
+			testsave(){//日流水检擦
+				this.request({
+					url:"/BankCardSave/costsave",
+					method:"POST",
+					data:{
+						cid:this.carddetil.id,
+					}
+				}).then(res=>{
+					if(res.code==='200'){
+						this.message="日流水达到"+(res.data).toFixed(2)+"元，已经超过安全阈值2万元，操作记录将会被计入异常操作中"
+						this.showflag=true
+						this.$refs.uToast33.show({
+											type:'success',
+											duration:'1500',
+											message:"转账成功",
+										})
+					}
+					else{
+						this.$refs.uToast.show({
+											type:'success',
+											duration:'1500',
+											message:"转账成功！",
+										})
+					}
+					
+				})
+			},
 			cancel(){
 				this.show=false
+			},
+			gettransfertimes(){//获取转账次数
+				this.request({
+					url:"/BankCardSave/transfertest",
+					method:"POST",
+					data:{
+						payname:this.model1.userInfo.name,
+						paycard:this.model1.userInfo.cardnumber,
+						cardid:this.carddetil.id,
+					}
+				}).then(res=>{
+					if(res.code==='200'){
+						this.tsum=res.data
+						return this.tsum
+					}
+				})
+				return this.tsum
 			},
 			getbankcardone(){
 				this.request({

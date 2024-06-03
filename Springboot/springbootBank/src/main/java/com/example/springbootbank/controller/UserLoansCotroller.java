@@ -60,6 +60,10 @@ public class UserLoansCotroller {
         UserLoans userLoans=new UserLoans();
         //开始创建
         userLoans.setCid((Integer) map.get("cid"));
+        BankCard bankCard=bankCardMapper.selectById((Integer) map.get("cid"));
+        if(bankCard.getState()!=0){
+            return Result.error("500","该银行卡处于封禁状态！无法进行如何操作");
+        }
         userLoans.setLid((Integer) map.get("lid"));
         userLoans.setUid((Integer) map.get("uid"));
         userLoans.setCost(Float.valueOf((String)map.get("cost"))*10000);
@@ -128,6 +132,10 @@ public class UserLoansCotroller {
         }
         else if(type==2){//通过
             userLoans.setWorktime(LocalDate.now());
+            BankCard bankCard=bankCardMapper.selectById(userLoans.getCid());
+            if(bankCard.getState()!=0){
+                return Result.error("500","该银行卡处于封禁状态！无法通过申请");
+            }
             if(newreturnpay(userLoans)){
                 if(addloans(userLoans)&&userLoansMapper.updateById(userLoans)==1){
                     return Result.success();
@@ -150,7 +158,6 @@ public class UserLoansCotroller {
         details.add(detail);
         bankCard.setDetail(JSONArray.toJSONString(details));
         //设置下个月还款账单
-
         if(bankCardMapper.updateById(bankCard)==1){
             return true;
         }

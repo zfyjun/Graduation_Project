@@ -7,8 +7,10 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.Files;
 import com.example.springbootbank.entity.Market;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +72,7 @@ public class FileController {
             url=dbfiles.getUrl();
             uploadFile.delete();
         }else{
-            url="http://localhost:9090/files/download/"+fileUUid;
+            url="http://localhost:9090/file/download/"+fileUUid;
         }
         Files saveFile=new Files();
         saveFile.setName(originalFilename);
@@ -97,7 +100,6 @@ public class FileController {
         outputStream.write(bytes);
         outputStream.flush();
         outputStream.close();
-        System.out.println("预览接口结束运行");
     }
     @PostMapping("/filesDeletById")//根据id删除文件
     public Result getMarketDatebyId(@RequestBody Map map){
@@ -109,7 +111,20 @@ public class FileController {
         }
         return Result.error("500","文件删除失败");
     }
-
+    @PostMapping("/filesselectByIds")//根据id数组获取文件
+    public Result filesselectByIds(@RequestBody Map map){
+        String idstr =(String) map.get("ids");
+        List<Integer> ids= JSONArray.parseArray(idstr,Integer.class);
+        List<Files> filesList=new ArrayList<>();
+        for(int i=0;i<ids.size();i++){
+            Files filesone=filesMapper.selectById(ids.get(i));
+            filesList.add(filesone);
+        }
+        if(filesList.size()>0){
+            return Result.success(filesList);
+        }
+        return Result.error("500","文件删除失败");
+    }
     public Files getFileByMd5(String md5){
         QueryWrapper<Files> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("md5",md5);

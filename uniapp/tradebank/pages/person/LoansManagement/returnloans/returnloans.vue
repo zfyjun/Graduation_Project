@@ -32,7 +32,7 @@
 							<u--text style="flex: 1;"  type="warning" text="逾期还款" v-if="nowpays.state==3" ></u--text>
 						</view>
 						<view>
-							<u--text type="success" :text="'需还金额￥：'+nowpays.cost"></u--text>
+							<u--text type="success" :text="'需还金额￥：'+nowpays.cost.toFixed(0)"></u--text>
 							<u--text size="13" type="info" :text="'还款方式：'+returnloans.returnname" ></u--text>
 						</view>
 					</view>
@@ -48,7 +48,7 @@
 					<u--text size="13" :text="'账单时间：'+item.time"></u--text>
 					<u--text size="13" :text="'还款时间：'+item.returntime" v-if="item.returntime!=null"></u--text>
 					<view style="display: flex;">
-						<u--text style="flex: 1;" :text="'欠款金额￥：'+item.cost"></u--text>
+						<u--text style="flex: 1;" :text="'欠款金额￥：'+item.cost.toFixed(0)"></u--text>
 						<u--text style="flex: 1;" type="success" :text="'状态：按时还款'" v-if="item.state==1"></u--text>
 						<u--text style="flex: 1;" type="warning" :text="'状态：逾期还款'" v-if="item.state==3"></u--text>
 						<u--text style="flex: 1;" type="error" :text="'状态：逾期未还款'" v-if="item.state==2"></u--text>
@@ -75,7 +75,7 @@
 		        			>
 		        				<u--input
 								        disabled
-		        						v-model="nowpays.cost"
+		        						v-model="nowpays.cost.toFixed(0)"
 		        						border="none"
 		        				></u--input>
 								<u-icon

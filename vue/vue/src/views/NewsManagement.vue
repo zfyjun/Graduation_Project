@@ -1,5 +1,9 @@
 <template>
   <div style="padding: 20px">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="新闻编辑" :name="1"></el-tab-pane>
+      <el-tab-pane label="已发布新闻" :name="2"></el-tab-pane>
+    </el-tabs>
     <div>
       <el-input v-model="search" placeholder="请输入新闻标题的关键字进行查询" style="width:250px;margin-left: 50px" clearable size="mini"></el-input>
 <!--      <el-select v-model="sex" placeholder="用户性别" size="mini" style="width: 140px;margin-left: 5px">-->
@@ -8,71 +12,131 @@
 <!--        <el-option label="女性" value=2></el-option>-->
 <!--        <el-option label="保密" value=3></el-option>-->
 <!--      </el-select>-->
-      <el-button @click="load" size="mini" style="margin-left: 10px">查询</el-button>
-      <el-button @click="add" size="mini" style="margin-left: 500px" type="primary" >新增</el-button>
+      <el-button @click="searchNews" size="mini" style="margin-left: 10px">查询</el-button>
+      <el-button v-if="activeName==1" @click="add" size="mini" style="margin-left: 500px" type="primary" >新增</el-button>
     </div>
     <!--数据展示-->
-    <div style="margin-left: 50px;margin-top: 20px" v-loading="loading">
-      <el-table :data="tableData" stripe border size="mini"ref="multipleTable" tooltip-effect="dark" @selection-change="handleSelectionChange">
-        <el-table-column
-            type="selection"
-            width="55">
-        </el-table-column>
-        <el-table-column prop="id" label="ID" fixed width="40" sortable></el-table-column>
-        <el-table-column prop="title" label="新闻标题" show-overflow-tooltip width="100"></el-table-column>
-        <el-table-column prop="content" label="新闻内容" show-overflow-tooltip style="width: 50px">
-          <template v-slot="scope">
-            <el-button @click="preview(scope.row.content)">查看内容</el-button>
-          </template>
-        </el-table-column>
+    <div v-if="activeName==1" >
+      <div style="margin-left: 50px;margin-top: 20px" v-loading="loading">
+        <el-table :data="tableData" stripe border size="mini"ref="multipleTable" tooltip-effect="dark" @selection-change="handleSelectionChange">
+          <el-table-column
+              type="selection"
+              width="55">
+          </el-table-column>
+          <el-table-column prop="id" label="ID" fixed width="40" sortable></el-table-column>
+          <el-table-column prop="title" label="新闻标题" show-overflow-tooltip width="100"></el-table-column>
+          <el-table-column prop="content" label="新闻内容" show-overflow-tooltip style="width: 50px">
+            <template v-slot="scope">
+              <el-button @click="preview(scope.row.content)">查看内容</el-button>
+            </template>
+          </el-table-column>
 
-        <el-table-column prop="img" label="配图" style="width: 80px;height: 80px">
-          <template v-slot="scope">
-            <div style="display: flex;align-items: center">
-              <el-image style="width: 150px;height: 150px" v-if="scope.row.img"
-              :src="scope.row.img" ></el-image>
-            </div>
+          <el-table-column prop="img" label="封面" style="width: 80px;height: 80px">
+            <template v-slot="scope">
+              <div style="display: flex;align-items: center">
+                <el-image style="width: 150px;height: 150px" v-if="scope.row.img"
+                          :src="scope.row.img" ></el-image>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="category" label="新闻分类" style="width: auto"></el-table-column>
+          <el-table-column prop="type" label="类型" style="width: auto"></el-table-column>
+          <el-table-column prop="time" label="编辑时间" style="width: auto"></el-table-column>
+          <el-table-column prop="readCount" label="阅读次数" style="width: auto"></el-table-column>
+          <!--        <el-table-column prop="permission" label="权限" style="width: auto"></el-table-column>-->
+          <el-table-column
+              fixed="right"
+              label="操作"
+              width="135">
+            <template slot-scope="scope">
+              <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+              <el-popconfirm title="确认发布该新闻？" @confirm="handleUpdata(scope.row.id)">
+                <template #reference>
+                  <el-button type="text" style="color:limegreen;margin-left: 10px" size="mini" >发布</el-button>
+                </template>
+              </el-popconfirm>
+              <el-popconfirm title="确认彻底删除该新闻吗？" @confirm="handleDelete(scope.row.id)">
+                <template #reference>
+                  <el-button type="text" style="color:orangered;margin-left: 10px" size="mini" >删除</el-button>
+                </template>
+              </el-popconfirm>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <el-popconfirm v-if="activeName==1" title="确认发布这些新闻吗？" @confirm="UploadAll()" >
+          <template #reference>
+            <el-button type="text" style="color:limegreen;margin-left: 20px" size="mini"  >批量发布</el-button>
           </template>
-        </el-table-column>
-        <el-table-column prop="category" label="新闻分类" style="width: auto"></el-table-column>
-        <el-table-column prop="type" label="类型" style="width: auto"></el-table-column>
-        <el-table-column prop="time" label="发布时间" style="width: auto"></el-table-column>
-        <el-table-column prop="adminId" label="发布人ID" style="width: auto"></el-table-column>
-        <el-table-column prop="readCount" label="阅读次数" style="width: auto"></el-table-column>
-        <!--        <el-table-column prop="permission" label="权限" style="width: auto"></el-table-column>-->
-        <el-table-column
-            fixed="right"
-            label="操作"
-            width="110">
-          <template slot-scope="scope">
-            <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
-            <el-popconfirm title="确认删除该用户？" @confirm="handleDelete(scope.row.id)">
-              <template #reference>
-                <el-button type="text" style="color:orangered;margin-left: 10px" size="mini" >删除</el-button>
-              </template>
-            </el-popconfirm>
+        </el-popconfirm>
+        <el-popconfirm v-if="activeName==1" title="确认彻底删除这些新闻吗？" @confirm="DeleteAll()" >
+          <template #reference>
+            <el-button type="text" style="color:orangered;margin-left: 20px" size="mini"  >批量删除</el-button>
           </template>
-        </el-table-column>
-      </el-table>
-      <!--分页-->
-      <div style="display: flex;margin-top: 5px">
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[5, 10, 15, 20]"
-            :page-size="5"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total">
-        </el-pagination>
+        </el-popconfirm>
+
+
       </div>
+    </div>
+    <div v-if="activeName==2" >
+      <div style="margin-left: 50px;margin-top: 20px" v-loading="loading">
+        <el-table :data="tableData" stripe border size="mini"ref="multipleTable" tooltip-effect="dark" @selection-change="handleSelectionChange">
+          <el-table-column
+              type="selection"
+              width="55">
+          </el-table-column>
+          <el-table-column prop="id" label="ID" fixed width="40" sortable></el-table-column>
+          <el-table-column prop="title" label="新闻标题" show-overflow-tooltip width="100"></el-table-column>
+          <el-table-column prop="content" label="新闻内容" show-overflow-tooltip style="width: 50px">
+            <template v-slot="scope">
+              <el-button @click="preview(scope.row.content)">查看内容</el-button>
+            </template>
+          </el-table-column>
 
-      <el-popconfirm title="确认删除这些用户吗？" @confirm="DeleteAll()" >
+          <el-table-column prop="img" label="封面" style="width: 80px;height: 80px">
+            <template v-slot="scope">
+              <div style="display: flex;align-items: center">
+                <el-image style="width: 150px;height: 150px" v-if="scope.row.img"
+                          :src="scope.row.img" ></el-image>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="category" label="新闻分类" style="width: auto"></el-table-column>
+          <el-table-column prop="type" label="类型" style="width: auto"></el-table-column>
+          <el-table-column prop="uptime" label="发布时间" style="width: auto"></el-table-column>
+          <el-table-column prop="readCount" label="阅读次数" style="width: auto"></el-table-column>
+          <!--        <el-table-column prop="permission" label="权限" style="width: auto"></el-table-column>-->
+          <el-table-column
+              fixed="right"
+              label="操作"
+              width="70">
+            <template slot-scope="scope">
+              <el-popconfirm title="确认下架该新闻？" @confirm="handledown(scope.row.id)">
+                <template #reference>
+                  <el-button type="text" style="color:orangered;margin-left: 10px" size="mini" >下架</el-button>
+                </template>
+              </el-popconfirm>
+            </template>
+          </el-table-column>
+        </el-table>
+      <el-popconfirm  title="确认下架这些新闻吗？" @confirm="DownAll()" >
         <template #reference>
-          <el-button type="text" style="color:orangered;margin-left: 20px" size="mini"  >批量删除</el-button>
+          <el-button type="text" style="color:orangered;margin-left: 20px" size="mini"  >批量下架</el-button>
         </template>
       </el-popconfirm>
-
+        </div>
+    </div>
+    <!--分页-->
+    <div style="display: flex;margin-top: 5px">
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[5, 10, 15, 20]"
+          :page-size="5"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+      </el-pagination>
     </div>
     <!--新增弹窗-->
     <div >
@@ -83,12 +147,20 @@
           </el-form-item>
 
           <el-form-item  prop="category" label="新闻分类" >
-            <el-input v-model="form.category" style="width: 70%;" placeholder="新闻分类"></el-input>
+            <el-select v-model="form.category" placeholder="请选择">
+              <el-option
+                  v-for="item in options"
+                  :key="item.label"
+                  :label="item.label"
+                  :value="item.label">
+              </el-option>
+            </el-select>
+<!--            <el-input v-model="form.category" style="width: 70%;" placeholder="新闻分类"></el-input>-->
           </el-form-item>
 
-          <el-form-item prop="img" label="配图" >
+          <el-form-item prop="img" label="封面" >
             <el-upload
-                action="http://localhost:9090/files/upload"
+                action="http://localhost:9090/file/upload"
                 list-type="picture"
                 :on-success="handleImgSuccess"
             >
@@ -165,6 +237,15 @@ export default {
       editor:null,
       content:'',
       formVisible1:false,
+      options:[
+        {value:1,label:'财经'},
+        {value: 2,label: '娱乐'},
+        {value: 3,label: '科技'},
+        {value: 5,label: '时政'},
+        {value: 4,label: '公告'},
+      ],
+      activeName:1,
+      type:0,
     }
 
   },
@@ -179,6 +260,9 @@ export default {
     },
     //查询方法
     load() {
+      this.currentPage=1//默认显示第一页
+      this.pageSize=5
+      this.total=0
       this.searchNews()
     },
     searchNews(){//查询与显示（所有新闻）
@@ -188,26 +272,29 @@ export default {
           pageNum: this.currentPage,
           pageSize: this.pageSize,
           search: this.search,
+          type:this.type,
         }
       }).then(res=> {
         this.tableData=res.data.records
         console.log(res.data.records)
-        // for(let i=0;i<this.tableData.length;i++){
-        //   if(this.tableData[i].sex==1){
-        //     this.tableData[i].sex="男"
-        //   }
-        //   else if(this.tableData[i].sex==2){
-        //     this.tableData[i].sex="女"
-        //   }
-        //   else if(this.tableData[i].sex==3){
-        //     this.tableData[i].sex="保密"
-        //   }
-        // }
         this.total=res.data.total
         this.loading=false
       })
     },
-    DeleteAll(){
+    handleClick(tab, event) {
+      this.multipleSelection=[]
+      if(this.activeName==1){
+        this.type=0
+        this.search=''
+        this.load()
+      }
+      else {
+        this.type=1
+        this.search=''
+        this.load()
+      }
+    },
+    DeleteAll(){//批量删除
       let deleteitem=[]
       for(let i=0;i<this.multipleSelection.length;i++){
         deleteitem[i]=this.multipleSelection[i].id
@@ -226,6 +313,54 @@ export default {
             this.$message({
               type:"error",
               message:'批量删除失败'
+            })
+          }
+        })
+      }
+    },
+    DownAll(){//批量下架
+      let deleteitem=[]
+      for(let i=0;i<this.multipleSelection.length;i++){
+        deleteitem[i]=this.multipleSelection[i].id
+      }
+      if(deleteitem.length===0){
+        this.$message('请选择要下架的新闻！')
+      }else{
+        request.post("/news/donwByBatch",deleteitem).then(res=>{
+          if(res.code==='200'){
+            this.$message({
+              type:"success",
+              message:'批量下架成功'
+            })
+            this.load()
+          }else{
+            this.$message({
+              type:"error",
+              message:'批量下架失败'
+            })
+          }
+        })
+      }
+    },
+    UploadAll(){//批量发布
+      let deleteitem=[]
+      for(let i=0;i<this.multipleSelection.length;i++){
+        deleteitem[i]=this.multipleSelection[i].id
+      }
+      if(deleteitem.length===0){
+        this.$message('请选择要发布的新闻！')
+      }else{
+        request.post("/news/updateByBatch",deleteitem).then(res=>{
+          if(res.code==='200'){
+            this.$message({
+              type:"success",
+              message:'批量发布成功'
+            })
+            this.load()
+          }else{
+            this.$message({
+              type:"error",
+              message:'批量发布失败'
             })
           }
         })
@@ -267,7 +402,51 @@ export default {
         this.editor.txt.html(row.content)
       })
     },
-    handleDelete(id) {
+    handledown(id){//先下架某一新闻
+      request.post("/news/downnews", id
+          ).then(res=>{
+        if(res.code=='200'){
+          this.$message({
+            type: "success",
+            message: "下架成功！"
+          })
+          this.load()
+        }else{
+          this.$message({
+            type: "error",
+            message: "下架失败"
+          })
+        }
+        if(this.tableData.length==0||this.tableData.length==1){
+          this.currentPage--;
+        }
+        this.load()//发布之后重新加载表格的数据
+      })
+    },
+    handleUpdata(id){//发布某一新闻
+      request.post("/news/updateone",
+          {
+             id:id
+          }).then(res=>{
+        if(res.code=='200'){
+          this.$message({
+            type: "success",
+            message: "发布成功！"
+          })
+          this.load()
+        }else{
+          this.$message({
+            type: "error",
+            message: "发布失败"
+          })
+        }
+        if(this.tableData.length==0||this.tableData.length==1){
+          this.currentPage--;
+        }
+        this.load()//发布之后重新加载表格的数据
+      })
+    },
+    handleDelete(id) {//删除某一新闻
       request.delete("/news/"+id).then(res=> {
         if(res.code === '200') {
           this.$message({
@@ -284,22 +463,21 @@ export default {
           this.currentPage--;
         }
         this.load()//删除之后重新加载表格的数据
-
       })
     },
     handleSizeChange(pageSize) {//改变当前每页的个数触发
       this.pageSize=pageSize
-      this.load()
+      this.searchNews()
     },
     handleCurrentChange(pageNum) {//改变当前页面触发
       this.currentPage=pageNum
-      this.load()
+      this.searchNews()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
     handleImgSuccess(res){
-      this.form.img=res
+      this.form.img=res.data.url
     },
     // handleImgSuccess(response,file,fileList){
     //   this.form.img=response.data

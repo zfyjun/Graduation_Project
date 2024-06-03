@@ -142,6 +142,38 @@
 				"navigationBarTitleText" : "贷款还款",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/index/news/news",
+			"style" : 
+			{
+				"navigationBarTitleText" : "新闻阅读",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/person/BankCardManagement/BankCardManagement",
+			"style" : 
+			{
+				"navigationBarTitleText" : "银行卡管理",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/login/forgetpassword/forgetpassword",
+			"style" : 
+			{
+				"navigationBarTitleText" : "忘记密码",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/person/Usermsg/Usermsg",
+			"style" : 
+			{
+				"navigationBarTitleText" : "信息管理",
+				"enablePullDownRefresh" : false
+			}
 		}
 		
 	],

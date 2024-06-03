@@ -82,7 +82,7 @@ public class LenderController {
     public Result getworkloansbyid(@RequestBody Map map){
         Integer id=(Integer) map.get("id");
         QueryWrapper<UserLoans> userLoansQueryWrapper=new QueryWrapper<>();
-        List<UserLoans> userLoansList=userLoansMapper.selectList(userLoansQueryWrapper.eq("uid",id));
+        List<UserLoans> userLoansList=userLoansMapper.selectList(userLoansQueryWrapper.eq("uid",id).eq("ispass",2));
         if(userLoansList.size()>0){
             return Result.success(userLoansList);
         }

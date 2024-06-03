@@ -161,6 +161,7 @@
 									multiple
 									:maxCount="10"
 									:previewFullImage="true"
+								
 							></u-upload>		
 				</u--form>		
 				
@@ -258,7 +259,8 @@
 				fileList1:[],
 				myloans:{},
 				type:0,//0是新增申请，1是编辑申请
-				src:""
+				src:"",
+				returnfiles:[]
 			};
 		},
 		onLoad() {
@@ -299,22 +301,42 @@
 					}
 				})
 				if(flag==1){//是编辑
-					this.myloans=uni.getStorageSync('myloans')
-					this.type=1
-					this.model1.lender=this.myloans.type
-					this.model1.userInfo.cost=this.myloans.cost
-					this.model1.userInfo.salary=this.myloans.salary
-					this.model1.userInfo.returnType=this.myloans.returnType
-					this.model1.userInfo.timelimit=this.myloans.timelimit
-					this.loanstext='申请修改'
+				this.myloans=uni.getStorageSync('myloans')
+				    this.request({
+				    	url:"/file/filesselectByIds",
+				    	method:"POST",
+				    	data:{
+				    		ids:this.myloans.materials
+				    	}
+				    }).then(res=>{
+				    	if(res.code=='200'){
+							this.returnfiles=res.data
+				    		this.gethistory()
+				    	}
+				    })
+					
 				}
+			},
+			gethistory(){//设置编辑的历史信息
+				this.type=1
+				this.model1.lender=this.myloans.type
+				this.model1.userInfo.cost=this.myloans.cost
+				this.model1.userInfo.salary=this.myloans.salary
+				this.model1.userInfo.returnType=this.myloans.returnType
+				this.model1.userInfo.timelimit=this.myloans.timelimit
+				for(let i=0;i<this.returnfiles.length;i++){
+					let fileson={id:this.returnfiles[i].id , message:'' , name:this.returnfiles[i].name , size:(this.returnfiles[i].size)*1024 , status:'success' , thumb:this.returnfiles[i].url , type:'image' , url:this.returnfiles[i].url}
+					this.fileList1.push(fileson)
+				}
+				this.loanstext='申请修改'
 			},
 			sendLoans(){//提交贷款申请
 				let user=uni.getStorageSync('user')
+				console.log(this.fileList1)
 				if(this.model1.userInfo.name==user.name&&this.model1.userInfo.password==user.password){
 					let fileListids=[]
 					for(let i=0;i<this.fileList1.length;i++){
-						fileListids.push(Number(this.fileList1[i].url))
+						fileListids.push(Number(this.fileList1[i].id))
 					}
 					console.log(fileListids)
 					this.request({
@@ -400,7 +422,7 @@
 					this[`fileList${event.name}`].splice(fileListLen, 1, Object.assign(item, {
 						status: 'success',
 						message: '',
-						url: 'http://localhost:9090//files//dd92b8ce53a546e3b46ca9eeb598663e.jpg',
+						url: result.data.url,
 						id:result.data.id
 					}))
 					fileListLen++
@@ -418,6 +440,7 @@
 						success: (res) => {
 							setTimeout(() => {
 								resolve(res.data)
+								console.log("上传成功")
 								console.log(this.fileList1)
 							}, 1000)
 						}

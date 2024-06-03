@@ -1,5 +1,6 @@
 package com.example.springbootbank.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -127,4 +128,18 @@ public class UserController {
         return Result.success(page);
     }
 
+    @PostMapping("/getUserinfo")//获取用户详情信息
+    public Result getUserinfo(@RequestBody Map map){
+        Integer uid=(Integer)map.get("uid");
+        UserInfo userInfo=userInfoMapper.selectOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUid,uid));
+        return Result.success(userInfo);
+    }
+
+    @PostMapping("/setUserinfoanuser")//修改用户信息
+    public Result setUserinfoanuser(@RequestBody Map map){
+        User user= JSONObject.parseObject((String) map.get("user"),User.class);
+        UserInfo userInfo= JSONObject.parseObject((String) map.get("userinfo"),UserInfo.class);
+
+        return Result.success();
+    }
 }

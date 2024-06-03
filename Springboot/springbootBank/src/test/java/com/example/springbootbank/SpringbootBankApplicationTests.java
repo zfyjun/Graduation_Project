@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.entity.*;
 
+import com.example.springbootbank.entity.otherEntity.AbnormalMsg;
 import com.example.springbootbank.mapper.*;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
@@ -72,7 +73,7 @@ class SpringbootBankApplicationTests {
     MarketCopyMapper marketCopyMapper;
     @Test
     void contextLoads() {
-        setoverdue();
+        productwork();
     }
     public void setloanspay(){//检查每个贷款设置逾期
         QueryWrapper<UserLoans> queryWrapper=new QueryWrapper<>();
@@ -88,6 +89,7 @@ class SpringbootBankApplicationTests {
                 //设置违规记录
                 UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,userLoansList.get(i).getUid()));
                 userCredit.setDefaults(userCredit.getDefaults()+1);
+                userCredit.setCredit(userCredit.getCredit()-10);
                 userCreditMapper.updateById(userCredit);
             }
             else if(reLoansList.get(0).getState()==2&&nowtime.isEqual(reLoansList.get(0).getTime().plusMonths(1))){//逾期超过一个月了
@@ -224,7 +226,7 @@ class SpringbootBankApplicationTests {
             System.out.println("不存在该银行卡");
         }
     }
-    //每天检查是否存在逾期账单并设置逾期天数
+    //信用卡逾期账单检查
     public void setoverdue(){
         List<CreditCard> creditCards=creditCardMapper.selectList(null);//获取所有的信用卡
         for(int i=0;i<creditCards.size();i++){
@@ -251,6 +253,19 @@ class SpringbootBankApplicationTests {
                             float balance2=bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue();
                             Debts.get(j).setInterest(balance2);
                             BankCard bankCard=bankCardMapper.selectById(creditCards.get(i).getCid());
+                            //
+                            bankCard.setAbnormal(1);//设置异常
+                            List<AbnormalMsg> abnormalMsgs=JSONArray.parseArray(bankCard.getAbnormalmsg(), AbnormalMsg.class);
+                            AbnormalMsg abnormalMsg=new AbnormalMsg();
+                            LocalDateTime nowtime=LocalDateTime.now();
+                            abnormalMsg.setTime(nowtime);
+                            abnormalMsg.setDescription("信用卡账单逾期未还");
+                            abnormalMsg.setState(1);
+                            abnormalMsg.setType(3);
+                            abnormalMsgs.add(abnormalMsg);
+                            bankCard.setAbnormalmsg(JSONArray.toJSONString(abnormalMsgs));
+                            bankCardMapper.updateById(bankCard);
+                            //
                             UserCredit userCredit=userCreditMapper.selectOne(Wrappers.<UserCredit>lambdaQuery().eq(UserCredit::getUid,bankCard.getUid()));
                             userCredit.setDefaults(userCredit.getDefaults()+1);
                             userCredit.setCredit(userCredit.getCredit()-10);

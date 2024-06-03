@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.springbootbank.common.IdGeneratorSnowlake;
 import com.example.springbootbank.common.Result;
 import com.example.springbootbank.entity.*;
+import com.example.springbootbank.entity.otherEntity.AbnormalMsg;
 import com.example.springbootbank.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +48,13 @@ public class PayCostController {
         float cost=Float.valueOf((String)map.get("cost"));
         BankCard bankCard=bankCardMapper.selectById(id);
         if(bankCard!=null){
+            if(bankCard.getState()!=0){
+                return Result.error("500","该银行卡处于封禁状态！无法进行如何操作");
+            }
             if(bankCard.getType()==3&&!Creditcardsure(id)){//信用卡
                 return Result.error("500","该信用卡存在未还清的逾期账单，请还清逾期账单后继续使用该信用卡！");
             }
+
             Detail detail=new Detail();
             //
             detail.setId(IdGeneratorSnowlake.getInstance().snowflakeId());
@@ -80,6 +86,9 @@ public class PayCostController {
         float cost=Float.valueOf((String)map.get("cost"));
         BankCard bankCard=bankCardMapper.selectById(id);
         if(bankCard!=null){
+            if(bankCard.getState()!=0){
+                return Result.error("500","该银行卡处于封禁状态！无法进行如何操作");
+            }
             Detail detail=new Detail();
             //
             detail.setId(IdGeneratorSnowlake.getInstance().snowflakeId());
@@ -112,8 +121,12 @@ public class PayCostController {
         BankCard bankCard=bankCardMapper.selectOne(Wrappers.<BankCard>lambdaQuery().eq(BankCard::getCardnumber,cardnumber));
         if(bankCard!=null){
             User user=userMapper.selectById(bankCard.getUid());
-            if(user.getName().equals(name)){
+            if(user.getName().equals(name)){//验证成功
                 Integer id=(Integer) map.get("cardid") ;//银行卡id
+                BankCard bankCard1=bankCardMapper.selectById(id);
+                if(bankCard1.getState()!=0){
+                    return Result.error("500","该银行卡处于封禁状态！无法进行如何操作");
+                }
                 float cost=Float.valueOf((String)map.get("cost"));//金额
                 String describe=(String)map.get("describe") ;//用途
                 if(maketans(id,bankCard.getId(),cost,describe,1,0)==1){
@@ -121,10 +134,12 @@ public class PayCostController {
                 }
                 return Result.error("500","错误！转账过程中服务器出错，请联系客服");
             }
-            return Result.error("500","错误！接收方姓名错误，请重新填写");
+            return Result.error("500","错误！接收方姓名或银行卡号错误，请重新填写");
         }
         return Result.error("404","错误！接收方账户不存在，请重新填写");
     }
+
+
 
     @PostMapping("/consume")//消费
     public Result consume(@RequestBody Map map){
@@ -133,6 +148,9 @@ public class PayCostController {
         String describe=(String) map.get("describe");
         BankCard bankCard=bankCardMapper.selectById(cid);
         if(bankCard!=null){//账户存在
+            if(bankCard.getState()!=0){
+                return Result.error("500","该银行卡处于封禁状态！无法进行如何操作");
+            }
             if(cost>bankCard.getBalance()){
                 return Result.error("500","余额不足！支付失败");
             }
@@ -165,6 +183,9 @@ public class PayCostController {
         float cost=Float.valueOf(String.valueOf (map.get("cost")));//金额
         float reallcost=cost;
         BankCard pbankCard=bankCardMapper.selectById(pcid);
+        if(pbankCard.getState()!=0){
+            return Result.error("500","该银行卡处于封禁状态！无法进行如何操作");
+        }
         if(cost<=pbankCard.getBalance()){//金额足够还款
             CreditCard creditCard=creditCardMapper.selectOne(Wrappers.<CreditCard>lambdaQuery().eq(CreditCard::getCid,ccid));
             List<Debt> debts= JSONArray.parseArray(creditCard.getDebt(),Debt.class);

@@ -1,8 +1,7 @@
 <template>
 	<view >
 		<view  style="padding: 2%;" >
-			<view class="box"  >
-				
+			<view class="box" @click="tousermsg" >
 				<view style="display: flex; padding: 5%;" >
 					<u-avatar  size="60" class="avatar" ></u-avatar>
 					<u--text color="#fff" class="text1" mode="name"  format="encrypt" bold :text="user.name"></u--text>
@@ -20,6 +19,7 @@
 						<u-cell icon="rmb-circle-fill" title="我的理财" @click="tofinance"></u-cell>
 						<u-cell icon="hourglass-half-fill" title="我的贷款" @click="toloans()"></u-cell>
 						<u-cell icon="integral-fill" title="信用卡审核" @click="toCreditCard()" ></u-cell>
+						<u-cell icon="coupon-fill" title="银行卡管理" @click="Cardmanagement()" ></u-cell>
 				</u-cell-group>
 			</view>
 			<view style="width: 50%; margin: 5% auto" >
@@ -293,6 +293,16 @@
 			toCreditCard(){//转移到信用卡审核界面
 				uni.navigateTo({
 						url:"/pages/person/CreditCardAudit/CreditCardAudit"
+				})
+			},
+			Cardmanagement(){//银行卡管理
+				uni.navigateTo({
+						url:"/pages/person/BankCardManagement/BankCardManagement"
+				})
+			},
+			tousermsg(){//用户信息
+				uni.navigateTo({
+						url:"/pages/person/Usermsg/Usermsg"
 				})
 			}
 			

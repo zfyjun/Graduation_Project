@@ -28,7 +28,17 @@
 			</view>
 		</view>
 		<u-toast ref="uToast"></u-toast>
-		<u-modal @close="show2=false" @cancel="show2=false" showCancelButton="true" @confirm="surebuy()" :show="show2"  :content="'确认购买当前产品吗？购买金额为￥'+pay.cost+'，购买账户为'+cardtext"></u-modal>
+		<u-modal @close="show2=false" @cancel="show2=false" showCancelButton="true" @confirm="surebuy()" :show="show2" >
+			<view>
+				<view>
+					<u--text :text="'确认购买当前产品吗？购买金额为￥'+pay.cost+'，购买账户为'+cardtext"></u--text>
+				</view>
+				<view style="margin-top: 1%;">
+					<u--input v-model="idcardnumber" placeholder="请输入身份证号码" type="idcardnumber" ></u--input>
+					<u--input style="margin-top: 1%;" v-model="password" placeholder="请输入银行卡密码" type="password" ></u--input>
+				</view>
+			</view>
+		</u-modal>
 		<view style="width: 95%;margin: 0 auto;">
 			<u-button type="primary" text="确认购买" @click="buy"></u-button>
 		</view>
@@ -40,6 +50,7 @@
 		data() {
 			return {
 				product:uni.getStorageSync('product'),
+				user:uni.getStorageSync('user'),
 				pay:{cost:'',cardid:''},
 				show:false,
 				cards:[[]],
@@ -48,6 +59,8 @@
 				cardtext:'',
 				balance:'',
 				show2:false,
+				password:'',
+				idcardnumber:'',
 				
 			};
 		},
@@ -65,6 +78,8 @@
 				}).then(res=>{
 					if(res.code==='200'){
 						let index=0;
+						// this.userCards=[]
+						// this.cards[0]=[]
 						for(let i=0;i<res.data.length;i++){
 							if(res.data[i].type==1||res.data[i].type==2){
 								this.userCards.push(res.data[i])
@@ -78,6 +93,7 @@
 								index++
 							}
 						}
+						//设置初始值
 						this.cardtext=this.cards[0][0].card
 						this.balance=this.userCards[0].balance
 						this.pay.cardid=this.userCards[0].id
@@ -93,10 +109,12 @@
 				})
 			},
 			confirm(val){
+				console.log(val)
 				let index=val.value[0].index
 				this.cardtext=this.cards[0][index].card
+				console.log(this.userCards)
 				this.balance=this.userCards[index].balance
-				this.pay.cardid=this.userCards[index].cardid
+				this.pay.cardid=this.userCards[index].id
 				this.show=false
 			},
 			buy(){
@@ -126,39 +144,48 @@
 				}
 			},
 			surebuy(){//确认购买
-				this.request({
-					url:"/Product/BuyProduct",
-					method:"POST",
-					data:{
-						uid:uni.getStorageSync('user').id,
-						cost:this.pay.cost,
-						cardid:this.pay.cardid,
-						productid:this.product.id
-					}
-				}).then(res=>{
-					if(res.code==='200'){
-						this.show2=false
-						this.$refs.uToast.show({
-											type:'success',
-											duration:'2000',
-											message:"购买成功！正在返回产品页面...",
-											complete() {
-												uni.navigateBack({
-														url: "pages/product/detail/detail"
-												})
-											}
-										})
-					}
-					else{
-						this.show2=false
-						this.$refs.uToast.show({
-											type:'error',
-											duration:'2000',
-											message:res.msg,
-										})
-					}
-					this.getcards()
-				}) 
+				if(this.password==this.user.password&&this.idcardnumber==this.user.idcard){
+					this.request({
+						url:"/Product/BuyProduct",
+						method:"POST",
+						data:{
+							uid:uni.getStorageSync('user').id,
+							cost:this.pay.cost,
+							cardid:this.pay.cardid,
+							productid:this.product.id
+						}
+					}).then(res=>{
+						if(res.code==='200'){
+							this.show2=false
+							this.$refs.uToast.show({
+												type:'success',
+												duration:'2000',
+												message:"购买成功！正在返回产品页面...",
+												complete() {
+													uni.navigateBack({
+															url: "pages/product/detail/detail"
+													})
+												}
+											})
+						}
+						else{
+							this.show2=false
+							this.$refs.uToast.show({
+												type:'error',
+												duration:'2000',
+												message:res.msg,
+											})
+						}
+						this.getcards()
+					}) 
+				}
+				else{
+					this.$refs.uToast.show({
+										type:'error',
+										duration:'2000',
+										message:'身份证或银行卡密码错误',
+									})
+				}
 			}
 		}
 	}
