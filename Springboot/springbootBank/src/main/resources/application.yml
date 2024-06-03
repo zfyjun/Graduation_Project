@@ -15,8 +15,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 50MB
-      max-request-size: 50MB
+      max-file-size: 128MB
+      max-request-size: 128MB
 server:
   port: 9090
 

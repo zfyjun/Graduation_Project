@@ -1,5 +1,6 @@
 <template>
 	<view >
+		<u-button @click="test()">测试</u-button>
 		<u-button text="消费" @click="opneconsume()"></u-button>
 		<u-popup customStyle="width: 80%;" :round="7" style="width: 80%;" mode="center" closeOnClickOverlay="true" :show="show" @close="close" @open="open">
 		       <view style="padding: 5%;">
@@ -88,6 +89,12 @@
 			this.getCards()
 		},
 		methods: {
+			test(){
+				alert('1')
+				uni.reLaunch({
+					url:"/pages/chat/Im"
+				})
+			},
 			opneconsume(){//弹出消费框
 				this.show=true
 			},

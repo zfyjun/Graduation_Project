@@ -2,14 +2,12 @@ package com.example.springbootbank.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.springbootbank.common.ReturnObj;
 import com.example.springbootbank.entity.ChatHistory;
 import com.example.springbootbank.mapper.ChatHistoryMapper;
 import com.example.springbootbank.utils.SnowflakeIdWorker;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -23,6 +21,46 @@ public class ChatHistoryController {
     @Resource
     private ChatHistoryMapper chatHistoryMapper;
 
+    @PostMapping("/isRead")
+    public ReturnObj isRead(@RequestBody Map map){
+
+//        String name= (String) map.get("toUser");
+        String name="root";
+//        QueryWrapper<ChatHistory> queryWrapper=new QueryWrapper<>();
+//        queryWrapper.eq("from_user",name);
+//        queryWrapper.eq("un_read",0);
+//        List<ChatHistory> list=chatHistoryMapper.selectList(queryWrapper);
+//        System.out.println(list);
+
+
+        // 使用 UpdateWrapper 来更新查询出的记录
+        UpdateWrapper<ChatHistory> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("from_user", name).eq("un_read",0).set("un_read", 1);
+        chatHistoryMapper.update(null, updateWrapper);
+
+        returnObj=new ReturnObj("",null,"200");
+        return returnObj;
+    }
+
+    @PostMapping("/unRead")
+    public ReturnObj unRead(@RequestBody Map map){
+        String name= (String) map.get("name");
+        QueryWrapper<ChatHistory> queryWrapper=new QueryWrapper<>();
+
+//        根据当前用户名字（to_user）查询所有为0（未读）的消息，按照发送的人（from_user）进行分组
+        queryWrapper.select("from_user","count(*) as un_read")
+                .eq("to_user",name)
+                .eq("un_read",0)
+                .groupBy("from_user");
+
+        List<Map<String,Object>> list1=chatHistoryMapper.selectMaps(queryWrapper);
+        System.out.println(list1);
+
+
+        returnObj=new ReturnObj("",list1,"200");
+        return returnObj;
+    }
+
     @PostMapping("/add")
     public ReturnObj add(@RequestBody Map map){
         Map chatMap = (Map) map.get("message");
@@ -34,7 +72,7 @@ public class ChatHistoryController {
 
         SnowflakeIdWorker snowflakeIdWorker=new SnowflakeIdWorker(1,1);
         chatHistory.setId(String.valueOf(snowflakeIdWorker.nextId()));
-        System.out.println(chatHistory);
+//        System.out.println(chatHistory);
 
         returnObj=new ReturnObj("",chatHistoryMapper.insert(chatHistory),"200");
         return returnObj;
@@ -78,7 +116,7 @@ public class ChatHistoryController {
             }
         }
 
-        System.out.println(list3);
+//        System.out.println(list3);
 
         List list=new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
@@ -90,7 +128,7 @@ public class ChatHistoryController {
             list.add(tmp);
         }
 
-        System.out.println(list1);
+//        System.out.println(list1);
 
         returnObj=new ReturnObj("",list,"200");
         return returnObj;

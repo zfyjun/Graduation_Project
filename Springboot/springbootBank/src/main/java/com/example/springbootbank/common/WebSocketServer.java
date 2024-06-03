@@ -3,12 +3,28 @@ package com.example.springbootbank.common;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.example.springbootbank.controller.AdminOnlineController;
+import com.example.springbootbank.entity.AdminOnline;
+import com.example.springbootbank.entity.ChatHistory;
+import com.example.springbootbank.mapper.AdminOnlineMapper;
+import com.example.springbootbank.mapper.ChatHistoryMapper;
+import com.example.springbootbank.service.AdminOnlineService;
+import com.example.springbootbank.utils.SpringContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.object.UpdatableSqlQuery;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,11 +34,35 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint(value = "/imserver/{username}")
 @Component
 public class WebSocketServer {
+    @Resource
+    private AdminOnlineMapper adminOnlineMapper;
+
+    @Resource
+    private ChatHistoryMapper chatHistoryMapper;
+
+    // 用于存储所有用户
+    private static List<AdminOnline> allUsers=new ArrayList<>();
+    private JSONObject UnReadObject=new JSONObject();
+
     private static final Logger log = LoggerFactory.getLogger(WebSocketServer.class);
     /**
      * 记录当前在线连接数
      */
+    // 用于存储所有在线用户
     public static final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
+
+
+    @PostConstruct
+    public void init() {
+        QueryWrapper<AdminOnline> queryWrapper=new QueryWrapper<>();
+        queryWrapper.select("*");
+
+        List<AdminOnline> list=adminOnlineMapper.selectList(queryWrapper);
+        allUsers = list;
+//        System.out.println("init");
+//        System.out.println(allUsers);
+    }
+
     /**
      * 连接建立成功调用的方法
      */
@@ -30,17 +70,31 @@ public class WebSocketServer {
     public void onOpen(Session session, @PathParam("username") String username) {
         sessionMap.put(username, session);
 
+        // 设置该用户在线
+        allUsers.stream()
+                .filter(user -> user.getName().equals(username))
+                .findFirst()
+                .ifPresent(user -> user.setOnline(1));
+
+        AdminOnlineService adminOnlineService = SpringContextUtil.getBean(AdminOnlineService.class);
+        adminOnlineService.setOnline(username);
 
         log.info("有新用户加入，username={}, 当前在线人数为：{}", username, sessionMap.size());
+        // 构建要发送的消息
         JSONObject result = new JSONObject();
         JSONArray array = new JSONArray();
-        result.set("users", array);
-        for (Object key : sessionMap.keySet()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.set("username", key);
-            // {"username", "zhang", "username": "admin"}
-            array.add(jsonObject);
+
+        // 把userList的每个用户都添加到usersArray中
+        for (AdminOnline user : allUsers) {
+            JSONObject userObject = new JSONObject();
+            userObject.set("username", user.getName());
+            userObject.set("isOnline", user.getOnline());
+            userObject.set("role",user.getRole());
+
+            array.add(userObject);
         }
+        result.set("users", array);
+
 //        {"users": [{"username": "zhang"},{ "username": "admin"}]}
         sendAllMessage(JSONUtil.toJsonStr(result));  // 后台发送消息给所有的客户端
     }
@@ -51,6 +105,33 @@ public class WebSocketServer {
     public void onClose(Session session, @PathParam("username") String username) {
         sessionMap.remove(username);
         log.info("有一连接关闭，移除username={}的用户session, 当前在线人数为：{}", username, sessionMap.size());
+
+        // 设置该用户离线
+        allUsers.stream()
+                .filter(user -> user.getName().equals(username))
+                .findFirst()
+                .ifPresent(user -> user.setOnline(0));
+//        UpdateWrapper<AdminOnline> updateWrapper=new UpdateWrapper<>();
+//        updateWrapper.eq("name",username).set("online",0);
+//        adminOnlineMapper.update(null,updateWrapper);
+        //同步数据库中的状态变化
+        AdminOnlineService adminOnlineService = SpringContextUtil.getBean(AdminOnlineService.class);
+        adminOnlineService.setOffline(username);
+
+        JSONObject result = new JSONObject();
+        JSONArray array = new JSONArray();
+
+        // 把userList的每个用户都添加到usersArray中
+        for (AdminOnline user : allUsers) {
+            JSONObject userObject = new JSONObject();
+            userObject.set("username", user.getName());
+            userObject.set("isOnline", user.getOnline());
+            userObject.set("role",user.getRole());
+            array.add(userObject);
+        }
+        result.set("users", array);
+        sendAllMessage(JSONUtil.toJsonStr(result));  // 后台发送消息给所有的客户端
+
     }
     /**
      * 收到客户端消息后调用的方法
