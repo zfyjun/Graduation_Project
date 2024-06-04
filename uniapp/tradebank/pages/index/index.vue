@@ -1,6 +1,7 @@
 <template>
 	<view >
 		<view>
+			<u-button @click="test()">测试</u-button>
 			<u-button text="消费" @click="opneconsume()"></u-button>
 			 <u-sticky bgColor="#fff">
 			 <u-swiper  
@@ -67,6 +68,8 @@
 				></u-divider>
 			  </view>
 		</view>
+
+		
 		<u-popup customStyle="width: 80%;" :round="7" style="width: 80%;" mode="center" closeOnClickOverlay="true" :show="show" @close="close" @open="open">
 		       <view style="padding: 5%;">
 				   <u--form
@@ -220,6 +223,11 @@
 			this.scrolltolower(this.index)
 		},
 		methods: {
+			test(){
+				uni.navigateTo({
+					url:"/pages/chat/Im"
+				})
+			},
 			opneconsume(){//弹出消费框
 				this.show=true
 			},

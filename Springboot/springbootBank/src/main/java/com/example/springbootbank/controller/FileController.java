@@ -49,6 +49,50 @@ public class FileController {
 //    @Value("${ip:localhost}")
 //    private String ip;
 
+    @PostMapping("/uploadAudio")
+    public Result uploadAudio(@RequestParam("audio") MultipartFile audio)throws IOException {
+        System.out.println("audio");
+        System.out.println(audio);
+        String originalFilename = audio.getOriginalFilename();
+        String extension = "webm"; // 默认扩展名
+        long size = audio.getSize();
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        String uuid= IdUtil.fastSimpleUUID();
+        String fileUUid=uuid+ StrUtil.DOT+extension;
+
+        String filePath = "D:/课程作业（所有）/毕设/git/springboot/Springboot/springbootBank/files/" + fileUUid;
+        File dest = new File(filePath);
+        if (!dest.getParentFile().exists()) {
+            dest.getParentFile().mkdirs();
+        }
+//        System.out.println("filePath");
+//        System.out.println(filePath);
+        String md5;
+        String url;
+        audio.transferTo(dest);
+        md5=SecureUtil.md5(dest);
+        Files dbfiles=getFileByMd5(md5);
+        if(dbfiles!=null){
+            url=dbfiles.getUrl();
+            dest.delete();
+        }else{
+            url="http://localhost:9090/file/download/"+fileUUid;
+        }
+        Files saveFile=new Files();
+        saveFile.setName(originalFilename);
+        saveFile.setType(extension);
+        saveFile.setSize(size/1024);
+        saveFile.setUrl(url);
+        saveFile.setMd5(md5);
+        filesMapper.insert(saveFile);
+        return Result.success(url);
+
+    }
+
+
     @PostMapping("/upload")
     public Result upload(@RequestParam MultipartFile file) throws IOException {
         String originalFilename= file.getOriginalFilename();
@@ -92,6 +136,8 @@ public class FileController {
     public void download(@PathVariable String fileName, HttpServletResponse response) throws IOException {
         response.addHeader("Content-Disposition","attachment;filename="+ URLEncoder.encode(fileName,"UTF-8"));
         String filePath=ROOT_PATH+File.separator+fileName;
+//        System.out.println("filePath");
+//        System.out.println(filePath);
         if(!FileUtil.exist(filePath)){
             return ;
         }

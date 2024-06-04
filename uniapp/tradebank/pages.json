@@ -64,6 +64,14 @@
 			}
 		},
 		{
+			"path" : "pages/chat/Im",
+			"style" : 
+			{
+				"navigationBarTitleText" : "客服",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
 			"path" : "pages/product/buyproduct/buyproduct",
 			"style" : 
 			{
@@ -176,7 +184,16 @@
 			}
 		}
 		
-	],
+	    ,{
+            "path" : "pages/chat/MessageItem/MessageItem",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

@@ -101,6 +101,11 @@
 					}
 				}).then(res=>{
 					if(res.code==='200'){
+						//客服
+						sessionStorage.setItem('user', JSON.stringify(res.data))
+						sessionStorage.setItem('account', JSON.stringify(res.data))
+						sessionStorage.setItem('admin', JSON.stringify(res.data))
+						
 						uni.setStorageSync('user',res.data)
 						this.$refs.uToast.show({
 											type:'success',

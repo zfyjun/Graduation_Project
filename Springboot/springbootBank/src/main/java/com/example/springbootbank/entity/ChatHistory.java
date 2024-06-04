@@ -12,10 +12,9 @@ public class ChatHistory {
 
     @TableId("id")
     private String id;
-
     private String fromUser;
     private String toUser;
     private String text;
-
+    private int unRead;
     private LocalDateTime createTime;
 }

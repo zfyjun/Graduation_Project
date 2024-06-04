@@ -71,9 +71,14 @@ class SpringbootBankApplicationTests {
     UserInfoMapper userInfoMapper;
     @Autowired
     MarketCopyMapper marketCopyMapper;
+    @Autowired
+    ChatHistoryMapper chatHistoryMapper;
     @Test
     void contextLoads() {
-        productwork();
+        List<ChatHistory> chatHistories=chatHistoryMapper.selectList(null);
+        for(int i=0;i<chatHistories.size();i++){
+            System.out.println(chatHistories.get(i));
+        }
     }
     public void setloanspay(){//检查每个贷款设置逾期
         QueryWrapper<UserLoans> queryWrapper=new QueryWrapper<>();
