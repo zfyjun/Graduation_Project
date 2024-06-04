@@ -149,7 +149,7 @@ export default {
       audioBlobs:[],
       audioUrls:[],
       unReadMsgs:[],
-      unreadCount:2
+      unreadCount:2,
     }
   },
   created() {
@@ -231,6 +231,7 @@ export default {
 
     historyChat(user) {
 	  this.contentMsg=[],
+	  // this.tempUser=user
 		// this.audioBlobs=[],
 
       this.request({
@@ -372,6 +373,16 @@ export default {
               "type":"text",
               "data":this.text
             })
+			
+			
+			let tmpMsg={
+				"from":this.user.account,
+				text:{
+					"type":"text",
+					"data":this.text
+				},
+				"to":this.chatUser
+			}
             //发送文本信息
             message = {from: this.user.account, to: this.chatUser, text: msgData}
             //文本
@@ -390,22 +401,15 @@ export default {
             }).then(res=>{
               console.log("保存成功")
               // 构建消息内容，本人消息
-			  let tmpMsg={
-			  	"from":this.user.account,
-			  	text:{
-			  		"type":msgData.type,
-			  		"data":msgData.data
-			  	},
-			  	"to":this.chatUser
-			  }
+			 
 			  this.contentMsg.push(tmpMsg)
 
-              // this.createContent(null, this.user.account, JSON.parse(msgData))
-              //让聊天记录显示在下面一条
-              this.$nextTick(() => {
-                let container = this.$el.querySelector(".chat-content");
-                container.scrollTop = container.scrollHeight;
-              })
+              // // this.createContent(null, this.user.account, JSON.parse(msgData))
+              // //让聊天记录显示在下面一条
+              // this.$nextTick(() => {
+              //   let container = this.$el.querySelector(".chat-content");
+              //   container.scrollTop = container.scrollHeight;
+              // })
 
             })
 
@@ -432,6 +436,15 @@ export default {
                 "type":"audio",
                 "data":this.audio
               })
+			  
+			  let tmpMsg={
+			  	"from":this.user.account,
+			  	text:{
+			  		"type":"audio",
+			  		"data":this.audio
+			  	},
+			  	"to":this.chatUser
+			  }
 
               //发送语音信息
               message = {from: this.user.account, to: this.chatUser, text: msgData}
@@ -452,21 +465,8 @@ export default {
               }).then(res=>{
                 console.log("保存成功")
                 // 构建消息内容，本人消息
-				setTimeout(() => {
-					historyChat(this.chatUser)
-				        // this.$refs.audioControl.play();
-				      }, 5000);
 				
-				
-				// let tmpMsg={
-				// 	"from":this.user.account,
-				// 	text:{
-				// 		"type":msgData.type,
-				// 		"data":msgData.data
-				// 	},
-				// 	"to":this.chatUser
-				// }
-				// this.contentMsg.push(tmpMsg)
+				this.contentMsg.push(tmpMsg)
                 // this.createContent(null, this.user.account, JSON.parse(msgData))
                 //让聊天记录显示在下面一条
                 this.$nextTick(() => {
@@ -475,7 +475,8 @@ export default {
                 })
               })
             })
-			
+		
+		
           }
         }
       }

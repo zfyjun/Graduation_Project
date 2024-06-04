@@ -63,7 +63,7 @@ public class FileController {
         String uuid= IdUtil.fastSimpleUUID();
         String fileUUid=uuid+ StrUtil.DOT+extension;
 
-        String filePath = "D:/课程作业（所有）/毕设/git/springboot/Springboot/springbootBank/files/" + fileUUid;
+        String filePath = "E:/Desktop/毕设项目/Springboot/springbootBank/files" + fileUUid;
         File dest = new File(filePath);
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdirs();
