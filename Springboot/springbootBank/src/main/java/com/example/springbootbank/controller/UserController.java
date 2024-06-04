@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -134,12 +135,32 @@ public class UserController {
         UserInfo userInfo=userInfoMapper.selectOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUid,uid));
         return Result.success(userInfo);
     }
-
+    @PostMapping("/getUser")//获取用户信息
+    public Result getUser(@RequestBody Map map){
+        Integer uid=(Integer)map.get("uid");
+        User user=userMapper.selectById(uid);
+        return Result.success(user);
+    }
     @PostMapping("/setUserinfoanuser")//修改用户信息
     public Result setUserinfoanuser(@RequestBody Map map){
         User user= JSONObject.parseObject((String) map.get("user"),User.class);
-        UserInfo userInfo= JSONObject.parseObject((String) map.get("userinfo"),UserInfo.class);
-
+        UserInfo userInfo= JSONObject.parseObject((String)map.get("userinfo"),UserInfo.class) ;
+        QueryWrapper<User> queryWrapper1=new QueryWrapper<>();
+        List<User> userListidcards=userMapper.selectList(queryWrapper1.eq("idcard",user.getIdcard()));
+        for(int i=0;i<userListidcards.size();i++){
+            if(userListidcards.get(i).getId()!=user.getId()){
+                return Result.error("500","错误！该身份证号码已被注册！");
+            }
+        }
+        QueryWrapper<User> queryWrapper2=new QueryWrapper<>();
+        List<User> userListphone=userMapper.selectList(queryWrapper2.eq("phone",user.getPhone()));
+        for(int i=0;i<userListphone.size();i++){
+            if(userListphone.get(i).getId()!=user.getId()){
+                return Result.error("500","错误！该电话号码已被注册！");
+            }
+        }
+        userMapper.updateById(user);
+        userInfoMapper.updateById(userInfo);
         return Result.success();
     }
 }

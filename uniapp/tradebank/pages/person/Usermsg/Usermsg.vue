@@ -2,6 +2,7 @@
 	<view style="padding: 2%;">
 		<view class="box" >
 			<view style="padding: 3%;">
+				<u-toast ref="uToast"></u-toast>
 				<u--form
 					abelPosition="left"
 					>
@@ -9,17 +10,28 @@
 						        labelWidth="25%"
 								label="真实姓名:"
 								borderBottom
+								
 								ref="item1"
 						>
-							<u--input  border="none" v-model="usermsg.user.name"></u--input>
+							<u--input :disabled="disable1"  border="none" v-model="usermsg.user.name"></u--input>
 						</u-form-item>
 						<u-form-item
 						        labelWidth="25%"
 								label="身份证号:"
+								
 								borderBottom
 								ref="item1"
 						>
-							<u--input  border="none" v-model="usermsg.user.idcard"></u--input>
+							<u--input :disabled="disable2"  border="none" v-model="usermsg.user.idcard" ></u--input>
+						</u-form-item>
+						<u-form-item
+						        labelWidth="15%"
+								label="年龄:"
+								type="number"
+								borderBottom
+								ref="item1"
+						>
+							<u--input :disabled="disable3"  border="none" v-model="usermsg.userinfo.age"></u--input>
 						</u-form-item>
 						<u-form-item
 						        labelWidth="25%"
@@ -29,14 +41,7 @@
 						>
 							<u--input  border="none" v-model="usermsg.user.phone"></u--input>
 						</u-form-item>
-						<u-form-item
-						        labelWidth="15%"
-								label="年龄:"
-								borderBottom
-								ref="item1"
-						>
-							<u--input  border="none" v-model="usermsg.userinfo.age"></u--input>
-						</u-form-item>
+						
 						<u-form-item
 						        labelWidth="15%"
 								label="工作:"
@@ -73,6 +78,9 @@
 							<u--input  border="none" v-model="usermsg.userinfo.education"></u--input>
 						</u-form-item>
 				</u--form>
+				<view>
+					<u-button style="width: 95%;" type="primary" text="修改确认" @click="edit"></u-button>
+				</view>
 			</view>
 			<u-action-sheet
 							:show="showSex"
@@ -110,6 +118,9 @@
 						subname:"已结婚",
 					},
 				],
+			    disable1:false,
+				disable2:false,
+				disable3:false,
 			}
 		},
 		onLoad() {
@@ -133,10 +144,70 @@
 			setmsg(){
 				this.usermsg.user=this.user
 				this.usermsg.userinfo=this.userinfo
+				if(this.usermsg.user.idcard!=''){
+					this.disable2=true
+				}
+				if(this.usermsg.user.name!=''){
+					this.disable1=true
+				}
+				if(this.usermsg.userinfo.age!=''){
+					this.disable3=true
+				}
+			},
+			getuser(){//获取用户基本信息
+				this.request({
+					url:"/User/getUser",
+					method:"POST",
+					data:{
+						uid:this.user.id,
+					}
+				}).then(res=>{
+					if(res.code=='200'){
+						this.user=res.data
+						uni.setStorageSync("user",this.user)
+						this.getusermsg()
+					}
+				})
 			},
 			sexSelect(e) {
 				this.usermsg.userinfo.marital = e.name
-					},
+			},
+			edit(){
+				if(this.usermsg.user.name==''||this.usermsg.user.idcard==''||this.usermsg.user.phone==''||this.usermsg.userinfo.age==''||this.usermsg.userinfo.job==''||this.usermsg.userinfo.marital==''||this.usermsg.userinfo.education==''){
+					this.$refs.uToast.show({
+										type:'warning',
+										duration:'1500',
+										message:"存在信息未填写完整",
+									})
+				}
+				else{
+					this.request({
+						url:"/User/setUserinfoanuser",
+						method:"POST",
+						data:{
+							user:JSON.stringify(this.usermsg.user),
+							userinfo:JSON.stringify(this.usermsg.userinfo)
+						}
+					}).then(res=>{
+						if(res.code=='200'){
+							
+							this.getuser()
+							this.$refs.uToast.show({
+												type:'success',
+												duration:'1500',
+												message:"信息修改成功",
+											})
+						}
+						else{
+							this.$refs.uToast.show({
+												type:'error',
+												duration:'1500',
+												message:res.msg,
+											})
+						}
+					})
+				}
+			}
 		}
 	}
 </script>

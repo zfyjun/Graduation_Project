@@ -260,7 +260,8 @@
 				myloans:{},
 				type:0,//0是新增申请，1是编辑申请
 				src:"",
-				returnfiles:[]
+				returnfiles:[],
+				flag:0
 			};
 		},
 		onLoad() {
@@ -289,19 +290,21 @@
 				}
 			},
 			check(){//检查是编辑还是新增
-				let flag=0
+			let flag=0
 				uni.getStorageInfo({
 					success: function(res){
 						if(res.keys.includes('myloans')){
 							flag=1
 						}
 						else{
-							console.log('没有')
+							flag=0
 						}
 					}
 				})
 				if(flag==1){//是编辑
-				this.myloans=uni.getStorageSync('myloans')
+				    this.myloans=uni.getStorageSync('myloans')
+				//获取银行卡信息
+			        this.editgetcard()
 				    this.request({
 				    	url:"/file/filesselectByIds",
 				    	method:"POST",
@@ -314,8 +317,20 @@
 				    		this.gethistory()
 				    	}
 				    })
-					
 				}
+			},
+			editgetcard(){
+				this.request({
+					url:"/BankCard/getCard",
+					method:"POST",
+					data:{
+						cardid:this.myloans.cid
+					}
+				}).then(res=>{
+					if(res.code=='200'){
+						this.carddetil=res.data
+					}
+				})
 			},
 			gethistory(){//设置编辑的历史信息
 				this.type=1
