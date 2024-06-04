@@ -1,19 +1,19 @@
 import json
+
+import joblib
+import numpy as np
 import pandas as pd
 import pymysql
 import torch
 import torch.nn as nn
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
-from sklearn.metrics import accuracy_score, mean_squared_error
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler
 from sqlalchemy import create_engine
-import numpy as np
-
 
 pymysql.install_as_MySQLdb()
 engine = create_engine('mysql://root:root@localhost:3306/test?charset=utf8')
@@ -43,18 +43,11 @@ def get_data():
         kmeans = KMeans(n_clusters=i, init='k-means++', max_iter=300, n_init=10, random_state=0)
         kmeans.fit(X)
         wcss.append(kmeans.inertia_)
-        # print(wcss)
-    # plt.plot(range(1, 11), wcss)
-    # plt.title('Elbow Method')
-    # plt.xlabel('Number of clusters')
-    # plt.ylabel('WCSS')
-    # plt.show()
 
     # 根据Elboe Method的结果选择合适的簇数，然后用K-means算法进行分群
     n_clusters = 5  # 假设我们选择了5
     kmeans = KMeans(n_clusters=n_clusters, init='k-means++', max_iter=300, n_init=10, random_state=0)
     y_kmeans = kmeans.fit_predict(X)
-    # print(y_kmeans)
 
     clusters = []
     for i in range(n_clusters):
@@ -62,7 +55,7 @@ def get_data():
         clusters.append(cluster_i)
     # centers = kmeans.cluster_centers_.tolist()
     # 以JSON格式返回数据
-    print(jsonify({'clusters': clusters}))
+    # print(jsonify({'clusters': clusters}))
     return jsonify({'clusters': clusters})
     # return jsonify({'clusters': clusters, 'centers': centers})
 
@@ -81,7 +74,6 @@ def get_age():
 
     # 进行描述性统计分析
     describe_age = data['age'].describe().to_dict()
-    print(describe_age)
 
     # 计算工作类型的分布频数
     job_data = data['job'].value_counts().reset_index()
@@ -91,19 +83,12 @@ def get_age():
     tmp1 = data['job'].describe().to_dict()
     describe_job = json.dumps(tmp1, default=default)
 
-    # describe_job = jsonify(data['job'].describe().to_dict())
-    # describe_job1 = jsonify(data['job'].describe().to_dict())
-    # print("job")
-    # print(tmp1)
-    # print(describe_job)
-
     # 计算余额的分布频数
     balance_data = data['balance'].value_counts().sort_index().to_frame().reset_index()
     balance_data.columns = ['balance', 'count']
     balance_data_dict = balance_data.to_dict(orient='records')
 
     describe_balance = data['balance'].describe().to_dict()
-
 
     # 计算教育的分布频数
     education_data = data['education'].value_counts().sort_index().to_frame().reset_index()
@@ -121,7 +106,6 @@ def get_age():
     tmp4 = data['marital'].describe().to_dict()
     describe_marital = json.dumps(tmp4, default=default)
 
-
     # 返回数据给前端
     return jsonify([{'name': 'age', 'age': age_data_dict, 'describe': describe_age},
                     {'name': 'job', 'job': job_data_dict, 'describe': describe_job},
@@ -129,9 +113,8 @@ def get_age():
                     {'name': 'education', 'education': education_data_dict, 'describe': describe_education},
                     {'name': 'marital', 'marital': marital_data_dict, 'describe': describe_marital}])
 
-
-@app.route('/predict', methods=['POST'])
-def predict():
+@app.route('/train',methods=['POST'])
+def train():
     # 载入数据
     url = "E:/CSV/train_set.csv"
     data = pd.read_csv(url)
@@ -155,14 +138,68 @@ def predict():
     )
 
     model.fit(X_train, y_train)
+    # 在这里保存模型
+    joblib.dump(model, 'model.pkl')
     # 模型预测
     y_pred = model.predict(X_test)
-
 
     # 计算预测准确度
     accuracy = accuracy_score(y_true=y_test, y_pred=y_pred)
     print("Accuracy of the BP neural network model: ", accuracy)
     return jsonify({'data': y_pred.tolist()})
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    # 载入数据
+    url = "E:/CSV/test_set.csv"
+    data = pd.read_csv(url)
+    X = data[['age', 'balance', 'day', 'duration', 'campaign', 'pdays']]
+    y = data['y']
+    scaler = StandardScaler()
+    X = scaler.fit_transform(X)
+
+    # 将“Y”中的字符串标签替换为数字标签
+    # y = y.replace(to_replace=['no', 'yes'], value=[0, 1])
+    # 分割数据为训练集和测试集
+    X_test = X
+
+    model = joblib.load('model.pkl')
+
+    # 预测结果
+    y_pred = model.predict(X_test)
+
+    # 获取预测概率
+    y_pred_proba = model.predict_proba(X_test)
+
+    # 只保留预测结果为1的数据
+    predicted_indices = np.where(y_pred == 1)
+
+    # 预测结果为1的数据
+    predicted_data = data.iloc[predicted_indices]
+
+    # 预测结果为1的数据的预测概率
+    predicted_proba = y_pred_proba[predicted_indices]
+
+    # # 将预测概率转化为DataFrame
+    # prob_df = pd.DataFrame(predicted_proba, columns=['probability'], index=predicted_data.index)
+    #
+    # # 将预测结果为1的数据和对应的预测概率放在一起
+    # final_df = pd.concat([predicted_data, prob_df], axis=1)
+
+    print("result")
+    # print(predicted_data)
+    # print(predicted_proba)
+    json1 = predicted_data.to_json(orient="records")
+    json2 = json.dumps(predicted_proba.tolist())
+    print(json1)
+    print(json2)
+    # for(int i;i<)
+    # print(final_df)
+    # # 计算预测准确度
+    # accuracy = accuracy_score(y_true=y_test, y_pred=y_pred)
+    # print("Accuracy of the BP neural network model: ", accuracy)
+    return jsonify({'data':predicted_data.to_json(orient="records"),
+                    'proba':json.dumps(predicted_proba.tolist())})
 
 
 class BPNN(nn.Module):
@@ -204,7 +241,6 @@ def bpmodle(df):
 
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
-
 
     # 划分训练集和测试集
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
@@ -248,7 +284,6 @@ def bpmodle(df):
 
     return y_pred
 
-
 @app.route('/model', methods=['POST'])
 def model_predict():
     print('model')
@@ -257,61 +292,22 @@ def model_predict():
     arr2 = bpmodle(data)
     print(arr2)
 
-
 @app.route('/user_job', methods=['POST'])
 def get_job():
     url = "E:/CSV/train_set.csv"
     data = pd.read_csv(url)
 
+    # 将分类数据转化为数值型
+    data['job'] = data['job'].astype('category').cat.codes
+    data['marital'] = data['marital'].astype('category').cat.codes
+    data['education'] = data['education'].astype('category').cat.codes
+    data['default'] = data['default'].map({'no': 0, 'yes': 1})
+    data['loan'] = data['loan'].map({'no': 0, 'yes': 1})
 
-    Vuedata = request.get_json()
-    print(Vuedata)
-    dataname1 = Vuedata['dataname1']
-    dataname2 = Vuedata.get('dataname2')
-    print(dataname1)
-    print(dataname2)
+    # 计算相关性
+    correlation = data[['job', 'marital', 'education', 'default', 'balance', 'loan']].corr()
 
-    # 进行描述性统计分析
-    describe_data = data['age'].describe()
-    # print(describe_data)
-
-    # dataname1 = 'age'
-    # dataname2 = 'balance'
-
-    # 截取年龄和账户余额数据
-    # age_balance_data = data[[dataname1, dataname2]].values.tolist()
-    # print(age_balance_data)
-
-
-
-
-
-    data['education_encoded'] = data['education'].astype('category').cat.codes
-    # print(data['education_encoded'])
-    data['loan_encoded'] = data['loan'].map({'no': 0, 'yes': 1})
-
-    education_data = data.groupby('y')['education_encoded'].mean().to_dict()
-    loan_data = data.groupby('y')['loan_encoded'].mean().to_dict()
-
-    # 对 'job' 和 'marital' 进行分组，然后计算每组中 'age' 和 'balance' 的平均值
-    result = data.groupby(['job', 'marital'])[['age', 'balance']].mean()
-    print(result)
-    # 将分组结果转换为 JSON 格式并打印
-    json_result = result.to_json(orient='index')
-    print('json_result')
-    print(json_result)
-
-
-
-    # 计算年龄（age）和账户余额（balance）的相关性
-    # correlation = data[dataname1].corr(data[dataname2])
-    # 'correlation': correlation
-    return jsonify({'education': education_data,
-                    'loan': loan_data,
-                    'result': json_result})
-
-
-
+    return jsonify(correlation.to_dict())
 
 
 if __name__ == "__main__":

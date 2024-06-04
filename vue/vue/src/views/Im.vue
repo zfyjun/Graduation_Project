@@ -172,7 +172,8 @@ export default {
     historyChat(user) {
 
       request.post('/chatHistory/isRead',{
-        toUser:user.username
+        fromUser:user.username,
+        toUser:this.user.username
       }).then(res=>{
         this.unRead()
       })

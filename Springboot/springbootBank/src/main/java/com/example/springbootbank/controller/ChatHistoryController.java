@@ -24,8 +24,9 @@ public class ChatHistoryController {
     @PostMapping("/isRead")
     public ReturnObj isRead(@RequestBody Map map){
 
-//        String name= (String) map.get("toUser");
-        String name="root";
+        String fromUser= (String) map.get("fromUser");
+        String toUser= (String) map.get("toUser");
+//        String name="root";
 //        QueryWrapper<ChatHistory> queryWrapper=new QueryWrapper<>();
 //        queryWrapper.eq("from_user",name);
 //        queryWrapper.eq("un_read",0);
@@ -35,7 +36,7 @@ public class ChatHistoryController {
 
         // 使用 UpdateWrapper 来更新查询出的记录
         UpdateWrapper<ChatHistory> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("from_user", name).eq("un_read",0).set("un_read", 1);
+        updateWrapper.eq("from_user", fromUser).eq("to_user",toUser).eq("un_read",0).set("un_read", 1);
         chatHistoryMapper.update(null, updateWrapper);
 
         returnObj=new ReturnObj("",null,"200");

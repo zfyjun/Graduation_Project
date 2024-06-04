@@ -4,13 +4,20 @@
               <!-- 显示用户 -->
               <view class="show_user" v-for="(user,index) in users" :key="user.username">
                   <view style="display: flex;justify-content: center;align-items: center;height: 100%;" v-if="user.role==1">
+					  <!-- <view> -->
                         <text>{{user.username}}</text>
-                        <view v-if="unRead>0">
-                            <text>{{unRead}}</text>
-                        </view>
+						<view v-for="unRead in unReadMsgs">
+						    <view v-if="user.username===unRead.from_user">
+						        <view class="dot" v-if="unRead.un_read>0">
+						            <text class="count">{{ unRead.un_read }}</text>
+						        </view>
+						    </view>
+						</view>
+					  <!-- </view> -->
+					
 					    <view>
-					        <view v-if="user.isOnline==0">(离线)</view>
-					        <view v-if="user.isOnline==1">(在线)</view>
+					        <view style="margin-left: 12px;" v-if="user.isOnline==0">(离线)</view>
+					        <view style="margin-left: 12px;" v-if="user.isOnline==1">(在线)</view>
 						</view>
 					  
 					  <icon type="success" @click="historyChat(user)"></icon>
@@ -141,13 +148,13 @@ export default {
       audioBlob:null,
       audioBlobs:[],
       audioUrls:[],
-      unRead:0,
+      unReadMsgs:[],
       unreadCount:2
     }
   },
   created() {
     this.init()
-    this.test()
+    this.unRead()
   },
   mounted() {
 
@@ -168,6 +175,20 @@ export default {
         // console.log(this.users)
       })
     },
+	unRead(){
+	      this.request({
+			  url:"/chatHistory/unRead",
+			  method:'POST',
+			  data:{
+				name:this.user.account,
+			}
+	      }).then(res=>{
+	        console.log('res')
+	        this.unReadMsgs=res.data
+	        console.log(this.unReadMsgs)
+	      })
+	
+	    },
     download(url) {
       this.request({
 		  url:url,
@@ -219,7 +240,7 @@ export default {
 			toUser:user.account,
 		},
       }).then(res=>{
-        this.unRead=0
+        this.unRead()
       })
 
       this.request({
@@ -541,8 +562,8 @@ export default {
 }
 .dot {
   position: absolute;
-  right: -13px;
-  top: -3px;
+  right: 245px;
+  top: 23px;
   width: 13px;
   height: 13px;
   background-color: red;
