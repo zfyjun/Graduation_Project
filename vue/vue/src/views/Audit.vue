@@ -357,7 +357,7 @@ export default {
     this.getLoanstype()
   },
   methods:{
-    getLoanstype(){
+    getLoanstype(){//获取贷款信息
       request.post("/Lender/getLenders",{
       }).then(res=>{
         if(res.code=='200'){

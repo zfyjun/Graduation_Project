@@ -360,7 +360,6 @@
                    </el-tabs>
                  </div>
                </el-tab-pane>
-               <el-tab-pane label="用户数据" name="second" ></el-tab-pane>
              </el-tabs>
              <div style="padding-top: 1%">
 

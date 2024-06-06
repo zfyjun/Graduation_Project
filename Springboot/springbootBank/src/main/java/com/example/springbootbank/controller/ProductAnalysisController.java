@@ -383,7 +383,7 @@ public class ProductAnalysisController {
 }
 @Data
 class Productanalysis{
-    Product product;
+    Product product;//产品
     Integer buyp;//购买人数
     Integer buytwice;//回头客人数
 }

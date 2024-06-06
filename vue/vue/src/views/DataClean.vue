@@ -716,7 +716,7 @@ export default {
         this.keyarr=[]
         this.tableData=[]
         this.clearDateWork=[]
-        for(var key in this.updateDate[0]){
+        for(var key in this.updateDate[0]){//用于获取属性名
           var keyone={keyname:'',tokeyname:''}
           keyone.keyname=key
           this.keyarr.push(keyone)
@@ -829,7 +829,7 @@ export default {
         this.editrow.adjustedclose=Number((sum/indexs).toFixed(4))
       }
     },
-    startin() {//初始化填入
+    startin() {//初始化填入（自动匹配属性名）
       for(let i=0;i<this.keyarr.length;i++){
         for(let j=0;j<this.options.length;j++){
           if(this.options[j].truev.indexOf(this.keyarr[i].keyname)!=-1){
@@ -841,7 +841,7 @@ export default {
       }
       this.dialogVisible=true
     },
-    sure(){//确定导入表格
+    sure(){//确定上传数据
       let sum=0;
       for(let i=0;i<this.value.length;i++){
         if(this.value[i]!=''&&this.value[i]!=null){
@@ -909,7 +909,6 @@ export default {
     AutoclearData(){//自动清洗数据
       this.autodeleteDate()
       this.autodeleteDate()
-
     },
     autodeleteDate(){//自动数据删除重复
       for(let i=0;i<this.clearDateWork.length;i++){
@@ -964,11 +963,10 @@ export default {
     },
     clearData(){//数据清洗手动点开
       this.clearDateWork=[]
-      this.repetition()
+      this.repetition()//检测重复数据
     },
     repetition(){//重复数据
       for(let i=0;i<this.tableData.length;i++){
-
         for(let j=0;j<this.tableData.length;j++){
           if((this.tableData[i].date==this.tableData[j].date)&&(i!=j)&&(this.tableData[i].low==this.tableData[j].low)
               &&(this.tableData[i].high==this.tableData[j].high)&&(this.tableData[i].close==this.tableData[j].close)

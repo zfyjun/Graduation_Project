@@ -40,7 +40,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="category" label="新闻分类" style="width: auto"></el-table-column>
-          <el-table-column prop="type" label="类型" style="width: auto"></el-table-column>
+
           <el-table-column prop="time" label="编辑时间" style="width: auto"></el-table-column>
           <el-table-column prop="readCount" label="阅读次数" style="width: auto"></el-table-column>
           <!--        <el-table-column prop="permission" label="权限" style="width: auto"></el-table-column>-->
@@ -50,7 +50,7 @@
               width="135">
             <template slot-scope="scope">
               <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
-              <el-popconfirm title="确认发布该新闻？" @confirm="handleUpdata(scope.row.id)">
+              <el-popconfirm title="确认发布该新闻？" @confirm="handleUpdata(scope.row)">
                 <template #reference>
                   <el-button type="text" style="color:limegreen;margin-left: 10px" size="mini" >发布</el-button>
                 </template>
@@ -102,7 +102,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="category" label="新闻分类" style="width: auto"></el-table-column>
-          <el-table-column prop="type" label="类型" style="width: auto"></el-table-column>
+
           <el-table-column prop="uptime" label="发布时间" style="width: auto"></el-table-column>
           <el-table-column prop="readCount" label="阅读次数" style="width: auto"></el-table-column>
           <!--        <el-table-column prop="permission" label="权限" style="width: auto"></el-table-column>-->
@@ -344,26 +344,37 @@ export default {
     },
     UploadAll(){//批量发布
       let deleteitem=[]
+      let falg=0;
       for(let i=0;i<this.multipleSelection.length;i++){
+        if((this.multipleSelection[i].content==''||this.multipleSelection[i].content==null)||(this.multipleSelection[i].title==''||this.multipleSelection[i].title==null)){
+          this.$message({
+            type:"error",
+            message:'存在ID为:'+this.multipleSelection[i].id+'的新闻内容或标题为空，请添加内容后发布'
+          })
+          falg=1
+          break
+        }
         deleteitem[i]=this.multipleSelection[i].id
       }
-      if(deleteitem.length===0){
-        this.$message('请选择要发布的新闻！')
-      }else{
-        request.post("/news/updateByBatch",deleteitem).then(res=>{
-          if(res.code==='200'){
-            this.$message({
-              type:"success",
-              message:'批量发布成功'
-            })
-            this.load()
-          }else{
-            this.$message({
-              type:"error",
-              message:'批量发布失败'
-            })
-          }
-        })
+      if(falg==0){
+        if(deleteitem.length===0){
+          this.$message('请选择要发布的新闻！')
+        }else{
+          request.post("/news/updateByBatch",deleteitem).then(res=>{
+            if(res.code==='200'){
+              this.$message({
+                type:"success",
+                message:'批量发布成功'
+              })
+              this.load()
+            }else{
+              this.$message({
+                type:"error",
+                message:'批量发布失败'
+              })
+            }
+          })
+        }
       }
     },
     //打开新增弹窗
@@ -423,28 +434,36 @@ export default {
         this.load()//发布之后重新加载表格的数据
       })
     },
-    handleUpdata(id){//发布某一新闻
-      request.post("/news/updateone",
-          {
-             id:id
-          }).then(res=>{
-        if(res.code=='200'){
-          this.$message({
-            type: "success",
-            message: "发布成功！"
-          })
-          this.load()
-        }else{
-          this.$message({
-            type: "error",
-            message: "发布失败"
-          })
-        }
-        if(this.tableData.length==0||this.tableData.length==1){
-          this.currentPage--;
-        }
-        this.load()//发布之后重新加载表格的数据
-      })
+    handleUpdata(e){//发布某一新闻
+      if((e.content==''||e.content==null)||(e.title==''||e.title==null)){
+        this.$message({
+          type: "error",
+          message: "该新闻内容或者标题为空，请填写相关内容后发布！"
+        })
+      }
+      else{
+        request.post("/news/updateone",
+            {
+              id:e.id
+            }).then(res=>{
+          if(res.code=='200'){
+            this.$message({
+              type: "success",
+              message: "发布成功！"
+            })
+            this.load()
+          }else{
+            this.$message({
+              type: "error",
+              message: "发布失败"
+            })
+          }
+          if(this.tableData.length==0||this.tableData.length==1){
+            this.currentPage--;
+          }
+          this.load()//发布之后重新加载表格的数据
+        })
+      }
     },
     handleDelete(id) {//删除某一新闻
       request.delete("/news/"+id).then(res=> {

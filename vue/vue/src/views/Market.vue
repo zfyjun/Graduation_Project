@@ -121,7 +121,7 @@
         width="30%"
     >
       <div style="padding: 2%" v-loading="addloading" >
-          <el-select @change="changemarketpredict" v-model="predictmarketvalue" filterable  placeholder="请选择">
+          <el-select style="width: 40%" @change="changemarketpredict" v-model="predictmarketvalue" filterable  placeholder="请选择">
             <el-option
                 v-for="item in looksavemarktpredict"
                 :key="item.market.id"
@@ -131,7 +131,7 @@
             >
             </el-option>
           </el-select>
-        <el-select v-if="nowdata.market.length!=0" style="margin-left: 5%"  @change="changemarketpredict2" v-model="predictmoldevalue" filterable  placeholder="请选择">
+        <el-select v-if="nowdata.market.length!=0" style="margin-left: 5%;width: 40%"  @change="changemarketpredict2" v-model="predictmoldevalue" filterable  placeholder="请选择">
           <el-option
               v-for="item in nowdata.save"
               :key="item.id"

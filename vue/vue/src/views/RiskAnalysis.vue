@@ -12,7 +12,18 @@
         <el-button  style="margin-left: 5%" plain type="primary" @click="serchUser()">用户搜索</el-button>
         <el-button  style="margin-left: 5%" plain type="primary" @click="dialogVisible=true">风险分析<i class="el-icon-edit"></i></el-button>
         <el-button  style="margin-left: 5%" plain type="primary" @click="getpictrue()">数据视图</el-button>
+        <div  style="margin-left: 5%;flex: 3">
+          <el-tag
+              style="margin-right: 2%;"
+              v-for="item in items"
+              :key="item.label"
+              :type="item.type"
+              effect="dark">
+            {{ item.label }}
+          </el-tag>
+        </div>
       </div>
+
       <el-table stripe :data="tableData" border style="width: 100%;margin-top: 1%">
         <el-table-column prop="id" label="id" width="50"></el-table-column>
         <el-table-column prop="risk" label="风险等级"  sortable>
@@ -64,7 +75,7 @@
         <div style="display: flex">
           <div >分析范围：</div>
           <el-select v-model="analysis.type" placeholder="分析范围">
-            <el-option v-if="analysis.id==0" label="全部用户分析" :value='1'></el-option>
+<!--            <el-option v-if="analysis.id==0" label="全部用户分析" :value='1'></el-option>-->
             <el-option v-if="analysis.id==0" label="系统用户分析" :value='2'></el-option>
             <el-option v-if="analysis.id!=0" label="单用户分析" :value='3'></el-option>
           </el-select>
@@ -186,7 +197,13 @@ export default {
       linChart:null,
       barChart:null,
       showwords:false,
-      ranges:[]
+      ranges:[],
+      items: [
+        { type: 'success', label: '低风险' },
+        { type: 'warning', label: '中风险' },
+        { type: 'danger', label: '高风险' }
+
+      ]
     }
   },
   created() {
