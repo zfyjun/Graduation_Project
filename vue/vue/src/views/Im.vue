@@ -107,7 +107,8 @@ export default {
       audioBlobs:[],
       audioUrls:[],
       unReadMsgs:[],
-      unreadCount:2
+      unreadCount:2,
+      temMsgData:null
     }
   },
   created() {
@@ -122,7 +123,10 @@ export default {
     test(){
       console.log('this.users')
       console.log(this.users)
-      request.post('/AdminOnline/all').then(res=>{
+      request.post('/AdminOnline/all',{
+        "username":this.user.username
+      }).then(res=>{
+        console.log(this.user.username)
         this.newUsers=res
         console.log("newUsers")
         console.log(res)
@@ -305,6 +309,11 @@ export default {
             // 创建一个 form 数据对象并添加录音数据
             let formData = new FormData()
             formData.append("audio", this.audioBlob)
+            let tmpMsgData=JSON.stringify({
+              "type":"audio",
+              "data":this.audio
+            })
+
 
             // 使用 axios 发送 POST 请求并包含 form 数据
             request.post("/file/uploadAudio", formData, {
@@ -328,6 +337,7 @@ export default {
               // // 构建消息内容，本人消息
               // this.createContent(null, this.user.username, JSON.parse(msgData))
               console.log("audio标签")
+              // let tmpUrl=this.audio
               this.audio = null;
 
               socket.send(JSON.stringify(message));  // 将组装好的json发送给服务端，由服务端进行转发
@@ -336,7 +346,8 @@ export default {
               }).then(res=>{
                 console.log("保存成功")
                 // 构建消息内容，本人消息
-                this.createContent(null, this.user.username, JSON.parse(msgData))
+                this.createContent(null, this.user.username, JSON.parse(tmpMsgData))
+                // this.historyChat(this.chatUser)
                 //让聊天记录显示在下面一条
                 this.$nextTick(() => {
                   let container = this.$el.querySelector(".chat-content");
@@ -345,6 +356,7 @@ export default {
               })
             })
           }
+
         }
       }
 
