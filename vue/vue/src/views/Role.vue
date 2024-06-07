@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div v-show="activeIndex==1">
     <div style="margin: 10px 0">
       <el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search" v-model="name"></el-input>
 <!--      <el-input style="width: 200px" placeholder="请输入邮箱" suffix-icon="el-icon-message" class="ml-5" v-model="email"></el-input>-->
@@ -99,6 +100,12 @@
         <el-button type="primary" @click="saveRoleMenu">确 定</el-button>
       </div>
     </el-dialog>
+    </div>
+
+    <div v-show="activeIndex==2">
+
+    </div>
+
   </div>
 </template>
 
@@ -124,7 +131,8 @@ export default {
       checks: [], //菜单选中属性
       roleId: 0,
       roleFlag: '',
-      ids: []
+      ids: [],
+      activeIndex:'1',
     }
   },
   created() {

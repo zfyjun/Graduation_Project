@@ -10,9 +10,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.springbootbank.common.Constants;
 import com.example.springbootbank.common.Result;
+import com.example.springbootbank.common.WebSocketServer;
 import com.example.springbootbank.controller.dto.AdminDto;
 import com.example.springbootbank.entity.Admin;
+import com.example.springbootbank.entity.AdminOnline;
+import com.example.springbootbank.entity.User;
+import com.example.springbootbank.mapper.AdminMapper;
+import com.example.springbootbank.mapper.AdminOnlineMapper;
+import com.example.springbootbank.service.AdminOnlineService;
 import com.example.springbootbank.service.IAdminService;
+import com.example.springbootbank.utils.MD5Utils;
+import org.springframework.jdbc.object.UpdatableSqlQuery;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +29,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +48,14 @@ public class AdminController {
     @Resource
     private IAdminService adminService;
 
+    @Resource
+    private AdminOnlineMapper adminOnlineMapper;
+
+    @Resource
+    private AdminMapper adminMapper;
+
+//    private WebSocketServer webSocketServer=new WebSocketServer();
+
     @PostMapping("/login")
     public Result login(@RequestBody AdminDto adminDto){
         String username=adminDto.getUsername();
@@ -46,6 +63,7 @@ public class AdminController {
         if(StrUtil.isBlank(username)||StrUtil.isBlank(password)){
             return Result.error(Constants.CODE_400,"参数错误");
         }
+        adminDto.setPassword(MD5Utils.md5(adminDto.getPassword()));
         AdminDto dto=adminService.login(adminDto);
 
         return Result.success(dto);
@@ -55,6 +73,7 @@ public class AdminController {
     public Result register(@RequestBody AdminDto adminDto){
         System.out.println(adminDto);
         adminDto.setName(adminDto.getUsername());
+        adminDto.setPassword(MD5Utils.md5(adminDto.getPassword()));
         adminDto.setRole("ROLE_USER");
 
         String username=adminDto.getUsername();
@@ -65,6 +84,44 @@ public class AdminController {
         return Result.success(adminService.register(adminDto));
     }
 
+    @PostMapping("/update")
+    public Result update(@RequestBody Admin user){
+        adminService.updateById(user);
+        QueryWrapper<AdminOnline> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("role",1);
+        List<Integer> list=new ArrayList<>();
+        List<AdminOnline> adminOnlineList = adminOnlineMapper.selectList(queryWrapper);
+        for (int i = 0; i < adminOnlineList.size(); i++) {
+            list.add(adminOnlineList.get(i).getId());
+        }
+        if (!list.isEmpty()){
+            adminOnlineMapper.deleteBatchIds(list);
+        }
+
+
+        QueryWrapper<Admin> queryWrapper1=new QueryWrapper<>();
+        queryWrapper1.eq("role","ROLE_SERVICE");
+//        queryWrapper1.eq("role","ROLE_ROOT");
+        List<Admin> adminList=adminMapper.selectList(queryWrapper1);
+        System.out.println(adminList);
+        for (int i = 0; i < adminList.size(); i++) {
+            AdminOnline adminOnline=new AdminOnline();
+            adminOnline.setU_id(adminList.get(i).getId());
+            adminOnline.setRole(1);
+            adminOnline.setOnline(0);
+            adminOnline.setName(adminList.get(i).getName());
+            adminOnlineMapper.insert(adminOnline);
+        }
+        AdminOnline adminOnline=new AdminOnline();
+        adminOnline.setU_id(1);
+        adminOnline.setRole(1);
+        adminOnline.setOnline(0);
+        adminOnline.setName("root");
+        adminOnlineMapper.insert(adminOnline);
+//        webSocketServer.init();
+
+        return Result.success();
+    }
     //新增或更新
     @PostMapping
     public Result save(@RequestBody Admin user){

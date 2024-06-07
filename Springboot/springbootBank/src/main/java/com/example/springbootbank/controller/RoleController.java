@@ -9,6 +9,7 @@ import com.example.springbootbank.service.IRoleService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,8 +30,22 @@ public class RoleController {
     // 新增或者更新
     @PostMapping
     public Result save(@RequestBody Role role) {
-        roleService.saveOrUpdate(role);
-        return Result.success();
+        QueryWrapper<Role> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("flag",role.getFlag());
+        Role role1 =roleService.getOne(queryWrapper);
+        if(role1==null){
+            roleService.saveOrUpdate(role);
+            Role role2=roleService.getOne(queryWrapper);
+            List<Integer> list=new ArrayList<>();
+            list.add(1);
+            list.add(2);
+            list.add(5);
+            roleService.setRoleMenu(role2.getId(),list);
+            return Result.success();
+        }else {
+            return Result.error();
+        }
+
     }
 
     @DeleteMapping("/{id}")

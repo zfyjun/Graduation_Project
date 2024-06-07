@@ -56,11 +56,12 @@ public class WebSocketServer {
     public void init() {
         QueryWrapper<AdminOnline> queryWrapper=new QueryWrapper<>();
         queryWrapper.select("*");
+        System.out.println(1111);
 
         List<AdminOnline> list=adminOnlineMapper.selectList(queryWrapper);
         allUsers = list;
-//        System.out.println("init");
-//        System.out.println(allUsers);
+        System.out.println("init");
+        System.out.println(allUsers);
     }
 
     /**
@@ -68,6 +69,7 @@ public class WebSocketServer {
      */
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) {
+//        this.init();
         sessionMap.put(username, session);
 
         // 设置该用户在线

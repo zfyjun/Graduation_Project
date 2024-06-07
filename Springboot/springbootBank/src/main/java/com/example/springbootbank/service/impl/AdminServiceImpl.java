@@ -72,7 +72,10 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
 
     @Override
     public Admin register(AdminDto adminDto) {
-        Admin one = this.getUserInfo(adminDto);
+
+        QueryWrapper<Admin> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("username",adminDto.getUsername());
+        Admin one = this.getOne(queryWrapper);
         if(one == null){
             one = new Admin();
             BeanUtil.copyProperties(adminDto,one,true);

@@ -5,7 +5,7 @@
       <el-col :span="8">
         <el-card style="width: 100%; min-height: 300px; color: #333">
           <div style="padding-bottom: 10px; border-bottom: 1px solid #ccc">在线用户<span style="font-size: 12px">（点击聊天气泡开始聊天）</span></div>
-          <div style="padding: 10px 0" v-for="(user,index) in users" :key="user.username" class="userBox">
+          <div style="padding: 10px 0" v-for="(user,index) in newUsers" :key="user.username" class="userBox">
             <div class="usernameBox">
               <span class="username">{{ user.username }}</span>
               <div v-for="unRead in unReadMsgs">
@@ -89,6 +89,7 @@ export default {
       user: {},//当前用户
       isCollapse: false,
       users: [],
+      newUsers:[],
       chatUser: '',//聊天对象
       text: "",
       messages: [],
@@ -121,6 +122,12 @@ export default {
     test(){
       console.log('this.users')
       console.log(this.users)
+      request.post('/AdminOnline/all').then(res=>{
+        this.newUsers=res
+        console.log("newUsers")
+        console.log(res)
+        console.log(this.newUsers)
+      })
       // request.post("/AdminOnline/all").then(res=>{
       // })
     },
